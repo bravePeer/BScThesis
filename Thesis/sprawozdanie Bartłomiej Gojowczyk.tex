@@ -1,0 +1,42 @@
+\documentclass[11pt,a4paper]{article}
+\input{szablon.tex}
+
+\usepackage{enumitem,amssymb}
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+\hspace{-2.5pt}}
+\newcommand{\wontfix}{\rlap{$\square$}{\large\hspace{1pt}\xmark}}
+
+
+\begin{document}
+\begin{center}
+		{\large \textbf{Praca Inżynierska}}
+\end{center}
+
+% \end{center}
+\begin{center}
+	\Large 
+\end{center}
+
+
+\textbf{Temat:} 
+Implementacja aplikacji desktopowej mającej na celu wsparcie nauki elektroniki.
+
+\textbf{Cel:} 
+Pomoc w nauce elektroniki dla osób nie mających styczności z zagadnieniami elektronicznymi.
+
+\begin{itemize}
+    \item Założenia:
+    \begin{todolist}
+    \item aplikacja desktopowa do nauki podstaw elektroniki
+    \item awd
+    \item profit
+    \end{todolist}
+  \end{itemize}
+
+
+\end{document}
