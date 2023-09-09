@@ -177,7 +177,7 @@ public:
 			logger->Error("CAN NOT load gui textures");*/
 
 		//Load fonts
-		if (font.loadFromFile("comic.ttf"))
+		if (font.loadFromFile("Resources\\comic.ttf"))
 			logger->Info("Successful loaded fonts");
 		else
 			logger->Error("CAN NOT load fonts ");
