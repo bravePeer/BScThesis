@@ -39,7 +39,7 @@ public:
 		tileShape.setPoint(2, Vector2f(TILE_LENGTH, TILE_WIDTH / 2.f));
 		tileShape.setPoint(3, Vector2f(TILE_LENGTH/ 2.f, TILE_WIDTH));
 
-		tileShape.setFillColor(sf::Color(255, 0, 0));
+		tileShape.setFillColor(defaultColor);
 		tileShape.setOutlineThickness(1.f);
 
 	}
@@ -55,38 +55,52 @@ public:
 
 	Vector2f GetGlobalPointPos(size_t point)
 	{
-		return Vector2f(tileShape.getPosition().x+ tileShape.getPoint(point).x, tileShape.getPosition().y + tileShape.getPoint(point).y);
+		return Vector2f(tileShape.getPosition().x + tileShape.getPoint(point).x, tileShape.getPosition().y + tileShape.getPoint(point).y);
 	}
 
 	bool isMouseHover(Vector2i& mousePos)
 	{
-		auto containLine01 = [=](Vector2i mousePos) -> bool {
-			float t = (mousePos.x - GetGlobalPointPos(0).x) *
-				(GetGlobalPointPos(1).y - GetGlobalPointPos(0).y) -
-				(mousePos.y - GetGlobalPointPos(0).y) *
-				(GetGlobalPointPos(1).x - GetGlobalPointPos(0).x);
+		//
+		//      1
+		//     / \
+		//    /   \
+		//   /     \
+		//  0       2
+		//   \     /
+		//    \   /
+		//     \ /
+		//      3
+		//
+
+		auto containLine01 = [=](Vector2i& mousePos) -> bool {
+			float t = (GetGlobalPointPos(1).x - GetGlobalPointPos(0).x) *
+				(mousePos.y - GetGlobalPointPos(0).y) - 
+				(GetGlobalPointPos(1).y - GetGlobalPointPos(0).y) *
+				(mousePos.x - GetGlobalPointPos(0).x);
+			return t > 0 ? true : false;
+		};
+		
+		auto containLine12 = [=](Vector2i& mousePos) -> bool {
+			float t = (GetGlobalPointPos(1).x - GetGlobalPointPos(2).x) *
+				(mousePos.y - GetGlobalPointPos(2).y) -
+				(GetGlobalPointPos(1).y - GetGlobalPointPos(2).y) *
+				(mousePos.x - GetGlobalPointPos(2).x);
 			return t < 0 ? true : false;
 		};
-		auto containLine23 = [=](Vector2i mousePos) -> bool {
-			float t = (mousePos.x - GetGlobalPointPos(3).x) *
-				(GetGlobalPointPos(2).y - GetGlobalPointPos(3).y) -
-				(mousePos.y - GetGlobalPointPos(3).y) *
-				(GetGlobalPointPos(2).x - GetGlobalPointPos(3).x);
+		
+		auto containLine23 = [=](Vector2i& mousePos) -> bool {
+			float t = (GetGlobalPointPos(3).x - GetGlobalPointPos(2).x) *
+				(mousePos.y - GetGlobalPointPos(2).y) -
+				(GetGlobalPointPos(3).y - GetGlobalPointPos(2).y) *
+				(mousePos.x - GetGlobalPointPos(2).x);
 			return t > 0 ? true : false;
 		};
-
-		auto containLine12 = [=](Vector2i mousePos) -> bool {
-			float t = (mousePos.x - GetGlobalPointPos(2).x) *
-				(GetGlobalPointPos(1).y - GetGlobalPointPos(2).y) -
-				(mousePos.y - GetGlobalPointPos(2).y) *
-				(GetGlobalPointPos(1).x - GetGlobalPointPos(2).x);
-			return t > 0 ? true : false;
-		};
-		auto containLine30 = [=](Vector2i mousePos) -> bool {
-			float t = (mousePos.x - GetGlobalPointPos(3).x) *
-				(GetGlobalPointPos(0).y - GetGlobalPointPos(3).y) -
-				(mousePos.y - GetGlobalPointPos(2).y) *
-				(GetGlobalPointPos(0).x - GetGlobalPointPos(3).x);
+		
+		auto containLine30 = [=](Vector2i& mousePos) -> bool {
+			float t = (GetGlobalPointPos(3).x - GetGlobalPointPos(0).x) *
+				(mousePos.y - GetGlobalPointPos(0).y) -
+				(GetGlobalPointPos(3).y - GetGlobalPointPos(0).y) *
+				(mousePos.x - GetGlobalPointPos(0).x);
 			return t < 0 ? true : false;
 		};
 
@@ -102,7 +116,7 @@ public:
 	{
 		//cout << tileShape.getPosition().x << endl;
 
-		auto containLine01 = [=](Vector2i mousePos) -> bool {
+		/*auto containLine01 = [=](Vector2i mousePos) -> bool {
 			float t = (mousePos.x - GetGlobalPointPos(0).x) *
 				(GetGlobalPointPos(1).y - GetGlobalPointPos(0).y) -
 				(mousePos.y - GetGlobalPointPos(0).y) *
@@ -140,13 +154,10 @@ public:
 		else
 		{
 			tileShape.setFillColor(defaultColor);
-		}
+		}*/
 	}
 	void Render(RenderTarget* target)
 	{
-		sf::RectangleShape rec(Vector2f(100, 100));
-		target->draw(rec);
-
 		target->draw(tileShape);
 	}
 	void setState(TileState tileState)
@@ -174,15 +185,24 @@ private:
 
 class Board
 {
+	Logger* logger;
+
 	int length; 
 	int width;  
 	int layers; 
+	Vector2f origin;
 
 	Tile* boardTiles;
+	vector<Component*> components; //Trzeba bêdzie sortowaæ po dodaniu nowego komponentu
+	bool* isComponentOnBoard;
+	Component* ghostComponent;
 
+	//Vector2f viewOrigin = { 0.f, 0.f };
+	Vector2f viewOrigin = { 300.f, 15.f };
 public:
 	Board()
 	{
+		logger = new Logger("Board");
 		length = 0;
 		width = 0;
 		layers = 0;
@@ -191,25 +211,42 @@ public:
 	Board(int length, int width, int layers)
 		:length(length), width(width), layers(layers)
 	{
+		logger = new Logger("Board");
+		origin = { 0,0 };
+		
 		boardTiles = new Tile[length * width];
+		isComponentOnBoard = new bool[length * width];
 
-		Vector2f startPos( 10 + TILE_LENGTH*(length-1), TILE_WIDTH+10  );
+		for (int i = 0; i < length * width; i++)
+			isComponentOnBoard[i] = false;
+
+
+		//Vector2f startPos(10 + TILE_LENGTH * (length - 1), TILE_WIDTH + 10);
+		Vector2f startPos(0,0);
 		Vector2f tmpPos = startPos;
 		for (int j = 0; j < width; j++)
 		{
 			for (int i = 0; i < length; i++)
 			{
-				boardTiles[j * length + i].SetPos(ScreenPos({j,i},{TILE_LENGTH, TILE_WIDTH}));
-				boardTiles[j * length + i].Move({ 300.f, 15.f });
+				boardTiles[j * length + i].SetPos(ScreenPos({i,j},{TILE_LENGTH, TILE_WIDTH}) + viewOrigin);
+				//boardTiles[j * length + i].Move(viewOrigin);
 				tmpPos.x += TILE_LENGTH;
 			}
 			tmpPos.y += TILE_WIDTH / 2.f;
 			tmpPos.x = startPos.x - TILE_LENGTH * (j) - TILE_LENGTH/2.f;
 		}
+
+		ghostComponent = nullptr;
 	}
 	~Board()
 	{
+		delete logger;
 		delete[] boardTiles;
+		delete[] isComponentOnBoard;
+		for (auto component: components)
+		{
+			delete component;
+		}
 	}
 
 	void Update(RenderWindow* window, Time* elapsed)
@@ -221,6 +258,26 @@ public:
 				boardTiles[j * length + i].Update(window, elapsed);
 			}
 		}
+
+		for (auto component : components)
+		{
+			component->Update(window, elapsed, viewOrigin);
+		}
+
+		if (ghostComponent != nullptr)
+		{
+			try
+			{
+				Vector2i mousePos = sf::Mouse::getPosition();
+				Vector2i hoveredTile = getHoverTile(mousePos);
+				ghostComponent->setBoardPosition(hoveredTile);
+			}
+			catch (const sf::String& e)
+			{
+
+			}
+			ghostComponent->Update(window, elapsed, viewOrigin);
+		}
 	}
 	void Render(RenderTarget* target)
 	{
@@ -231,9 +288,68 @@ public:
 				boardTiles[j*length + i].Render(target);
 			}
 		}
+
+		for (auto component : components)
+		{
+			component->Render(target);
+		}
+
+		if (ghostComponent != nullptr)
+			ghostComponent->Render(target);
 	}
 	void addRoute()
 	{
 
+	}
+	Vector2i getHoverTile(Vector2i& mouse)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			for (int i = 0; i < length; i++)
+			{
+				if (boardTiles[j * length + i].isMouseHover(mouse))
+					return Vector2i(i, j);
+			}
+		}
+		throw sf::String(L"Poza granicami p³ytki");
+	}
+	const Vector2i getBoardDimension()
+	{
+		return Vector2i(length, width);
+	}
+
+	bool canPlaceComponent(Component* component, Vector2i& pos)
+	{
+		for (int j = 0; j < component->getTileSize().y; j++)
+		{
+			for (int i = 0; i < component->getTileSize().x; i++)
+			{
+				if (isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] == true)
+					return false;
+			}
+		}
+
+		return true;
+	}
+	void placeComponent(Component* component, Vector2i& pos)
+	{
+		if (!canPlaceComponent(component, pos))
+			throw "Can't place compoenent!";
+
+		for (int j = 0; j < component->getTileSize().y; j++)
+		{
+			for (int i = 0; i < component->getTileSize().x; i++) //j * length + i
+			{
+				isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = true;
+			}
+		}
+
+		component->setBoardPosition(pos);
+		components.push_back(component);
+		logger->Info("Added component pos:" + to_string(pos.x) + " " + to_string(pos.y));
+	}
+	void placeGhostComponent(Component* component, Vector2i& mousePos)
+	{
+		ghostComponent = component;
 	}
 };

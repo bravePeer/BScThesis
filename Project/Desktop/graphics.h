@@ -19,128 +19,32 @@ public:
 		delete logger;
 	}
 
-	void LoadGroundGraphic(short limit = 4)
+	void LoadTestGraphic()
 	{
-		if (!tileTexture.loadFromFile("Resources\\Textures\\Ground\\grounds.png"))
+		if (!testTexture.loadFromFile("Resources\\Images\\testsmdled.png"))
 		{
-			isTileGraphicLoaded = false;
-			logger->Error("CAN NOT load Ground Textures");
+			logger->Error("Cant load testsmdled.png");
+			isTestGraphicsLoaded = false;
 			return;
 		}
 
-		for (int i = 0; i < limit; i++)
-		{
-			tileSprite[i].setTexture(tileTexture);
-			tileSprite[i].setTextureRect(IntRect(Vector2i(256 * i, 0), Vector2i(256, 256)));
-		}
-		isTileGraphicLoaded = true;
-
-		logger->Info("Successful loaded Ground Textures");
+		testSprite.setTexture(testTexture);
+		logger->Info("Loaded testsmdled.png");
+		isTestGraphicsLoaded = true;
 	}
-	void LoadBuildingGraphic()
+	sf::Sprite* GetSpriteTest()
 	{
-		if (!buildingTexture.loadFromFile("Resources\\Textures\\Building\\Buildings.png") || !buildingTexture2.loadFromFile("Resources\\Textures\\Building\\Buildings.png"))
-		{
-			logger->Error("CAN NOT load Ground Textures");
-			isBuildingGraphicLoaded = false;
-			return;
-		}
-
-		for (int i = 0; i < 5; i++)
-		{
-			buildingsSprite[i].setTexture(buildingTexture);
-			buildingsSprite[i].setTextureRect(IntRect(Vector2i(256 * i, 0), Vector2i(256, 256)));
-			buildingsSpriteOnTile[i].setTexture(buildingTexture2);
-			buildingsSpriteOnTile[i].setTextureRect(IntRect(Vector2i(256 * i, 0), Vector2i(256, 256)));
-		}
-
-		isBuildingGraphicLoaded = true;
-		logger->Info("Successful loaded Building Textures");
+		return &testSprite;
 	}
-	void LoadUnitGraphic()
-	{
-		if (!unitTexture.loadFromFile("Resources\\Textures\\Unit\\units.png"))
-		{
-			logger->Error("CAN NOT load Unit Textures");
-			isUnitGraphicLoaded = false;
-			return;
-		}
-
-		for (int i = 0; i < 4; i++)
-		{
-			unitsSprite[i].setTexture(unitTexture);
-			unitsSprite[i].setTextureRect(IntRect(Vector2i(256 * i, 0), Vector2i(256, 256)));
-		}
-
-		isUnitGraphicLoaded = true;
-		logger->Info("Successful loaded Unit Textures");
-	}
-
-	void LoadOtherGraphic()
-	{
-		if (!mouseOnTileTexture.loadFromFile("Resources\\Textures\\Gui\\ramka.png"))
-		{
-			isOtherGraphicsLoaded = false;
-			logger->Error("CAN NOT load Other Textures");
-			return;
-		}
-		mouseOnTileSprite.setTexture(mouseOnTileTexture);
-		isOtherGraphicsLoaded = true;
-		logger->Info("Successful loaded Other Textures");
-	}
-
+	
 	bool IsGraphicLoaded()
 	{
-		return isBuildingGraphicLoaded && isUnitGraphicLoaded && isTileGraphicLoaded;
+		return isTestGraphicsLoaded;
 	}
-	Sprite* GetSpriteGround(unsigned short id)
-	{
-		return &tileSprite[id];
-	}
-	Sprite* GetAllSpritesGround()
-	{
-		return tileSprite;
-	}
-
-	Sprite* GetSpriteBuilding(unsigned short id)
-	{
-		return &buildingsSprite[id];
-	}
-	Sprite* GetSpriteBuildingOnTile(unsigned short id)
-	{
-		return &buildingsSpriteOnTile[id];
-	}
-	Sprite* GetSpriteUnit(unsigned short id = 0)
-	{
-		return &unitsSprite[id];
-	}
-
-	Sprite* GetSpriteMouseOnTile()
-	{
-		return &mouseOnTileSprite;
-	}
-
 private:
-	bool isTileGraphicLoaded;
-	Texture tileTexture;
-	Sprite tileSprite[4];
-
-	bool isBuildingGraphicLoaded;
-	Texture buildingTexture;
-	Texture buildingTexture2;
-	Sprite buildingsSprite[5];
-	Sprite buildingsSpriteOnTile[5];
-
-	bool isUnitGraphicLoaded;
-	Texture unitTexture;
-	Sprite unitsSprite[4];
-
-	bool isGuiGraphicLoaded;
-	Texture guiTexture;
-
-	bool isOtherGraphicsLoaded;
-	Texture mouseOnTileTexture;
-	Sprite mouseOnTileSprite;
+	Sprite testSprite;
+	Texture testTexture;
+	bool isTestGraphicsLoaded;
 
 	Logger* logger;
 };
@@ -211,7 +115,6 @@ public:
 		return font;
 	}
 
-
 	string GetMapPresetPath()
 	{
 		return mapPresetsPath;
@@ -225,6 +128,8 @@ private:
 	Texture buttonSpecificTexture;
 	Texture mainTextBox;
 	Font font;
+
+	Sprite testSprite;
 
 	string mapPresetsPath = "Resources\\Presets\\";
 };
