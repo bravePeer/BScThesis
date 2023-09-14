@@ -263,21 +263,6 @@ public:
 		{
 			component->Update(window, elapsed, viewOrigin);
 		}
-
-		if (ghostComponent != nullptr)
-		{
-			try
-			{
-				Vector2i mousePos = sf::Mouse::getPosition();
-				Vector2i hoveredTile = getHoverTile(mousePos);
-				ghostComponent->setBoardPosition(hoveredTile);
-			}
-			catch (const sf::String& e)
-			{
-
-			}
-			ghostComponent->Update(window, elapsed, viewOrigin);
-		}
 	}
 	void Render(RenderTarget* target)
 	{
@@ -294,8 +279,7 @@ public:
 			component->Render(target);
 		}
 
-		if (ghostComponent != nullptr)
-			ghostComponent->Render(target);
+
 	}
 	void addRoute()
 	{
@@ -317,9 +301,19 @@ public:
 	{
 		return Vector2i(length, width);
 	}
+	 Vector2f& getViewOrigin()
+	{
+		return viewOrigin;
+	}
+
 
 	bool canPlaceComponent(Component* component, Vector2i& pos)
 	{
+		if (pos.x + component->getTileSize().x > length)
+			return false;
+		if (pos.y + component->getTileSize().y > width)
+			return false;
+
 		for (int j = 0; j < component->getTileSize().y; j++)
 		{
 			for (int i = 0; i < component->getTileSize().x; i++)
@@ -334,22 +328,19 @@ public:
 	void placeComponent(Component* component, Vector2i& pos)
 	{
 		if (!canPlaceComponent(component, pos))
-			throw "Can't place compoenent!";
+			throw sf::String(L"Can't place component! pos: ") + to_wstring(pos.x) + " " + to_wstring(pos.y);
 
 		for (int j = 0; j < component->getTileSize().y; j++)
 		{
 			for (int i = 0; i < component->getTileSize().x; i++) //j * length + i
 			{
 				isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = true;
+				
 			}
 		}
 
 		component->setBoardPosition(pos);
 		components.push_back(component);
-		logger->Info("Added component pos:" + to_string(pos.x) + " " + to_string(pos.y));
-	}
-	void placeGhostComponent(Component* component, Vector2i& mousePos)
-	{
-		ghostComponent = component;
+		logger->Info("Added "+component->getName() + " pos:" + to_string(pos.x) + " " + to_string(pos.y));
 	}
 };

@@ -65,6 +65,10 @@ public:
 	{
 		boardPosition = pos;
 	}
+	const sf::String& getName()
+	{
+		return name;
+	}
 private:
 	wstring name;
 	wstring description;

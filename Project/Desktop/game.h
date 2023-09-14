@@ -80,14 +80,14 @@ public:
 	}
 	void Render(RenderTarget* target)
 	{
-		renderSelectionComponent(target);
-		renderSelectedComponent(target);
-
 		board->Render(target);
 		renderTaskSection(target);
 		helpButton->Render(target);
 		menuButton->Render(target);
 		addRoute->Render(target);
+		
+		renderSelectionComponent(target);
+		renderSelectedComponent(target);
 
 		renderInfoNearMouse(target);
 	}
@@ -171,11 +171,32 @@ private:
 	{
 		Vector2i mousePos = sf::Mouse::getPosition(*window);
 
+		//Place component on board
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && addComponent != nullptr)
+		{
+			try
+			{
+				Vector2i hoveredTile = board->getHoverTile(mousePos);
+				board->placeComponent(addComponent, hoveredTile);
+			}
+			catch (const sf::String&e)
+			{
+				logger->Info(e);
+				delete addComponent;
+			}
+
+			addComponent = nullptr;
+		}
+
+
+		//Cancel adding element
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && addComponent != nullptr)
 		{
 			delete addComponent;
 			addComponent = nullptr; // not sure czy potrzebne
 		}
+
+
 
 		addRoute->Update(sf::Vector2f(mousePos));
 		if (addRoute->GetButtonState() == ButtonStates::PRESSED)
@@ -185,7 +206,7 @@ private:
 			tmp[0].y = 0;
 			tmp[1].x = 1;
 			tmp[1].y = 0;
-			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 1,2 }, 2, tmp, graphics.GetSpriteTest());
+			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, graphics.GetSpriteTest());
 			delete[] tmp;
 
 			Vector2i pos = { 3,3 };
@@ -201,17 +222,28 @@ private:
 			tmp[0].y = 0;
 			tmp[1].x = 1;
 			tmp[1].y = 0;
-			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 1,2 }, 2, tmp, graphics.GetSpriteTest());
+			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, graphics.GetSpriteTest());
 			delete[] tmp;
 
-			board->placeGhostComponent(addComponent, mousePos);
-			//Vector2i pos = { 3,3 };
-			//board->placeComponent(), pos);
-			//addComponent = new LedDiode(L"Dioda", L"Œwiec¹ca", { 1,2 }, 2, tmp, graphics.GetSpriteTest());
 		}
 
-		/*if (addComponent != nullptr)
-			addComponent->Update(window, elapsed);*/
+
+		if (addComponent != nullptr)
+		{
+			try
+			{
+				Vector2i mousePos = sf::Mouse::getPosition(*window);
+				Vector2i hoveredTile = board->getHoverTile(mousePos);
+				if (board->canPlaceComponent(addComponent, hoveredTile))
+					addComponent->setBoardPosition(hoveredTile);
+			}
+			catch (const sf::String& e)
+			{
+
+			}
+			addComponent->Update(window, elapsed, board->getViewOrigin());
+		}
+
 	}
 
 
@@ -237,6 +269,9 @@ private:
 	inline void renderSelectedComponent(RenderTarget* target)
 	{
 		selectedComponent->Render(target);
+
+		if (addComponent != nullptr)
+			addComponent->Render(target);
 	}
 
 	//void renderMenu
