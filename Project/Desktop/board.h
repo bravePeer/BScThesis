@@ -2,8 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "component.h"
 
-#define TILE_LENGTH 63
-#define TILE_WIDTH 31
+#define TILE_LENGTH 64
+#define TILE_WIDTH 32
 
 class Tile
 {
@@ -11,11 +11,12 @@ public:
 	enum TileState //TODO s³aba nazwa
 	{
 		EMPTY,
+		SMD_PAD,
+		THT_PAD,
 		ROUTED,
 		VIA,
 		CONNECTED // not sure is necessary
 	};
-
  
 	Tile()
 	{
@@ -37,11 +38,14 @@ public:
 		tileShape.setPoint(0, Vector2f(0.f, TILE_WIDTH / 2.f));
 		tileShape.setPoint(1, Vector2f(TILE_LENGTH / 2.f, 0.f));
 		tileShape.setPoint(2, Vector2f(TILE_LENGTH, TILE_WIDTH / 2.f));
-		tileShape.setPoint(3, Vector2f(TILE_LENGTH/ 2.f, TILE_WIDTH));
+		tileShape.setPoint(3, Vector2f(TILE_LENGTH / 2.f, TILE_WIDTH));
 
 		tileShape.setFillColor(defaultColor);
-		tileShape.setOutlineThickness(1.f);
+		//tileShape.setOutlineThickness(2.f);
 
+		/*tileShape.setTexture(GraphicAll::GetInstance()->getTileTexture());
+		tileShape.setTextureRect(IntRect(0,0,64,48));*/
+		tileSprite = GraphicAll::GetInstance()->getTileSprite(0);
 	}
 
 	void SetPos(Vector2f pos)
@@ -85,7 +89,7 @@ public:
 				(mousePos.y - GetGlobalPointPos(2).y) -
 				(GetGlobalPointPos(1).y - GetGlobalPointPos(2).y) *
 				(mousePos.x - GetGlobalPointPos(2).x);
-			return t < 0 ? true : false;
+			return t <= 0 ? true : false;
 		};
 		
 		auto containLine23 = [=](Vector2i& mousePos) -> bool {
@@ -93,7 +97,7 @@ public:
 				(mousePos.y - GetGlobalPointPos(2).y) -
 				(GetGlobalPointPos(3).y - GetGlobalPointPos(2).y) *
 				(mousePos.x - GetGlobalPointPos(2).x);
-			return t > 0 ? true : false;
+			return t >= 0 ? true : false;
 		};
 		
 		auto containLine30 = [=](Vector2i& mousePos) -> bool {
@@ -114,59 +118,48 @@ public:
 
 	void Update(RenderWindow* window, Time* elapsed)
 	{
-		//cout << tileShape.getPosition().x << endl;
-
-		/*auto containLine01 = [=](Vector2i mousePos) -> bool {
-			float t = (mousePos.x - GetGlobalPointPos(0).x) *
-				(GetGlobalPointPos(1).y - GetGlobalPointPos(0).y) -
-				(mousePos.y - GetGlobalPointPos(0).y) *
-				(GetGlobalPointPos(1).x - GetGlobalPointPos(0).x);
-			return t < 0 ? true : false;
-		};
-		auto containLine23 = [=](Vector2i mousePos) -> bool {
-			float t = (mousePos.x - GetGlobalPointPos(3).x) *
-				(GetGlobalPointPos(2).y - GetGlobalPointPos(3).y) -
-				(mousePos.y - GetGlobalPointPos(3).y) *
-				(GetGlobalPointPos(2).x - GetGlobalPointPos(3).x);
-			return t > 0 ? true : false;
-		};
-
-		auto containLine12 = [=](Vector2i mousePos) -> bool {
-			float t = (mousePos.x - GetGlobalPointPos(2).x) *
-				(GetGlobalPointPos(1).y - GetGlobalPointPos(2).y) -
-				(mousePos.y - GetGlobalPointPos(2).y) *
-				(GetGlobalPointPos(1).x - GetGlobalPointPos(2).x);
-			return t > 0 ? true : false;
-		};
-		auto containLine30 = [=](Vector2i mousePos) -> bool {
-			float t = (mousePos.x - GetGlobalPointPos(3).x) *
-				(GetGlobalPointPos(0).y - GetGlobalPointPos(3).y) -
-				(mousePos.y - GetGlobalPointPos(2).y) *
-				(GetGlobalPointPos(0).x - GetGlobalPointPos(3).x);
-			return t < 0 ? true : false;
-		};
-
-		if (containLine01(Mouse::getPosition(*window)) && containLine23(Mouse::getPosition(*window))
-			&& containLine12(Mouse::getPosition(*window)) && containLine30(Mouse::getPosition(*window)))
-		{
-			tileShape.setFillColor(hoverColor);
-		}
-		else
-		{
-			tileShape.setFillColor(defaultColor);
-		}*/
 	}
 	void Render(RenderTarget* target)
 	{
+		tileSprite->setPosition(tileShape.getPosition());
+		target->draw(*tileSprite);
 		target->draw(tileShape);
 	}
 	void setState(TileState tileState)
 	{
 		this->tileState = tileState;
+		tileSprite = GraphicAll::GetInstance()->getTileSprite(tileState);
 	}
 	TileState getState()
 	{
 		return tileState;
+	}
+	const sf::String getStateString()
+	{
+		switch (tileState)
+		{
+		case Tile::EMPTY:
+			return sf::String("Empty");
+			break;
+		case Tile::SMD_PAD:
+			return sf::String("SMD pad");
+			break;
+		case Tile::THT_PAD:
+			return sf::String("THT pad");
+			break;
+		case Tile::ROUTED:
+			return sf::String("Routed");
+			break;
+		case Tile::VIA:
+			return sf::String("Via");
+			break;
+		case Tile::CONNECTED:
+			return sf::String("Conntected");
+			break;
+		default:
+			return sf::String("-");
+			break;
+		}
 	}
 
 private:
@@ -174,12 +167,12 @@ private:
 		/*const float length = 60;
 		const float width = 30;*/
 
-		sf::Color defaultColor = sf::Color(50, 168, 56);
-		sf::Color hoverColor = sf::Color(61, 224, 58);
-		sf::Color routeColor = sf::Color(245, 241, 42);
+		sf::Color defaultColor = sf::Color(50, 168, 56, 0);
+		//sf::Color hoverColor = sf::Color(61, 224, 58,125);
+		//sf::Color routeColor = sf::Color(245, 241, 42);
 
 		TileState tileState = TileState::EMPTY;
-
+		Sprite* tileSprite;
 };
 
 
@@ -198,7 +191,7 @@ class Board
 	Component* ghostComponent;
 
 	//Vector2f viewOrigin = { 0.f, 0.f };
-	Vector2f viewOrigin = { 300.f, 15.f };
+	Vector2f viewOrigin = { 500.f, 15.f };
 public:
 	Board()
 	{
@@ -285,7 +278,7 @@ public:
 	{
 
 	}
-	Vector2i getHoverTile(Vector2i& mouse)
+	Vector2i getHoverTilePos(Vector2i& mouse)
 	{
 		for (int j = 0; j < width; j++)
 		{
@@ -297,11 +290,18 @@ public:
 		}
 		throw sf::String(L"Poza granicami p³ytki");
 	}
+	Tile& getTile(Vector2i pos)
+	{
+		if (pos.x + pos.y * length > length * width)
+			throw sf::String("Tile not exists!");
+
+		return boardTiles[pos.x + pos.y * length];
+	}
 	const Vector2i getBoardDimension()
 	{
 		return Vector2i(length, width);
 	}
-	 Vector2f& getViewOrigin()
+	Vector2f& getViewOrigin()
 	{
 		return viewOrigin;
 	}
@@ -335,9 +335,15 @@ public:
 			for (int i = 0; i < component->getTileSize().x; i++) //j * length + i
 			{
 				isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = true;
-				
 			}
 		}
+
+		Vector2i* padsPos = component->getPadsPos();
+		for (int i = 0; i < component->getPadsCount(); i++)
+		{
+			Vector2i buf = component->getBoardPosition() + padsPos[i];
+			boardTiles[buf.x + buf.y * length].setState(Tile::TileState::SMD_PAD);
+		} 
 
 		component->setBoardPosition(pos);
 		components.push_back(component);

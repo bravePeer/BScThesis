@@ -13,7 +13,8 @@ public:
 	MainGame(Resources *res) {
 		//test task
 		
-		graphics.LoadTestGraphic();
+		GraphicAll::GetInstance()->LoadTestGraphic();
+		GraphicAll::GetInstance()->LoadGraphic();
 
 		view = new View({ 800,450 }, { 1600, 900 });
 		origin = view->getCenter();
@@ -93,7 +94,6 @@ public:
 	}
 private:
 	Logger* logger;
-	GraphicAll graphics;
 
 	View* view;
 	Vector2f origin;
@@ -131,14 +131,16 @@ private:
 
 		Vector2i mousePos = Mouse::getPosition(*window);
 		sf::String str = L"";
-
 		try
 		{
-			Vector2i tmp = board->getHoverTile(mousePos);
+			Vector2i tmp = board->getHoverTilePos(mousePos);
+			Tile& hoveredTile = board->getTile(tmp);
 			str += L"Pos: ";
 			str += L"x: " + to_wstring(tmp.x);
 			str += L"y: " + to_wstring(tmp.y);
-			str += L"\nIndex: " + to_wstring(tmp.x + tmp.y * board->getBoardDimension().x);
+			str += L"\nIndeks: " + to_wstring(tmp.x + tmp.y * board->getBoardDimension().x);
+			str += L"\nTile:" + hoveredTile.getStateString();
+			str += L"\nKomponent:";
 		}
 		catch (const sf::String& e)
 		{
@@ -150,8 +152,6 @@ private:
 			static_cast<float>(Mouse::getPosition(*window).x) + origin.x - window->getSize().x / 2 + 50,
 			static_cast<float>(Mouse::getPosition(*window).y + origin.y - window->getSize().y / 2) });
 		mouseInfoBox->Update();
-
-
 	}
 	inline void renderInfoNearMouse(RenderTarget* target)
 	{
@@ -176,7 +176,7 @@ private:
 		{
 			try
 			{
-				Vector2i hoveredTile = board->getHoverTile(mousePos);
+				Vector2i hoveredTile = board->getHoverTilePos(mousePos);
 				board->placeComponent(addComponent, hoveredTile);
 			}
 			catch (const sf::String&e)
@@ -206,7 +206,7 @@ private:
 			tmp[0].y = 0;
 			tmp[1].x = 1;
 			tmp[1].y = 0;
-			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, graphics.GetSpriteTest());
+			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, GraphicAll::GetInstance()->GetSpriteTest(), GraphicAll::GetInstance()->getTestTexture()->getSize());
 			delete[] tmp;
 
 			Vector2i pos = { 3,3 };
@@ -222,9 +222,8 @@ private:
 			tmp[0].y = 0;
 			tmp[1].x = 1;
 			tmp[1].y = 0;
-			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, graphics.GetSpriteTest());
+			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, GraphicAll::GetInstance()->GetSpriteTest(), GraphicAll::GetInstance()->getTestTexture()->getSize());
 			delete[] tmp;
-
 		}
 
 
@@ -233,7 +232,7 @@ private:
 			try
 			{
 				Vector2i mousePos = sf::Mouse::getPosition(*window);
-				Vector2i hoveredTile = board->getHoverTile(mousePos);
+				Vector2i hoveredTile = board->getHoverTilePos(mousePos);
 				if (board->canPlaceComponent(addComponent, hoveredTile))
 					addComponent->setBoardPosition(hoveredTile);
 			}

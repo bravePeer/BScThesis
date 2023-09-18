@@ -1,8 +1,8 @@
 #pragma once
 #include "gui.h"
 
-#define TILE_LENGTH 63
-#define TILE_WIDTH 31
+#define TILE_LENGTH 64
+#define TILE_WIDTH 32
 
 //Electric compoenent
 class Component
@@ -17,8 +17,8 @@ public:
 		padsCount = 0;
 		padsPos = nullptr;
 	}
-	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite *sprite)
-		:name(name), description(description), tileSize(tileSize), padsCount(padsCount), sprite(sprite)
+	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite, Vector2u spriteSize)
+		:name(name), description(description), tileSize(tileSize), padsCount(padsCount), sprite(sprite), spriteSize(spriteSize)
 	{
 		globalPosition = { 0,0 };
 		this->padsPos = new Vector2i[padsCount];
@@ -35,7 +35,7 @@ public:
 	//, Vector2f& origin
 	virtual void Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin)
 	{
-		globalPosition = ScreenPos({ boardPosition.x, boardPosition.y }, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin;
+		globalPosition = ScreenPos({ boardPosition.x, boardPosition.y }, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin;// -Vector2f(spriteSize.y - TILE_WIDTH, 0.f);
 	}
 	virtual void Render(RenderTarget* target)
 	{
@@ -69,6 +69,14 @@ public:
 	{
 		return name;
 	}
+	const int getPadsCount()
+	{
+		return padsCount;
+	}
+	Vector2i* getPadsPos()
+	{
+		return padsPos;
+	}
 private:
 	wstring name;
 	wstring description;
@@ -81,14 +89,15 @@ private:
 	Vector2f globalPosition; //position on screen
 
 	Sprite* sprite;
+	Vector2i spriteSize; //Future use to set bigger image
 };
 
 
 class LedDiode : public Component
 {
 public:
-	LedDiode(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite)
-		:Component(name, description, tileSize, padsCount, padsPos, sprite)
+	LedDiode(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite, Vector2u spriteSize)
+		:Component(name, description, tileSize, padsCount, padsPos, sprite, spriteSize)
 	{
 
 	}

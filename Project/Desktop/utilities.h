@@ -71,7 +71,7 @@ static Vector2i absVector2i(Vector2i a)
 
 static Vector2f ScreenPos(Vector2i map, Vector2i tileSize)
 {
-	return Vector2f(static_cast<float>((map.x - map.y) * (tileSize.x / 2)), static_cast<float>((map.x + map.y) * (tileSize.y / 2)));
+	return Vector2f(static_cast<float>((map.x - map.y) * (tileSize.x / 2.)), static_cast<float>((map.x + map.y) * (tileSize.y / 2.)));
 }
 
 static Vector2i Screen2Map(Vector2i screen, Vector2i tileSize)

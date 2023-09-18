@@ -65,7 +65,7 @@ public:
 	//Rysowanie
 	void Render()
 	{
-		window->clear();
+		window->clear(sf::Color(200, 200, 150, 255));
 
 		gameState->Render(window);
 
