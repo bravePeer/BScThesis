@@ -20,11 +20,22 @@ public:
 	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite, Vector2u spriteSize)
 		:name(name), description(description), tileSize(tileSize), padsCount(padsCount), sprite(sprite), spriteSize(spriteSize)
 	{
-		globalPosition = { 0,0 };
+		this->globalPosition = { 0,0 };
 		this->padsPos = new Vector2i[padsCount];
 		for (int i = 0; i < padsCount; i++)
 		{
 			this->padsPos[i] = padsPos[i];
+		}
+	}
+	Component(Component* component)
+		:name(component->name), description(component->description), tileSize(component->tileSize), padsCount(component->padsCount), sprite(component->sprite),
+		spriteSize(component->spriteSize)
+	{
+		this->globalPosition = { 0,0 };
+		this->padsPos = new Vector2i[component->padsCount];
+		for (int i = 0; i < component->padsCount; i++)
+		{
+			this->padsPos[i] = component->padsPos[i];
 		}
 	}
 	~Component()
@@ -65,7 +76,7 @@ public:
 	{
 		boardPosition = pos;
 	}
-	const sf::String& getName()
+	const wstring& getName()
 	{
 		return name;
 	}
@@ -102,12 +113,27 @@ public:
 
 	}
 private:
-	void Update(RenderWindow* window, Time* elapsed)
+};
+
+
+class Resistor : public Component
+{
+public:
+	Resistor(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite, Vector2u spriteSize)
+		:Component(name, description, tileSize, padsCount, padsPos, sprite, spriteSize)
 	{
-	
+
 	}
-	void Render(RenderTarget* target)
+private:
+};
+
+class Capacitor : public Component
+{
+public:
+	Capacitor(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite, Vector2u spriteSize)
+		:Component(name, description, tileSize, padsCount, padsPos, sprite, spriteSize)
 	{
-		
+
 	}
+private:
 };

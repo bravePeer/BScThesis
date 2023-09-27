@@ -17,18 +17,24 @@ public:
 		VIA,
 		CONNECTED // not sure is necessary
 	};
- 
+	enum RouteDirection {
+		S = 0x01,
+		W = 0x02,
+		N = 0x04,
+		E = 0x08
+	};
+
 	Tile()
 	{
 		// 
 		//
 		//      1
 		//     / \
-		//    /   \
+		//  W /   \ N
 		//   /     \
 		//  0       2
 		//   \     /
-		//    \   /
+		//  S \   / E
 		//     \ /
 		//      3
 		//
@@ -46,6 +52,9 @@ public:
 		/*tileShape.setTexture(GraphicAll::GetInstance()->getTileTexture());
 		tileShape.setTextureRect(IntRect(0,0,64,48));*/
 		tileSprite = GraphicAll::GetInstance()->getTileSprite(0);
+		tileRoute = GraphicAll::GetInstance()->getRouteGraphic();
+
+		route = 0;
 	}
 
 	void SetPos(Vector2f pos)
@@ -121,14 +130,99 @@ public:
 	}
 	void Render(RenderTarget* target)
 	{
+		//if (route & 0x01) //South
+		//	target->draw(*tileRoute[0]);
+		//if (route & 0x02) //West
+		//	target->draw(*tileRoute[1]);
+		//if (route & 0x04) //North
+		//	target->draw(*tileRoute[2]);
+		//if (route & 0x08) //East
+		//	target->draw(*tileRoute[3]);
+
+		//Raczej niezbyt wydajne
+		switch (route)
+		{
+		case 1: // South
+			tileRoute->setTextureRect(sf::IntRect(66, 0, -66, 33));
+			break;
+		case 2: // West
+			tileRoute->setTextureRect(sf::IntRect(66, 33, -66, -33));
+			break;
+		case 4: // North
+			tileRoute->setTextureRect(sf::IntRect(0, 33, 66, -33));
+			break;
+		case 8: // East
+			tileRoute->setTextureRect(sf::IntRect(0, 0, 66, 33));
+			break;
+
+		case 12: // NE
+			tileRoute->setTextureRect(sf::IntRect(66, 0, 66, 33));
+			break;
+		case 3: //SW
+			tileRoute->setTextureRect(sf::IntRect(132, 0, -66, 33));
+			break;
+
+		case 6: //NW
+			tileRoute->setTextureRect(sf::IntRect(132, 33, 66, -33));
+			break;
+		case 9: //SE
+			tileRoute->setTextureRect(sf::IntRect(132, 0, 66, 33));
+			break;
+
+		case 10: //WE
+			tileRoute->setTextureRect(sf::IntRect(198, 0, 66, 33));
+			break;
+		case 5: //NS
+			tileRoute->setTextureRect(sf::IntRect(264, 0, -66, 33));
+			break;
+
+		case 14: // not S
+			tileRoute->setTextureRect(sf::IntRect(330, 33, -66, -33));
+			break;
+		case 13: // not W
+			tileRoute->setTextureRect(sf::IntRect(330, 0, -66, 33));
+			break;
+		case 11: // not N
+			tileRoute->setTextureRect(sf::IntRect(264, 0, 66, 33));
+			break;
+		case 7:  // not E
+			tileRoute->setTextureRect(sf::IntRect(264, 33, 66, -33));
+			break;
+
+		case 15:
+			tileRoute->setTextureRect(sf::IntRect(330, 0, 66, 33));
+			break;
+
+		default:
+			break;
+		}
+
 		tileSprite->setPosition(tileShape.getPosition());
 		target->draw(*tileSprite);
 		target->draw(tileShape);
+
+		if (route > 0)
+		{
+			tileRoute->setPosition(tileShape.getPosition());
+			target->draw(*tileRoute);
+		}
 	}
 	void setState(TileState tileState)
 	{
 		this->tileState = tileState;
 		tileSprite = GraphicAll::GetInstance()->getTileSprite(tileState);
+	}
+	void setRoute(char route)
+	{
+		this->route |= route;
+	}
+	void removeRoute(char route)
+	{
+		this->route &= ~route;
+	}
+	short getRoute()
+	{
+		return this->route;
 	}
 	TileState getState()
 	{
@@ -173,6 +267,9 @@ private:
 
 		TileState tileState = TileState::EMPTY;
 		Sprite* tileSprite;
+
+		Sprite* tileRoute; 
+		char route; // 4 lesast significant bits are SWNE 
 };
 
 
@@ -187,7 +284,8 @@ class Board
 
 	Tile* boardTiles;
 	vector<Component*> components; //Trzeba bêdzie sortowaæ po dodaniu nowego komponentu
-	bool* isComponentOnBoard;
+	//bool* isComponentOnBoard;
+	Component** isComponentOnBoard;
 	Component* ghostComponent;
 
 	//Vector2f viewOrigin = { 0.f, 0.f };
@@ -208,10 +306,11 @@ public:
 		origin = { 0,0 };
 		
 		boardTiles = new Tile[length * width];
-		isComponentOnBoard = new bool[length * width];
+		//isComponentOnBoard = new bool[length * width];
+		isComponentOnBoard = new Component * [length * width];
 
 		for (int i = 0; i < length * width; i++)
-			isComponentOnBoard[i] = false;
+			isComponentOnBoard[i] = nullptr;
 
 
 		//Vector2f startPos(10 + TILE_LENGTH * (length - 1), TILE_WIDTH + 10);
@@ -271,12 +370,6 @@ public:
 		{
 			component->Render(target);
 		}
-
-
-	}
-	void addRoute()
-	{
-
 	}
 	Vector2i getHoverTilePos(Vector2i& mouse)
 	{
@@ -307,6 +400,31 @@ public:
 	}
 
 
+	short tileNighbourDirection(Vector2i pos0, Vector2i pos1)
+	{
+		if (pos0.x == pos1.x)
+			if (pos0.y > pos1.y)
+				return Tile::RouteDirection::N;
+			else
+				return Tile::RouteDirection::S;
+		
+		if (pos0.y == pos1.y)
+			if (pos0.x > pos1.x)
+				return Tile::RouteDirection::W;
+			else
+				return Tile::RouteDirection::E;
+	}
+	void addRoute(Vector2i pos0, Vector2i pos1)
+	{
+		boardTiles[pos0.x + pos0.y * length].setRoute(tileNighbourDirection(pos0, pos1));
+		boardTiles[pos1.x + pos1.y * length].setRoute(tileNighbourDirection(pos1, pos0));
+	}
+	void removeRoute(Vector2i pos0, Vector2i pos1)
+	{
+		boardTiles[pos0.x + pos0.y * length].removeRoute(tileNighbourDirection(pos0, pos1));
+		boardTiles[pos1.x + pos1.y * length].removeRoute(tileNighbourDirection(pos1, pos0));
+	}
+
 	bool canPlaceComponent(Component* component, Vector2i& pos)
 	{
 		if (pos.x + component->getTileSize().x > length)
@@ -318,7 +436,7 @@ public:
 		{
 			for (int i = 0; i < component->getTileSize().x; i++)
 			{
-				if (isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] == true)
+				if (isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] != nullptr)
 					return false;
 			}
 		}
@@ -334,7 +452,8 @@ public:
 		{
 			for (int i = 0; i < component->getTileSize().x; i++) //j * length + i
 			{
-				isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = true;
+				//isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = true;
+				isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = component;
 			}
 		}
 
@@ -348,5 +467,42 @@ public:
 		component->setBoardPosition(pos);
 		components.push_back(component);
 		logger->Info("Added "+component->getName() + " pos:" + to_string(pos.x) + " " + to_string(pos.y));
+	}
+	Component* getComponentOnBoard(Vector2i pos)
+	{
+
+		return isComponentOnBoard[pos.x + pos.y * length];
+
+		/*for (auto& component : components)
+		{
+			if (pos == component->getBoardPosition())
+			{
+				return component;
+			}
+		}*/
+	}
+	
+	//---------Testing---------
+	void printComponentsMap()
+	{
+		for (int i = 0; i < width; i++)
+		{
+			for (int j = 0; j < length; j++)
+			{
+				cout << (isComponentOnBoard[j + i * length] != nullptr) ? '1' : '0';
+			}
+			cout << endl;
+		}
+	}
+	void printRoutMap()
+	{
+		for (int i = 0; i < width; i++)
+		{
+			for (int j = 0; j < length; j++)
+			{
+				cout << boardTiles[j + i * length].getRoute() << " ";
+			}
+			cout << endl;
+		}
 	}
 };

@@ -3,6 +3,10 @@
 #include <iostream>
 #include "Logger.h"
 
+#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistor.png"
+#define CAPACITOR_GRAPHIC_PATH "Resources\\Images\\simplecapacitor.png"
+#define ROUTE_GRAPHIC_PATH "Resources\\Images\\routes.png"
+
 using namespace sf;
 using namespace std;
 
@@ -30,25 +34,12 @@ public:
 			logger->Error("Can NOT load tile graphics!");
 		else
 			logger->Info("Tiles loaded successfuly!");
+		
+		loadResistorGraphic();
+		loadCapacitorGraphic();
+		loadRouteGraphic();
+	}
 
-	}
-	void LoadTestGraphic()
-	{
-		if (!testTexture.loadFromFile("Resources\\Images\\testsmdled.png"))
-		{
-			logger->Error("Cant load testsmdled.png");
-			isTestGraphicsLoaded = false;
-			return;
-		}
-
-		testSprite.setTexture(testTexture);
-		logger->Info("Loaded testsmdled.png, size:" + to_string(testTexture.getSize().x) + " " + to_string(testTexture.getSize().y));
-		isTestGraphicsLoaded = true;
-	}
-	sf::Sprite* GetSpriteTest()
-	{
-		return &testSprite;
-	}
 	const Texture* getTileTexture()
 	{
 		return &tilesTexture;
@@ -57,9 +48,89 @@ public:
 	{
 		return &(tilesSprite[i]);
 	}
+	
+	
+	void LoadTestGraphic()
+	{
+		if (!testTexture.loadFromFile("Resources\\Images\\simpleresistor.png"))
+		{
+			logger->Error("Cant load testsmdled.png");
+			isTestGraphicsLoaded = false;
+			return;
+		}
+
+		testSprite.setTexture(testTexture);
+		logger->Info("Loaded simpleresistor.png, size:" + to_string(testTexture.getSize().x) + " " + to_string(testTexture.getSize().y));
+		isTestGraphicsLoaded = true;
+	}
 	const Texture* getTestTexture()
 	{
 		return &testTexture;
+	}
+	sf::Sprite* GetSpriteTest()
+	{
+		return &testSprite;
+	}
+
+	void loadResistorGraphic()
+	{
+		if (!resistorTexture.loadFromFile(RESISTOR_GRAPHIC_PATH))
+		{
+			logger->Error("Cant load simpleresistor.png");
+			//isTestGraphicsLoaded = false;
+			return;
+		}
+
+		resistorSprite.setTexture(resistorTexture);
+		logger->Info("Loaded simpleresistor.png, size:" + to_string(resistorTexture.getSize().x) + " " + to_string(resistorTexture.getSize().y));
+		//isTestGraphicsLoaded = true;
+	}
+	const sf::Texture* getResistorTexture()
+	{
+		return &resistorTexture;
+	}
+	sf::Sprite* getResistorSprite()
+	{
+		return &resistorSprite;
+	}
+
+	void loadCapacitorGraphic()
+	{
+		if (!capacitorTexture.loadFromFile(CAPACITOR_GRAPHIC_PATH))
+		{
+			logger->Error("Cant load simpleresistor.png");
+			//isTestGraphicsLoaded = false;
+			return;
+		}
+
+		capacitorSprite.setTexture(capacitorTexture);
+		logger->Info("Loaded simpleresistor.png, size:" + to_string(capacitorTexture.getSize().x) + " " + to_string(capacitorTexture.getSize().y));
+		//isTestGraphicsLoaded = true;
+	}
+	const sf::Texture* getCapacitorTexture()
+	{
+		return &capacitorTexture;
+	}
+	sf::Sprite* getCapacitorSprite()
+	{
+		return &capacitorSprite;
+	}
+
+	void loadRouteGraphic()
+	{
+		if (!routeTexture.loadFromFile(ROUTE_GRAPHIC_PATH))
+		{
+			logger->Error("Cant load: " ROUTE_GRAPHIC_PATH);
+			return;
+		}
+
+		routeSprite.setTexture(routeTexture);
+		routeSprite.setTextureRect(sf::IntRect({0,0}, {66,33}));
+		logger->Info("Loaded: " ROUTE_GRAPHIC_PATH ", size:" + to_string(routeTexture.getSize().x) + " " + to_string(routeTexture.getSize().y));
+	}
+	sf::Sprite* getRouteGraphic()
+	{
+		return &routeSprite;
 	}
 
 	bool IsGraphicLoaded()
@@ -74,8 +145,14 @@ private:
 
 	static GraphicAll* graphicAll;
 
-	Sprite testSprite;
+	Texture resistorTexture;
+	Sprite resistorSprite;
+
+	Texture capacitorTexture;
+	Sprite  capacitorSprite;
+
 	Texture testTexture;
+	Sprite testSprite;
 	bool isTestGraphicsLoaded;
 
 	//48 x 512
@@ -93,6 +170,8 @@ private:
 		}
 	}
 
+	Texture routeTexture;
+	Sprite routeSprite;
 
 	Logger* logger;
 };

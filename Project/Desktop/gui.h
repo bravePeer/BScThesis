@@ -480,6 +480,11 @@ public:
 	{
 		return selected;
 	}
+	void ResetSelection()
+	{
+		buttons[selected]->SetButtonState(ButtonStates::IDLE);
+		selected = -1;
+	}
 
 	void Update(RenderWindow* window)
 	{

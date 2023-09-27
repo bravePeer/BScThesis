@@ -5,21 +5,43 @@
 #include "task.h"
 #include "component.h"
 
+/*
+
+Aplikacja desktopowa pomagaj¹ce w nauce elektroniki polega na uk³adaniu komponentów elektronicznych wed³ug podanego zadania.
+U¿ytkownik dostaje zadanie wraz z ograniczon¹ pul¹ elementów, z których musi u³o¿yæ dzia³aj¹cy uk³ad. 
+Wraz z postêpem u¿ytkownika trudnoœæ zadañ roœnie. 
+Zadaniem u¿ytkownika jest u³o¿enie elementów na p³ytce w taki sposób aby uk³ad dzia³a³ w sposób okreœlony przez zadanie.
+Aplikacja wymaga logowania, w celu zapisania postêpu gracza.
+
+*/
+
+
+//Ka¿de zadanie zawiera opis elementów oraz 
+
 //Main game state
 class MainGame: public State
 {
 public:
 	MainGame(){}
 	MainGame(Resources *res) {
-		//test task
-		
-		GraphicAll::GetInstance()->LoadTestGraphic();
+		logger = new Logger("Game");
+
+		//GraphicAll::GetInstance()->LoadTestGraphic();
 		GraphicAll::GetInstance()->LoadGraphic();
 
 		view = new View({ 800,450 }, { 1600, 900 });
 		origin = view->getCenter();
 		oldOrigin = origin;
 
+		components = new Component*[2];
+		Vector2i* tmp = new Vector2i[2];
+		tmp[0].x = 0;
+		tmp[0].y = 0;
+		tmp[1].x = 1;
+		tmp[1].y = 0;
+		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorSprite(), GraphicAll::GetInstance()->getResistorTexture()->getSize());
+		components[1] = new Capacitor(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(1, 2), 2, tmp, GraphicAll::GetInstance()->getCapacitorSprite(), GraphicAll::GetInstance()->getCapacitorTexture()->getSize());
+		delete[] tmp;
 
 		testTask = new Task(L"Zadanie testowe", L"Zadanie s³u¿¹ce \ndo przetestowania dzia³ania");
 
@@ -28,17 +50,25 @@ public:
 		selectionComponent = new TextBox({ 350.f, 50.f }, {10.f, 700.f}, res->GetFont(), L"Wybierz komponent elektroniczny");
 
 		addRoute = new Button({100.f,50.f}, {10,750}, res->GetFont(), L"Po³¹cz");
-		addLedDiode = new Button({ 100.f,50.f }, { 120.f, 750.f }, res->GetFont(), L"LED");
+		//addLedDiode = new Button({ 100.f,50.f }, { 120.f, 750.f }, res->GetFont(), L"LED");
 		
 		selectedComponent = new TextBox({ 200.f, 100.f }, {1200.f, 700.f}, res->GetFont(), L"Opis komponentu");
+		
+		//Load test components
+
+
+		addingComponents = new Button*[2];
+		addingComponents[0] = new Button({ 150.f, 120.f }, { 0.f,0.f }, res->GetFont(), components[0]->getName());
+		addingComponents[1] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		selectComponent = new SelectBox({ 150.f,150.f }, { 250.f, 760.f }, res->GetFont(), "Select Component", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), addingComponents, 2);
+
+		addComponent = nullptr;
 
 		menuButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1500.f, 0.f), res->GetFont(), L"MENU");
 		helpButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1400.f, 0.f), res->GetFont(), L"Pomoc");
 
 		taskName = new TextBox({ 400.f, 50.f }, posTaskSection, res->GetFont(), testTask->getName());
 		taskDescription = new TextBox({ 400.f, 400.f }, posTaskSection + Vector2f(0,70.f), res->GetFont(), testTask->getDescription());
-		logger = new Logger("Game");
-
 
 		mouseInfoBox = new TextBox({ 100,50 }, { 0,0 }, res->GetFont(),  "Inormacje dotycz¹ce pola", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), 12);
 	}
@@ -58,7 +88,8 @@ public:
 		delete selectionComponent;
 		delete selectedComponent;
 		delete addRoute;
-		delete addLedDiode;
+		//delete addLedDiode;
+		delete selectComponent;
 
 		delete logger;
 		delete mouseInfoBox;
@@ -70,10 +101,11 @@ public:
 	}
 	void Update(RenderWindow* window, Time* elapsed)
 	{
-
 		board->Update(window, elapsed);
 		helpButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 		menuButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
+
+		
 
 		updateSelectionComponent(window, elapsed);
 
@@ -90,6 +122,8 @@ public:
 		renderSelectionComponent(target);
 		renderSelectedComponent(target);
 
+		
+		selectComponent->Render(target);
 		renderInfoNearMouse(target);
 	}
 private:
@@ -103,7 +137,9 @@ private:
 	Button* menuButton;
 	Button* helpButton;
 
+	//-----------------------------------------
 	// Task section
+	//-----------------------------------------
 	const Vector2f posTaskSection = { 1200.f, 100.f };
 	const Vector2f sizeTaskSection = { 400.f, 200.f };
 
@@ -114,62 +150,62 @@ private:
 	TextBox* taskDescription;
 
 
-	// Select component section
+	//-----------------------------------------
+	// Select component section - Bottom sectiont
+	//-----------------------------------------
 	TextBox* selectionComponent;
 	Button* addRoute;
 	unsigned short addRouteState;
 
-	// Info component section
 	TextBox* selectedComponent;
-	Button* addLedDiode;
+	//Button* addLedDiode;
+	SelectBox* selectComponent;
+	Button** addingComponents;
 
-	// INFO near mouse
-	TextBox* mouseInfoBox;
-	inline void updateInfoNearMouse(RenderWindow* window, Time* elapsed)
-	{
-		//if in board section
+	Component** components;
 
-		Vector2i mousePos = Mouse::getPosition(*window);
-		sf::String str = L"";
-		try
-		{
-			Vector2i tmp = board->getHoverTilePos(mousePos);
-			Tile& hoveredTile = board->getTile(tmp);
-			str += L"Pos: ";
-			str += L"x: " + to_wstring(tmp.x);
-			str += L"y: " + to_wstring(tmp.y);
-			str += L"\nIndeks: " + to_wstring(tmp.x + tmp.y * board->getBoardDimension().x);
-			str += L"\nTile:" + hoveredTile.getStateString();
-			str += L"\nKomponent:";
-		}
-		catch (const sf::String& e)
-		{
-			str = e;
-		}
+	enum MouseMode {
+		Idle,
+		Route,
+		Place
+	};
+	MouseMode mouseMode = MouseMode::Idle;
 
-		mouseInfoBox->SetString(str);
-		mouseInfoBox->SetPostition({
-			static_cast<float>(Mouse::getPosition(*window).x) + origin.x - window->getSize().x / 2 + 50,
-			static_cast<float>(Mouse::getPosition(*window).y + origin.y - window->getSize().y / 2) });
-		mouseInfoBox->Update();
-	}
-	inline void renderInfoNearMouse(RenderTarget* target)
-	{
-		mouseInfoBox->Render(target);
+	Vector2i lastTileHover;
 
-	}
-
-
-
-
-	Board* board;
-
-	Component* addComponent = nullptr;
-
-	// ------ Update ------
 	inline void updateSelectionComponent(RenderWindow* window, Time* elapsed)
 	{
 		Vector2i mousePos = sf::Mouse::getPosition(*window);
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && mouseMode == MouseMode::Route)
+		{
+			try
+			{
+				if (board->getHoverTilePos(mousePos) != lastTileHover)
+					board->addRoute(lastTileHover, board->getHoverTilePos(mousePos));
+			}
+			catch (const sf::String& s)
+			{
+
+			}
+		}
+		
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && mouseMode == MouseMode::Route)
+		{
+			if (board->getHoverTilePos(mousePos) != lastTileHover)
+				board->removeRoute(lastTileHover, board->getHoverTilePos(mousePos));
+			//mouseMode = MouseMode::Idle;
+		}
+
+		try
+		{
+			lastTileHover = board->getHoverTilePos(mousePos);
+		}
+		catch (const sf::String&s)
+		{
+
+		}
+
 
 		//Place component on board
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && addComponent != nullptr)
@@ -179,12 +215,11 @@ private:
 				Vector2i hoveredTile = board->getHoverTilePos(mousePos);
 				board->placeComponent(addComponent, hoveredTile);
 			}
-			catch (const sf::String&e)
+			catch (const sf::String& e)
 			{
 				logger->Info(e);
 				delete addComponent;
 			}
-
 			addComponent = nullptr;
 		}
 
@@ -201,20 +236,22 @@ private:
 		addRoute->Update(sf::Vector2f(mousePos));
 		if (addRoute->GetButtonState() == ButtonStates::PRESSED)
 		{
-			Vector2i* tmp = new Vector2i[2];
+			/*Vector2i* tmp = new Vector2i[2];
 			tmp[0].x = 0;
 			tmp[0].y = 0;
 			tmp[1].x = 1;
 			tmp[1].y = 0;
 			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, GraphicAll::GetInstance()->GetSpriteTest(), GraphicAll::GetInstance()->getTestTexture()->getSize());
-			delete[] tmp;
+			delete[] tmp;*/
 
-			Vector2i pos = { 3,3 };
-			board->placeComponent(addComponent, pos);
+			//Vector2i pos = { 3,3 };
+			//board->placeComponent(addComponent, pos);
+			mouseMode = MouseMode::Route;
 			logger->Info("Button pressed");
+			board->printRoutMap();
 		}
 
-		addLedDiode->Update(sf::Vector2f(mousePos));
+		/*addLedDiode->Update(sf::Vector2f(mousePos));
 		if(addLedDiode->GetButtonState() == ButtonStates::PRESSED)
 		{
 			Vector2i* tmp = new Vector2i[2];
@@ -224,8 +261,29 @@ private:
 			tmp[1].y = 0;
 			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, GraphicAll::GetInstance()->GetSpriteTest(), GraphicAll::GetInstance()->getTestTexture()->getSize());
 			delete[] tmp;
-		}
+		}*/
 
+		if (Mouse::getPosition(*window).y > 600.f)
+		{
+			selectComponent->Update(window);
+
+			int selectedComponentId = selectComponent->GetSelected();
+			if (selectedComponentId != -1 && addComponent == nullptr)
+			{
+				/*Vector2i* tmp = new Vector2i[2];
+				tmp[0].x = 0;
+				tmp[0].y = 0;
+				tmp[1].x = 1;
+				tmp[1].y = 0;
+				addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, GraphicAll::GetInstance()->GetSpriteTest(), GraphicAll::GetInstance()->getTestTexture()->getSize());
+				delete[] tmp;*/
+				logger->Info("Selected " + to_string(selectedComponentId) + "component");
+				addComponent = new Component(components[selectedComponentId]);
+				selectComponent->ResetSelection();
+
+				//addingComponents[selectedComponentId]->SetButtonState(ButtonStates::IDLE);
+			}
+		}
 
 		if (addComponent != nullptr)
 		{
@@ -242,10 +300,55 @@ private:
 			}
 			addComponent->Update(window, elapsed, board->getViewOrigin());
 		}
-
 	}
 
+	//-----------------------------------------
+	// INFO near mouse
+	//-----------------------------------------
+	TextBox* mouseInfoBox;
+	inline void updateInfoNearMouse(RenderWindow* window, Time* elapsed)
+	{
+		//if in board section
 
+		Vector2i mousePos = Mouse::getPosition(*window);
+		sf::String str = L"";
+		try
+		{
+			Vector2i tmp = board->getHoverTilePos(mousePos);
+			Tile& hoveredTile = board->getTile(tmp);
+			str += L"Pos: ";
+			str += L"x: " + to_wstring(tmp.x);
+			str += L"y: " + to_wstring(tmp.y);
+			str += L"\nIndeks: " + to_wstring(tmp.x + tmp.y * board->getBoardDimension().x);
+			str += L"\nTile:" + hoveredTile.getStateString();
+			Component* component = board->getComponentOnBoard(tmp);
+			if(component != nullptr)
+				str += L"\nKomponent: " + component->getName();
+		}
+		catch (const sf::String& e)
+		{
+			str = e;
+		}
+
+		mouseInfoBox->SetString(str);
+		mouseInfoBox->SetPostition({
+			static_cast<float>(Mouse::getPosition(*window).x) + origin.x - window->getSize().x / 2 + 50,
+			static_cast<float>(Mouse::getPosition(*window).y + origin.y - window->getSize().y / 2) });
+		mouseInfoBox->Update();
+	}
+	inline void renderInfoNearMouse(RenderTarget* target)
+	{
+		mouseInfoBox->Render(target);
+	}
+
+	
+	Board* board;
+
+	Component* addComponent = nullptr;
+
+
+	// ------ Update ------
+	
 	
 	// ------ Render ------
 	inline void renderBoardSection()
@@ -262,7 +365,7 @@ private:
 	inline void renderSelectionComponent(RenderTarget* target)
 	{
 		selectionComponent->Render(target);
-		addLedDiode->Render(target);
+		//addLedDiode->Render(target);
 	}
 
 	inline void renderSelectedComponent(RenderTarget* target)
