@@ -178,6 +178,71 @@ private:
 
 GraphicAll* GraphicAll::graphicAll = nullptr;
 
+//Zawiera ustawienia aplikacji np. wymiary poszczególnych sekcji i ich pozycje
+class Config
+{
+public:
+	~Config() 
+	{
+		delete[] sectionRects;
+		delete logger;
+	}
+	Config(Config& other) = delete;
+	void operator=(const Config&) = delete;
+	static Config* getInstance()
+	{
+		if (appConfig == nullptr)
+			appConfig = new Config;
+
+		return appConfig;
+	}
+
+	enum class SectionConfig
+	{
+		BoardSection,
+		RouteSection,
+		ComponentSection,
+		InfoSection,
+		TaskSection,
+		MenuSection,
+
+		Last
+	};
+
+	const FloatRect& getSectionConfig(SectionConfig configId)
+	{
+		return sectionRects[static_cast<int>(configId)];
+	}
+private:
+	Config() 
+	{
+		logger = new Logger("Config");
+		loadSectionConfig();
+	}
+	inline void loadSectionConfig()
+	{
+		sectionRects = new FloatRect[static_cast<int>(SectionConfig::Last)];
+
+		sectionRects[static_cast<int>(SectionConfig::BoardSection)] = FloatRect(0, 0, 1200, 800);
+		sectionRects[static_cast<int>(SectionConfig::RouteSection)] = FloatRect(0, 700, 200, 200);
+		sectionRects[static_cast<int>(SectionConfig::ComponentSection)] = FloatRect(200, 700, 600, 200);
+		sectionRects[static_cast<int>(SectionConfig::InfoSection)] = FloatRect(1200, 700, 400, 200);
+		sectionRects[static_cast<int>(SectionConfig::TaskSection)] = FloatRect(1200, 100, 400, 600);
+		sectionRects[static_cast<int>(SectionConfig::MenuSection)] = FloatRect(1200, 0, 400, 100);
+
+	}
+
+
+
+	static Config* appConfig;
+	Logger* logger;
+
+	Vector2i windowDimension = { 1600, 400 };
+	FloatRect* sectionRects;
+};
+
+Config* Config::appConfig = nullptr;
+
 /*Grafiki do menu i fonty*/
 class Resources
 {
@@ -216,7 +281,6 @@ public:
 			logger->Error("CAN NOT load fonts ");
 	}
 
-
 	Texture* GetTextBoxTexture()
 	{
 		return &texboxTexture;
@@ -248,6 +312,7 @@ public:
 	{
 		return mapPresetsPath;
 	}
+
 
 private:
 	Logger* logger;

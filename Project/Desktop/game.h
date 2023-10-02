@@ -33,6 +33,7 @@ public:
 		origin = view->getCenter();
 		oldOrigin = origin;
 
+		//Load components
 		components = new Component*[2];
 		Vector2i* tmp = new Vector2i[2];
 		tmp[0].x = 0;
@@ -42,50 +43,40 @@ public:
 		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorSprite(), GraphicAll::GetInstance()->getResistorTexture()->getSize());
 		components[1] = new Capacitor(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(1, 2), 2, tmp, GraphicAll::GetInstance()->getCapacitorSprite(), GraphicAll::GetInstance()->getCapacitorTexture()->getSize());
 		delete[] tmp;
-
-		testTask = new Task(L"Zadanie testowe", L"Zadanie s³u¿¹ce \ndo przetestowania dzia³ania");
-
-		board = new Board(16, 16, 1);
-		
 		selectionComponent = new TextBox({ 350.f, 50.f }, {10.f, 700.f}, res->GetFont(), L"Wybierz komponent elektroniczny");
 
+
+		
 		addRoute = new Button({100.f,50.f}, {10,750}, res->GetFont(), L"Po³¹cz");
 		//addLedDiode = new Button({ 100.f,50.f }, { 120.f, 750.f }, res->GetFont(), L"LED");
 		
+		//Info section
 		selectedComponent = new TextBox({ 200.f, 100.f }, {1200.f, 700.f}, res->GetFont(), L"Opis komponentu");
 		
 		//Load test components
-
-
-		addingComponents = new Button*[2];
-		addingComponents[0] = new Button({ 150.f, 120.f }, { 0.f,0.f }, res->GetFont(), components[0]->getName());
-		addingComponents[1] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
-		selectComponent = new SelectBox({ 150.f,150.f }, { 250.f, 760.f }, res->GetFont(), "Select Component", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), addingComponents, 2);
+		initTaskSection(res);
+		initComponentSection(res);
+		initBoardSection();
 
 		addComponent = nullptr;
+
 
 		menuButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1500.f, 0.f), res->GetFont(), L"MENU");
 		helpButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1400.f, 0.f), res->GetFont(), L"Pomoc");
 
-		taskName = new TextBox({ 400.f, 50.f }, posTaskSection, res->GetFont(), testTask->getName());
-		taskDescription = new TextBox({ 400.f, 400.f }, posTaskSection + Vector2f(0,70.f), res->GetFont(), testTask->getDescription());
 
 		mouseInfoBox = new TextBox({ 100,50 }, { 0,0 }, res->GetFont(),  "Inormacje dotycz¹ce pola", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), 12);
 	}
 	~MainGame() 
 	{
+		destroyTaskSection();
+		destroyComponentSection();
+		destroyBoardSection();
 		delete view;
 
 		delete menuButton;
 		delete helpButton;
-		delete testTask;
 
-		delete taskName;
-		delete taskDescription;
-
-		delete board;
-
-		delete selectionComponent;
 		delete selectedComponent;
 		delete addRoute;
 		//delete addLedDiode;
@@ -107,22 +98,24 @@ public:
 
 		
 
-		updateSelectionComponent(window, elapsed);
+		updateComponentSection(window, elapsed);
 
 		updateInfoNearMouse(window, elapsed);
 	}
 	void Render(RenderTarget* target)
 	{
-		board->Render(target);
+		
 		renderTaskSection(target);
+		
 		helpButton->Render(target);
 		menuButton->Render(target);
+		
 		addRoute->Render(target);
 		
-		renderSelectionComponent(target);
-		renderSelectedComponent(target);
-
+		renderComponentSection(target);
 		
+		renderBoardSection(target);
+
 		selectComponent->Render(target);
 		renderInfoNearMouse(target);
 	}
@@ -140,40 +133,89 @@ private:
 	//-----------------------------------------
 	// Task section
 	//-----------------------------------------
-	const Vector2f posTaskSection = { 1200.f, 100.f };
-	const Vector2f sizeTaskSection = { 400.f, 200.f };
+	inline void initTaskSection(Resources* res)
+	{
+		//loadTask
+		testTask = new Task(L"Zadanie testowe", L"Zadanie s³u¿¹ce \ndo przetestowania dzia³ania");
+		
+		const Vector2f sectionPos = Config::getInstance()->getSectionConfig(Config::SectionConfig::TaskSection).getPosition();
+		const Vector2f sectionSize = Config::getInstance()->getSectionConfig(Config::SectionConfig::TaskSection).getSize();
+		
+		taskName = new TextBox({ 400.f, 50.f }, sectionPos, res->GetFont(), testTask->getName());
+		taskDescription = new TextBox(sectionSize - Vector2f(0, 60), sectionPos + Vector2f(0.f, 60.f), res->GetFont(), testTask->getDescription());
+	}
+	inline void destroyTaskSection()
+	{
+		delete testTask;
+		delete taskName;
+		delete taskDescription;
+	}
+	void updateTaskSection()
+	{
+
+	}
+	void renderTaskSection(RenderTarget* target)
+	{
+		taskDescription->Render(target);
+		taskName->Render(target);
+	}
 
 	Task* testTask;
 	/*sf::Text* taskName;
 	sf::Text* taskDescription;*/
 	TextBox* taskName;
 	TextBox* taskDescription;
-
-
+	
 	//-----------------------------------------
-	// Select component section - Bottom sectiont
+	// Route section - Bottom 
 	//-----------------------------------------
-	TextBox* selectionComponent;
+	inline void initRouteSection()
+	{
+
+	}
+	inline void destroyRouteSection()
+	{
+
+	}
+	inline void updateRouteSection()
+	{
+
+	}
+	inline void renderSection()
+	{
+
+	}
+
 	Button* addRoute;
 	unsigned short addRouteState;
 
-	TextBox* selectedComponent;
-	//Button* addLedDiode;
-	SelectBox* selectComponent;
-	Button** addingComponents;
+	//-----------------------------------------
+	// Component section - Bottom
+	//-----------------------------------------
+	inline void initComponentSection(Resources* res)
+	{
+		Vector2f sectionPos = Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition();
+		Vector2f sectionSize = Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize();
 
-	Component** components;
-
-	enum MouseMode {
-		Idle,
-		Route,
-		Place
-	};
-	MouseMode mouseMode = MouseMode::Idle;
-
-	Vector2i lastTileHover;
-
-	inline void updateSelectionComponent(RenderWindow* window, Time* elapsed)
+		addingComponents = new Button * [2];
+		addingComponents[0] = new Button({ 150.f, 120.f }, { 0.f,0.f }, res->GetFont(), components[0]->getName());
+		addingComponents[1] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		selectComponent = new SelectBox(
+			Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize(),
+			Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
+			res->GetFont(),
+			"Select Component",
+			Color(255, 0, 0, 0),
+			Color(255, 0, 0, 0),
+			Color(255, 0, 0, 0),
+			addingComponents,
+			2);
+	}
+	inline void destroyComponentSection()
+	{
+		delete selectionComponent;
+	}
+	inline void updateComponentSection(RenderWindow* window, Time* elapsed)
 	{
 		Vector2i mousePos = sf::Mouse::getPosition(*window);
 
@@ -301,11 +343,61 @@ private:
 			addComponent->Update(window, elapsed, board->getViewOrigin());
 		}
 	}
+	inline void renderComponentSection(RenderTarget* target)
+	{
+		selectionComponent->Render(target);
+	}
+
+	TextBox* selectionComponent;
+	
+
+	TextBox* selectedComponent;
+	//Button* addLedDiode;
+	SelectBox* selectComponent;
+	Button** addingComponents;
+
+	Component** components;
+
+	enum MouseMode {
+		Idle,
+		Route,
+		Place
+	};
+	MouseMode mouseMode = MouseMode::Idle;
+
+	Vector2i lastTileHover;
+
+	//-----------------------------------------
+	// Board section
+	//-----------------------------------------
+	inline void initBoardSection()
+	{
+		board = new Board(16, 16, 1);
+	}
+	inline void destroyBoardSection()
+	{
+		delete board;
+	}
+	inline void updateBoardSection(RenderWindow* window, Time* elapsed)
+	{
+
+	}
+	inline void renderBoardSection(RenderTarget* target)
+	{
+		board->Render(target);
+
+		selectedComponent->Render(target);
+
+		if (addComponent != nullptr)
+			addComponent->Render(target);
+	}
+
+	Board* board;
+	Component* addComponent = nullptr;
 
 	//-----------------------------------------
 	// INFO near mouse
 	//-----------------------------------------
-	TextBox* mouseInfoBox;
 	inline void updateInfoNearMouse(RenderWindow* window, Time* elapsed)
 	{
 		//if in board section
@@ -322,7 +414,7 @@ private:
 			str += L"\nIndeks: " + to_wstring(tmp.x + tmp.y * board->getBoardDimension().x);
 			str += L"\nTile:" + hoveredTile.getStateString();
 			Component* component = board->getComponentOnBoard(tmp);
-			if(component != nullptr)
+			if (component != nullptr)
 				str += L"\nKomponent: " + component->getName();
 		}
 		catch (const sf::String& e)
@@ -341,40 +433,6 @@ private:
 		mouseInfoBox->Render(target);
 	}
 
-	
-	Board* board;
+	TextBox* mouseInfoBox;
 
-	Component* addComponent = nullptr;
-
-
-	// ------ Update ------
-	
-	
-	// ------ Render ------
-	inline void renderBoardSection()
-	{
-
-	}
-
-	inline void renderTaskSection(RenderTarget* target)
-	{
-		taskDescription->Render(target);
-		taskName->Render(target);
-	}
-
-	inline void renderSelectionComponent(RenderTarget* target)
-	{
-		selectionComponent->Render(target);
-		//addLedDiode->Render(target);
-	}
-
-	inline void renderSelectedComponent(RenderTarget* target)
-	{
-		selectedComponent->Render(target);
-
-		if (addComponent != nullptr)
-			addComponent->Render(target);
-	}
-
-	//void renderMenu
 };
