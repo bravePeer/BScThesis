@@ -46,10 +46,15 @@ public:
 
 	void SetPosition(Vector2f _pos)
 	{
+		shape.setPosition(_pos);
 		drawingShape.setPosition(_pos);
 		text.setPosition(
 			drawingShape.getPosition().x + (drawingShape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f,
 			drawingShape.getPosition().y + (drawingShape.getGlobalBounds().height / 2.f) - text.getGlobalBounds().height / 2.f);
+	}
+	const Vector2f& getSize()
+	{
+		return shape.getSize();
 	}
 	void Move(Vector2f _offset)
 	{
@@ -452,7 +457,7 @@ public:
 
 	}
 	SelectBox(Vector2f _size, Vector2f _pos, Font* _font, String _text, Color _idle, Color _hover, Color _active, Button** _buttons = nullptr, unsigned short _amountButtons = 0, unsigned int _characterSize = 20, Texture* _texture = nullptr)
-		:font(_font), idleColor(_idle), hoverColor(_hover), activeColor(_active), buttons(_buttons), amountButtons(_amountButtons)
+		:font(_font), idleColor(_idle), hoverColor(_hover), activeColor(_active), buttons(_buttons), amountButtons(_amountButtons), maxAmountButtons(0)
 	{
 		shape.setSize(_size);
 		shape.setPosition(_pos);
@@ -465,11 +470,28 @@ public:
 		text.setFillColor(Color::White);
 		SetTextPosition();
 
-		//Ustawienie pozycji przyciskow wzglêdem selectBoxa
-		for (short i = 0; i < amountButtons; i++)
+
+		int sumLengthButton = 0;
+		if (maxAmountButtons == 0)
 		{
-			buttons[i]->Resize({ _size.x, -1 });
-			buttons[i]->Move(shape.getPosition(), shape.getPosition());
+			for (int i = 0; i < amountButtons; i++)
+			{
+				if (sumLengthButton + buttons[i]->getSize().x < _size.x)
+				{
+					sumLengthButton += buttons[i]->getSize().x;
+					maxAmountButtons++;
+				}
+			}
+		}
+
+		spaceBetweenButtons = (_size.x - sumLengthButton) / (maxAmountButtons + 1);
+		
+		float offset = _pos.x + spaceBetweenButtons;
+		//Ustawienie pozycji przyciskow wzglêdem selectBoxa
+		for (short i = 0; i < maxAmountButtons; i++)
+		{
+			buttons[i]->SetPosition({ offset, _pos.y + (_size.y - buttons[i]->getSize().y) / 2 });
+			offset += spaceBetweenButtons + buttons[i]->getSize().x;
 		}
 
 		selected = -1;
@@ -488,7 +510,7 @@ public:
 
 	void Update(RenderWindow* window)
 	{
-		for (unsigned short i = 0; i < amountButtons; i++)
+		for (unsigned short i = 0; i < maxAmountButtons; i++)
 		{
 			if (i == selected)
 			{
@@ -510,13 +532,20 @@ public:
 	{
 		target->draw(shape);
 
-		for (short i = 0; i < amountButtons; i++)
+		for (short i = 0; i < maxAmountButtons; i++)
 		{
 			buttons[i]->Render(target);
 		}
 	}
 
 private:
+	void SetTextPosition()
+	{
+		text.setPosition(
+			shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f,
+			shape.getPosition().y + text.getCharacterSize());
+	}
+
 	RectangleShape shape;
 	Texture* texture;
 
@@ -530,12 +559,9 @@ private:
 	unsigned short amountButtons;
 	short selected;
 
-	void SetTextPosition()
-	{
-		text.setPosition(
-			shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f,
-			shape.getPosition().y + text.getCharacterSize());
-	}
+	//Max number of buttons inside selectbox rect
+	unsigned short maxAmountButtons;
+	float spaceBetweenButtons;
 };
 
 //Bazowy stan gry w gui.h póki co

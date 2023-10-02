@@ -197,19 +197,24 @@ private:
 		Vector2f sectionPos = Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition();
 		Vector2f sectionSize = Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize();
 
-		addingComponents = new Button * [2];
+		addingComponents = new Button * [7];
 		addingComponents[0] = new Button({ 150.f, 120.f }, { 0.f,0.f }, res->GetFont(), components[0]->getName());
 		addingComponents[1] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		addingComponents[2] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		addingComponents[3] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		addingComponents[4] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		addingComponents[5] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		addingComponents[6] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
 		selectComponent = new SelectBox(
 			Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize(),
 			Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
 			res->GetFont(),
 			"Select Component",
-			Color(255, 0, 0, 0),
-			Color(255, 0, 0, 0),
-			Color(255, 0, 0, 0),
+			Color(255, 0, 0, 50),
+			Color(255, 0, 0, 50),
+			Color(255, 0, 0, 50),
 			addingComponents,
-			2);
+			7);
 	}
 	inline void destroyComponentSection()
 	{

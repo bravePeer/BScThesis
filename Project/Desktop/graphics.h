@@ -225,7 +225,7 @@ private:
 
 		sectionRects[static_cast<int>(SectionConfig::BoardSection)] = FloatRect(0, 0, 1200, 800);
 		sectionRects[static_cast<int>(SectionConfig::RouteSection)] = FloatRect(0, 700, 200, 200);
-		sectionRects[static_cast<int>(SectionConfig::ComponentSection)] = FloatRect(200, 700, 600, 200);
+		sectionRects[static_cast<int>(SectionConfig::ComponentSection)] = FloatRect(200, 700, 1000, 200);
 		sectionRects[static_cast<int>(SectionConfig::InfoSection)] = FloatRect(1200, 700, 400, 200);
 		sectionRects[static_cast<int>(SectionConfig::TaskSection)] = FloatRect(1200, 100, 400, 600);
 		sectionRects[static_cast<int>(SectionConfig::MenuSection)] = FloatRect(1200, 0, 400, 100);
