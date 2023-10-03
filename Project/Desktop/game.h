@@ -41,7 +41,7 @@ public:
 		tmp[1].x = 1;
 		tmp[1].y = 0;
 		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorSprite(), GraphicAll::GetInstance()->getResistorTexture()->getSize());
-		components[1] = new Capacitor(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(1, 2), 2, tmp, GraphicAll::GetInstance()->getCapacitorSprite(), GraphicAll::GetInstance()->getCapacitorTexture()->getSize());
+		components[1] = new Capacitor(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorSprite(), GraphicAll::GetInstance()->getCapacitorTexture()->getSize());
 		delete[] tmp;
 		selectionComponent = new TextBox({ 350.f, 50.f }, {10.f, 700.f}, res->GetFont(), L"Wybierz komponent elektroniczny");
 
@@ -210,9 +210,9 @@ private:
 			Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
 			res->GetFont(),
 			"Select Component",
-			Color(255, 0, 0, 50),
-			Color(255, 0, 0, 50),
-			Color(255, 0, 0, 50),
+			Color(255, 10, 80, 50),
+			Color(255, 10, 80, 50),
+			Color(255, 10, 80, 50),
 			addingComponents,
 			7);
 	}
@@ -354,13 +354,13 @@ private:
 	}
 
 	TextBox* selectionComponent;
-	
-
 	TextBox* selectedComponent;
+
 	//Button* addLedDiode;
 	SelectBox* selectComponent;
 	Button** addingComponents;
 
+	//Futeure load from outside
 	Component** components;
 
 	enum MouseMode {

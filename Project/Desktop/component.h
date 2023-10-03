@@ -1,10 +1,7 @@
 #pragma once
 #include "gui.h"
 
-#define TILE_LENGTH 64
-#define TILE_WIDTH 32
-
-//Electric compoenent
+//Electric compoenent mo¿e powinien zawieraæ strukture z napiêciem, pr¹dem i mon¹
 class Component
 {
 public:
@@ -47,6 +44,10 @@ public:
 	virtual void Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin)
 	{
 		globalPosition = ScreenPos({ boardPosition.x, boardPosition.y }, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin;// -Vector2f(spriteSize.y - TILE_WIDTH, 0.f);
+		
+		int m = max(tileSize.x, tileSize.y);
+		globalPosition.y -= sprite->getTexture()->getSize().y - (TILE_WIDTH + TILE_WIDTH / 2);
+		//globalPosition.y = globalPosition.y - (sprite->getTexture()->getSize().y - (m - 1) * TILE_WIDTH); //+(m % 2 == 0) ? TILE_WIDTH / 2 : 0);
 	}
 	virtual void Render(RenderTarget* target)
 	{

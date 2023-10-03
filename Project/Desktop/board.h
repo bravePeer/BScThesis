@@ -2,8 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "component.h"
 
-#define TILE_LENGTH 64
-#define TILE_WIDTH 32
+//#define TILE_LENGTH 64
+//#define TILE_WIDTH 32
 
 class Tile
 {

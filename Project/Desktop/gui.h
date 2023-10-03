@@ -449,6 +449,7 @@ private:
 	}
 };
 
+//Button pos is automaticly changed
 class SelectBox
 {
 public:

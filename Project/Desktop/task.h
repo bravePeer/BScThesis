@@ -1,24 +1,37 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <string>
+#include "component.h"
 
 class Task
 {
 public:
-	Task(std::wstring name, std::wstring description)
+	Task(sf::String name, sf::String description)
 		:name(name), description(description)
 	{ }
 	~Task()
 	{ }
-	std::wstring& getName()
+
+
+	Component* getComponents()
+	{
+		return componentes;
+	}
+	int getComponentCount()
+	{
+		return componentCount;
+	}
+	sf::String& getName()
 	{
 		return name;
 	}
-	std::wstring& getDescription()
+	sf::String& getDescription()
 	{
 		return description;
 	}
 private:
-	std::wstring name;
-	std::wstring description;
+	sf::String name;
+	sf::String description;
+
+	Component* componentes;
+	int componentCount;
 };

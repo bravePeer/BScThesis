@@ -3,6 +3,13 @@
 #include <iostream>
 #include "Logger.h"
 
+//Dimension on screen
+#define TILE_LENGTH 64
+#define TILE_WIDTH 32
+
+#define IMAGE_TILE_LENGTH 66
+//#define TILE_WIDTH 32
+
 #define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistor.png"
 #define CAPACITOR_GRAPHIC_PATH "Resources\\Images\\simplecapacitor.png"
 #define ROUTE_GRAPHIC_PATH "Resources\\Images\\routes.png"
@@ -166,7 +173,7 @@ private:
 		for (int i = 0; i < 8; i++)
 		{
 			tilesSprite[i].setTexture(tilesTexture);
-			tilesSprite[i].setTextureRect(sf::IntRect(65 * i, 0, 66, 48));
+			tilesSprite[i].setTextureRect(sf::IntRect(IMAGE_TILE_LENGTH * i, 0, 66, 48));
 		}
 	}
 
