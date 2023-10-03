@@ -34,14 +34,15 @@ public:
 		oldOrigin = origin;
 
 		//Load components
-		components = new Component*[2];
-		Vector2i* tmp = new Vector2i[2];
+		components = new Component*[3];
+		Vector2i* tmp = new Vector2i[3];
 		tmp[0].x = 0;
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorSprite(), GraphicAll::GetInstance()->getResistorTexture()->getSize());
-		components[1] = new Capacitor(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorSprite(), GraphicAll::GetInstance()->getCapacitorTexture()->getSize());
+		components[0] = new Component(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorTexture());
+		components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorTexture());
+		components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture());
 		delete[] tmp;
 		selectionComponent = new TextBox({ 350.f, 50.f }, {10.f, 700.f}, res->GetFont(), L"Wybierz komponent elektroniczny");
 
@@ -200,7 +201,7 @@ private:
 		addingComponents = new Button * [7];
 		addingComponents[0] = new Button({ 150.f, 120.f }, { 0.f,0.f }, res->GetFont(), components[0]->getName());
 		addingComponents[1] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
-		addingComponents[2] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		addingComponents[2] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[2]->getName());
 		addingComponents[3] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
 		addingComponents[4] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
 		addingComponents[5] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
@@ -269,7 +270,15 @@ private:
 			}
 			addComponent = nullptr;
 		}
-
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+			rotated = false;
+		//Rotate component
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && addComponent != nullptr && !rotated)
+		{
+			rotated = true;
+			addComponent->rotate();
+		}
+		
 
 		//Cancel adding element
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && addComponent != nullptr)
@@ -371,6 +380,7 @@ private:
 	MouseMode mouseMode = MouseMode::Idle;
 
 	Vector2i lastTileHover;
+	bool rotated = false;
 
 	//-----------------------------------------
 	// Board section

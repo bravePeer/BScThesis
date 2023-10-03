@@ -10,8 +10,10 @@
 #define IMAGE_TILE_LENGTH 66
 //#define TILE_WIDTH 32
 
-#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistor.png"
+//#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistor.png"
+#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistorMirror.png"
 #define CAPACITOR_GRAPHIC_PATH "Resources\\Images\\simplecapacitor.png"
+#define DIODE_GRAPHIC_PATH "Resources\\Images\\simplediode.png"
 #define ROUTE_GRAPHIC_PATH "Resources\\Images\\routes.png"
 
 using namespace sf;
@@ -44,6 +46,7 @@ public:
 		
 		loadResistorGraphic();
 		loadCapacitorGraphic();
+		loadDiodeGraphic();
 		loadRouteGraphic();
 	}
 
@@ -81,25 +84,25 @@ public:
 
 	void loadResistorGraphic()
 	{
-		if (!resistorTexture.loadFromFile(RESISTOR_GRAPHIC_PATH))
-		{
+		if (!resistorTexture.loadFromFile(RESISTOR_GRAPHIC_PATH)) {
 			logger->Error("Cant load simpleresistor.png");
 			//isTestGraphicsLoaded = false;
 			return;
 		}
 
-		resistorSprite.setTexture(resistorTexture);
+		//resistorSprite.setTexture(resistorTexture);
 		logger->Info("Loaded simpleresistor.png, size:" + to_string(resistorTexture.getSize().x) + " " + to_string(resistorTexture.getSize().y));
 		//isTestGraphicsLoaded = true;
 	}
-	const sf::Texture* getResistorTexture()
+
+	const sf::Texture& getResistorTexture()
 	{
-		return &resistorTexture;
+		return resistorTexture;
 	}
-	sf::Sprite* getResistorSprite()
-	{
-		return &resistorSprite;
-	}
+	//sf::Sprite* getResistorSprite()
+	//{
+	//	return &resistorSprite;
+	//}
 
 	void loadCapacitorGraphic()
 	{
@@ -110,17 +113,36 @@ public:
 			return;
 		}
 
-		capacitorSprite.setTexture(capacitorTexture);
+		//capacitorSprite.setTexture(capacitorTexture);
 		logger->Info("Loaded simpleresistor.png, size:" + to_string(capacitorTexture.getSize().x) + " " + to_string(capacitorTexture.getSize().y));
 		//isTestGraphicsLoaded = true;
 	}
-	const sf::Texture* getCapacitorTexture()
+	const sf::Texture& getCapacitorTexture()
 	{
-		return &capacitorTexture;
+		return capacitorTexture;
 	}
-	sf::Sprite* getCapacitorSprite()
+	//sf::Sprite* getCapacitorSprite()
+	//{
+	//	return &capacitorSprite;
+	//}
+
+
+	void loadDiodeGraphic()
 	{
-		return &capacitorSprite;
+		if (!diodeTexture.loadFromFile(DIODE_GRAPHIC_PATH))
+		{
+			logger->Error("Cant load simplediode.png");
+			//isTestGraphicsLoaded = false;
+			return;
+		}
+
+		//capacitorSprite.setTexture(capacitorTexture);
+		logger->Info("Loaded simplediode.png, size:" + to_string(diodeTexture.getSize().x) + " " + to_string(diodeTexture.getSize().y));
+
+	}
+	const sf::Texture& getDiodeTexture()
+	{
+		return diodeTexture;
 	}
 
 	void loadRouteGraphic()
@@ -153,10 +175,10 @@ private:
 	static GraphicAll* graphicAll;
 
 	Texture resistorTexture;
-	Sprite resistorSprite;
-
+	//Sprite resistorSprite;
 	Texture capacitorTexture;
-	Sprite  capacitorSprite;
+	//Sprite  capacitorSprite;
+	Texture diodeTexture;
 
 	Texture testTexture;
 	Sprite testSprite;
