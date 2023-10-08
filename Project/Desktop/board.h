@@ -8,7 +8,7 @@
 class Tile
 {
 public:
-	enum TileState //TODO s³aba nazwa
+	enum TileState //TODO sï¿½aba nazwa
 	{
 		EMPTY,
 		SMD_PAD,
@@ -283,7 +283,7 @@ class Board
 	Vector2f origin;
 
 	Tile* boardTiles;
-	vector<Component*> components; //Trzeba bêdzie sortowaæ po dodaniu nowego komponentu
+	vector<Component*> components; //Trzeba bï¿½dzie sortowaï¿½ po dodaniu nowego komponentu
 	//bool* isComponentOnBoard;
 	Component** isComponentOnBoard;
 	Component* ghostComponent;
@@ -381,7 +381,7 @@ public:
 					return Vector2i(i, j);
 			}
 		}
-		throw sf::String(L"Poza granicami p³ytki");
+		throw sf::String(L"Poza granicami pï¿½ytki");
 	}
 	Tile& getTile(Vector2i pos)
 	{
@@ -467,6 +467,10 @@ public:
 		component->setBoardPosition(pos);
 		components.push_back(component);
 		logger->Info("Added "+component->getName() + " pos:" + to_string(pos.x) + " " + to_string(pos.y));
+	}
+	void removeComponent(Vector2i pos)
+	{
+		
 	}
 	Component* getComponentOnBoard(Vector2i pos)
 	{

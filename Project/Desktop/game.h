@@ -7,7 +7,7 @@
 
 /*
 
-Aplikacja desktopowa pomagaj¹ce w nauce elektroniki polega na uk³adaniu komponentów elektronicznych wed³ug podanego zadania.
+Aplikacja desktopowa pomagaj¹ca w nauce elektroniki polega na uk³adaniu komponentów elektronicznych wed³ug podanego zadania.
 U¿ytkownik dostaje zadanie wraz z ograniczon¹ pul¹ elementów, z których musi u³o¿yæ dzia³aj¹cy uk³ad. 
 Wraz z postêpem u¿ytkownika trudnoœæ zadañ roœnie. 
 Zadaniem u¿ytkownika jest u³o¿enie elementów na p³ytce w taki sposób aby uk³ad dzia³a³ w sposób okreœlony przez zadanie.
@@ -98,8 +98,8 @@ public:
 		menuButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 
 		
-
 		updateComponentSection(window, elapsed);
+		updateBoardSection(window, elapsed);
 
 		updateInfoNearMouse(window, elapsed);
 	}
@@ -223,101 +223,16 @@ private:
 	}
 	inline void updateComponentSection(RenderWindow* window, Time* elapsed)
 	{
-		Vector2i mousePos = sf::Mouse::getPosition(*window);
-
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && mouseMode == MouseMode::Route)
-		{
-			try
-			{
-				if (board->getHoverTilePos(mousePos) != lastTileHover)
-					board->addRoute(lastTileHover, board->getHoverTilePos(mousePos));
-			}
-			catch (const sf::String& s)
-			{
-
-			}
-		}
-		
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && mouseMode == MouseMode::Route)
-		{
-			if (board->getHoverTilePos(mousePos) != lastTileHover)
-				board->removeRoute(lastTileHover, board->getHoverTilePos(mousePos));
-			//mouseMode = MouseMode::Idle;
-		}
-
-		try
-		{
-			lastTileHover = board->getHoverTilePos(mousePos);
-		}
-		catch (const sf::String&s)
-		{
-
-		}
-
-
-		//Place component on board
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && addComponent != nullptr)
-		{
-			try
-			{
-				Vector2i hoveredTile = board->getHoverTilePos(mousePos);
-				board->placeComponent(addComponent, hoveredTile);
-			}
-			catch (const sf::String& e)
-			{
-				logger->Info(e);
-				delete addComponent;
-			}
-			addComponent = nullptr;
-		}
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-			rotated = false;
-		//Rotate component
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && addComponent != nullptr && !rotated)
-		{
-			rotated = true;
-			addComponent->rotate();
-		}
-		
-
-		//Cancel adding element
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && addComponent != nullptr)
-		{
-			delete addComponent;
-			addComponent = nullptr; // not sure czy potrzebne
-		}
-
-
+		Vector2i mousePos = Mouse::getPosition(*window);
 
 		addRoute->Update(sf::Vector2f(mousePos));
 		if (addRoute->GetButtonState() == ButtonStates::PRESSED)
 		{
-			/*Vector2i* tmp = new Vector2i[2];
-			tmp[0].x = 0;
-			tmp[0].y = 0;
-			tmp[1].x = 1;
-			tmp[1].y = 0;
-			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, GraphicAll::GetInstance()->GetSpriteTest(), GraphicAll::GetInstance()->getTestTexture()->getSize());
-			delete[] tmp;*/
-
-			//Vector2i pos = { 3,3 };
-			//board->placeComponent(addComponent, pos);
 			mouseMode = MouseMode::Route;
+			mouseModeF = &MainGame::updateBoardSectionRoute;
 			logger->Info("Button pressed");
 			board->printRoutMap();
 		}
-
-		/*addLedDiode->Update(sf::Vector2f(mousePos));
-		if(addLedDiode->GetButtonState() == ButtonStates::PRESSED)
-		{
-			Vector2i* tmp = new Vector2i[2];
-			tmp[0].x = 0;
-			tmp[0].y = 0;
-			tmp[1].x = 1;
-			tmp[1].y = 0;
-			addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, GraphicAll::GetInstance()->GetSpriteTest(), GraphicAll::GetInstance()->getTestTexture()->getSize());
-			delete[] tmp;
-		}*/
 
 		if (Mouse::getPosition(*window).y > 600.f)
 		{
@@ -326,35 +241,13 @@ private:
 			int selectedComponentId = selectComponent->GetSelected();
 			if (selectedComponentId != -1 && addComponent == nullptr)
 			{
-				/*Vector2i* tmp = new Vector2i[2];
-				tmp[0].x = 0;
-				tmp[0].y = 0;
-				tmp[1].x = 1;
-				tmp[1].y = 0;
-				addComponent = new Component(L"Dioda", L"Œwiec¹ca", { 2,1 }, 2, tmp, GraphicAll::GetInstance()->GetSpriteTest(), GraphicAll::GetInstance()->getTestTexture()->getSize());
-				delete[] tmp;*/
 				logger->Info("Selected " + to_string(selectedComponentId) + "component");
 				addComponent = new Component(components[selectedComponentId]);
 				selectComponent->ResetSelection();
+				mouseModeF = &MainGame::updateBoardSectionPlaceComponent;
 
 				//addingComponents[selectedComponentId]->SetButtonState(ButtonStates::IDLE);
 			}
-		}
-
-		if (addComponent != nullptr)
-		{
-			try
-			{
-				Vector2i mousePos = sf::Mouse::getPosition(*window);
-				Vector2i hoveredTile = board->getHoverTilePos(mousePos);
-				if (board->canPlaceComponent(addComponent, hoveredTile))
-					addComponent->setBoardPosition(hoveredTile);
-			}
-			catch (const sf::String& e)
-			{
-
-			}
-			addComponent->Update(window, elapsed, board->getViewOrigin());
 		}
 	}
 	inline void renderComponentSection(RenderTarget* target)
@@ -388,6 +281,8 @@ private:
 	inline void initBoardSection()
 	{
 		board = new Board(16, 16, 1);
+
+		mouseModeF = &MainGame::updateBoardSectionIdle;
 	}
 	inline void destroyBoardSection()
 	{
@@ -395,8 +290,108 @@ private:
 	}
 	inline void updateBoardSection(RenderWindow* window, Time* elapsed)
 	{
-
+		(this->*mouseModeF)(window, elapsed);
+		return;
 	}
+	void updateBoardSectionIdle(RenderWindow* window, Time* elapsed)
+ 	{ 
+		//Select component
+
+		//Delete component
+	}
+	void updateBoardSectionRoute(RenderWindow* window, Time* elapsed)
+	{
+		Vector2i mousePos = sf::Mouse::getPosition(*window);
+
+		//Add route
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			try
+			{
+				if (board->getHoverTilePos(mousePos) != lastTileHover)
+					board->addRoute(lastTileHover, board->getHoverTilePos(mousePos));
+			}
+			catch (const sf::String& s)
+			{
+
+			}
+		}
+
+		//Delete route
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+		{
+			if (board->getHoverTilePos(mousePos) != lastTileHover)
+				board->removeRoute(lastTileHover, board->getHoverTilePos(mousePos));
+			//mouseMode = MouseMode::Idle;
+		}
+
+		try
+		{
+			lastTileHover = board->getHoverTilePos(mousePos);
+		}
+		catch (const sf::String& s)
+		{
+
+		}
+	}
+	void updateBoardSectionPlaceComponent(RenderWindow* window, Time* elapsed)
+	{ 
+		if(addComponent == nullptr)
+		{
+			mouseModeF = &MainGame::updateBoardSectionIdle;
+			return;
+		}
+
+		//Cancel placeing component
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+		{
+			delete addComponent;
+			addComponent = nullptr; // not sure czy potrzebne
+			return;
+		}
+
+		//Rotate component
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+			rotated = false;
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && addComponent != nullptr && !rotated)
+		{
+			rotated = true;
+			addComponent->rotate();
+		}
+
+		//Move mouse
+		Vector2i mousePos = sf::Mouse::getPosition(*window);
+		try
+		{
+			Vector2i hoveredTile = board->getHoverTilePos(mousePos);
+			if (board->canPlaceComponent(addComponent, hoveredTile))
+				addComponent->setBoardPosition(hoveredTile);
+		}
+		catch (const sf::String& e)
+		{
+
+		}
+		addComponent->Update(window, elapsed, board->getViewOrigin());
+
+		//Place component on board
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			try
+			{
+				Vector2i hoveredTile = board->getHoverTilePos(mousePos);
+				board->placeComponent(addComponent, hoveredTile);
+			}
+			catch (const sf::String& e)
+			{
+				logger->Info(e);
+				delete addComponent;
+			}
+			addComponent = nullptr;
+			mouseModeF = &MainGame::updateBoardSectionIdle;
+		}
+	}
+	void (MainGame::*mouseModeF)(RenderWindow* window, Time* elapsed);
 	inline void renderBoardSection(RenderTarget* target)
 	{
 		board->Render(target);
