@@ -48,13 +48,13 @@ public:
 
 
 		
+		addRoute = new Button({100.f,50.f}, {10,750}, res->GetFont(), L"Po³¹cz");
 		//addLedDiode = new Button({ 100.f,50.f }, { 120.f, 750.f }, res->GetFont(), L"LED");
 		
 		//Info section
 		selectedComponent = new TextBox({ 200.f, 100.f }, {1200.f, 700.f}, res->GetFont(), L"Opis komponentu");
 		
 		//Load test components
-		initRouteSection(res);
 		initTaskSection(res);
 		initComponentSection(res);
 		initBoardSection();
@@ -73,14 +73,13 @@ public:
 		destroyTaskSection();
 		destroyComponentSection();
 		destroyBoardSection();
-		destroyRouteSection();
-
 		delete view;
 
 		delete menuButton;
 		delete helpButton;
 
 		delete selectedComponent;
+		delete addRoute;
 		//delete addLedDiode;
 		delete selectComponent;
 
@@ -98,7 +97,7 @@ public:
 		helpButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 		menuButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 
-		updateRouteSection(window, elapsed);
+		
 		updateComponentSection(window, elapsed);
 		updateBoardSection(window, elapsed);
 
@@ -112,8 +111,8 @@ public:
 		helpButton->Render(target);
 		menuButton->Render(target);
 		
-		renderRouteSection(target);
-
+		addRoute->Render(target);
+		
 		renderComponentSection(target);
 		
 		renderBoardSection(target);
@@ -171,44 +170,23 @@ private:
 	//-----------------------------------------
 	// Route section - Bottom 
 	//-----------------------------------------
-	inline void initRouteSection(Resources* res)
+	inline void initRouteSection()
 	{
-		addRoute = new Button({ 100.f,50.f }, { 10,750 }, res->GetFont(), L"Po³¹cz");
-		removeComponentButton = new Button({ 100.f, 50.f }, { 10.f,805.f }, res->GetFont(), L"Usuñ");
+
 	}
 	inline void destroyRouteSection()
 	{
-		delete addRoute;
-		delete removeComponentButton;
+
 	}
-	inline void updateRouteSection(RenderWindow* window, Time* elapsed)
+	inline void updateRouteSection()
 	{
-		Vector2f mousePos = sf::Vector2f(Mouse::getPosition(*window));
 
-		addRoute->Update(mousePos);
-		if (addRoute->GetButtonState() == ButtonStates::PRESSED)
-		{
-			mouseMode = MouseMode::Route;
-			mouseModeF = &MainGame::updateBoardSectionRoute;
-			logger->Info("Button pressed");
-			board->printRoutMap();
-		}
-
-		removeComponentButton->Update(mousePos);
-		if (removeComponentButton->GetButtonState() == ButtonStates::PRESSED)
-		{
-			mouseMode = MouseMode::Remove;
-			mouseModeF = &MainGame::updateBoardSectionRemoveComponent;
-			logger->Info("Remove button pressed");
-		}
 	}
-	inline void renderRouteSection(RenderTarget* target)
+	inline void renderSection()
 	{
-		removeComponentButton->Render(target);
-		addRoute->Render(target);
+
 	}
 
-	Button* removeComponentButton;
 	Button* addRoute;
 	unsigned short addRouteState;
 
@@ -247,6 +225,15 @@ private:
 	{
 		Vector2i mousePos = Mouse::getPosition(*window);
 
+		addRoute->Update(sf::Vector2f(mousePos));
+		if (addRoute->GetButtonState() == ButtonStates::PRESSED)
+		{
+			mouseMode = MouseMode::Route;
+			mouseModeF = &MainGame::updateBoardSectionRoute;
+			logger->Info("Button pressed");
+			board->printRoutMap();
+		}
+
 		if (Mouse::getPosition(*window).y > 600.f)
 		{
 			selectComponent->Update(window);
@@ -281,8 +268,7 @@ private:
 	enum MouseMode {
 		Idle,
 		Route,
-		Place,
-		Remove
+		Place
 	};
 	MouseMode mouseMode = MouseMode::Idle;
 
@@ -405,24 +391,6 @@ private:
 			mouseModeF = &MainGame::updateBoardSectionIdle;
 		}
 	}
-	void updateBoardSectionRemoveComponent(RenderWindow* window, Time* elapsed)
-	{
-		Vector2i mousePos = sf::Mouse::getPosition(*window);
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-		{
-			try
-			{
-				Vector2i componentPos = board->getHoverTilePos(mousePos);
-				//board->getComponentOnBoard(componentPos);
-				board->removeComponent(componentPos);
-				mouseModeF = &MainGame::updateBoardSectionIdle;
-			}
-			catch (const sf::String&)
-			{
-
-			}
-		}
-	}
 	void (MainGame::*mouseModeF)(RenderWindow* window, Time* elapsed);
 	inline void renderBoardSection(RenderTarget* target)
 	{
@@ -436,7 +404,6 @@ private:
 
 	Board* board;
 	Component* addComponent = nullptr;
-	Component* selectedComponentTmp = nullptr;
 
 	//-----------------------------------------
 	// INFO near mouse

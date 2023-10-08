@@ -470,38 +470,7 @@ public:
 	}
 	void removeComponent(Vector2i pos)
 	{
-		Component* toRemove = getComponentOnBoard(pos);
-		if (toRemove == nullptr)
-			throw sf::String("No Component");
-
-		vector<Component*> tmp;
-		for (auto component : components)
-		{
-			if (component == toRemove)
-			{
-				continue;
-			}
-			tmp.push_back(component);
-		}
-
-		for (int j = 0; j < toRemove->getTileSize().y; j++)
-		{
-			for (int i = 0; i < toRemove->getTileSize().x; i++) //j * length + i
-			{
-				//isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = true;
-				isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = nullptr;
-			}
-		}
-
-		Vector2i* padsPos = toRemove->getPadsPos();
-		for (int i = 0; i < toRemove->getPadsCount(); i++)
-		{
-			Vector2i buf = toRemove->getBoardPosition() + padsPos[i];
-			boardTiles[buf.x + buf.y * length].setState(Tile::TileState::EMPTY);
-		}
-
-		components = tmp;
-		delete toRemove;
+		
 	}
 	Component* getComponentOnBoard(Vector2i pos)
 	{
