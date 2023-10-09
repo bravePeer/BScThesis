@@ -48,13 +48,13 @@ public:
 
 
 		
-		addRoute = new Button({100.f,50.f}, {10,750}, res->GetFont(), L"Po³¹cz");
 		//addLedDiode = new Button({ 100.f,50.f }, { 120.f, 750.f }, res->GetFont(), L"LED");
 		
 		//Info section
 		selectedComponent = new TextBox({ 200.f, 100.f }, {1200.f, 700.f}, res->GetFont(), L"Opis komponentu");
 		
 		//Load test components
+		initRouteSection(res);
 		initTaskSection(res);
 		initComponentSection(res);
 		initBoardSection();
@@ -66,25 +66,25 @@ public:
 		helpButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1400.f, 0.f), res->GetFont(), L"Pomoc");
 
 
-		mouseInfoBox = new TextBox({ 100,50 }, { 0,0 }, res->GetFont(),  "Inormacje dotycz¹ce pola", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), 12);
-	}
+			}
 	~MainGame() 
 	{
 		destroyTaskSection();
 		destroyComponentSection();
 		destroyBoardSection();
+		destroyRouteSection();
+		destroyInfoNearMouse();
+
 		delete view;
 
 		delete menuButton;
 		delete helpButton;
 
 		delete selectedComponent;
-		delete addRoute;
 		//delete addLedDiode;
 		delete selectComponent;
 
 		delete logger;
-		delete mouseInfoBox;
 	}
 	void AddLetter(wchar_t s) { }
 	State* IsStateChanged()
@@ -97,9 +97,9 @@ public:
 		helpButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 		menuButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 
-		
+		updateRouteSection(window, elapsed);
 		updateComponentSection(window, elapsed);
-		updateBoardSection(window, elapsed);
+		(this->*updateBoardSection)(window, elapsed);
 
 		updateInfoNearMouse(window, elapsed);
 	}
@@ -111,8 +111,8 @@ public:
 		helpButton->Render(target);
 		menuButton->Render(target);
 		
-		addRoute->Render(target);
-		
+		renderRouteSection(target);
+
 		renderComponentSection(target);
 		
 		renderBoardSection(target);
@@ -170,25 +170,53 @@ private:
 	//-----------------------------------------
 	// Route section - Bottom 
 	//-----------------------------------------
-	inline void initRouteSection()
+	inline void initRouteSection(Resources* res)
 	{
-
+		addRouteButton = new Button({ 100.f,50.f }, { 10.f, 735.f }, res->GetFont(), L"Po³¹cz");
+		moveComponentButotn = new Button({ 100.f, 50.f }, { 10.f, 790.f }, res->GetFont(), L"Przesuñ");
+		removeComponentButton = new Button({ 100.f, 50.f }, { 10.f, 845.f }, res->GetFont(), L"Usuñ");
 	}
 	inline void destroyRouteSection()
 	{
-
+		delete addRouteButton;
+		delete removeComponentButton;
+		delete moveComponentButotn;
 	}
-	inline void updateRouteSection()
+	inline void updateRouteSection(RenderWindow* window, Time* elapsed)
 	{
+		Vector2f mousePos = sf::Vector2f(Mouse::getPosition(*window));
+
+		addRouteButton->Update(mousePos);
+		if (addRouteButton->GetButtonState() == ButtonStates::PRESSED)
+		{
+			mouseMode = MouseMode::Route;
+			updateBoardSection = &MainGame::updateBoardSectionRoute;
+			logger->Info("Button pressed");
+			board->printRoutMap();
+		}
+
+		removeComponentButton->Update(mousePos);
+		if (removeComponentButton->GetButtonState() == ButtonStates::PRESSED)
+		{
+			mouseMode = MouseMode::Remove;
+			updateBoardSection = &MainGame::updateBoardSectionRemoveComponent;
+			logger->Info("Remove button pressed");
+		}
+
+		moveComponentButotn->Update(mousePos);
 
 	}
-	inline void renderSection()
+	inline void renderRouteSection(RenderTarget* target)
 	{
-
+		removeComponentButton->Render(target);
+		addRouteButton->Render(target);
+		moveComponentButotn->Render(target);
 	}
 
-	Button* addRoute;
-	unsigned short addRouteState;
+	Button* removeComponentButton;
+	Button* moveComponentButotn;
+	Button* addRouteButton;
+	unsigned short addRouteButtonState;
 
 	//-----------------------------------------
 	// Component section - Bottom
@@ -225,15 +253,6 @@ private:
 	{
 		Vector2i mousePos = Mouse::getPosition(*window);
 
-		addRoute->Update(sf::Vector2f(mousePos));
-		if (addRoute->GetButtonState() == ButtonStates::PRESSED)
-		{
-			mouseMode = MouseMode::Route;
-			mouseModeF = &MainGame::updateBoardSectionRoute;
-			logger->Info("Button pressed");
-			board->printRoutMap();
-		}
-
 		if (Mouse::getPosition(*window).y > 600.f)
 		{
 			selectComponent->Update(window);
@@ -244,7 +263,7 @@ private:
 				logger->Info("Selected " + to_string(selectedComponentId) + "component");
 				addComponent = new Component(components[selectedComponentId]);
 				selectComponent->ResetSelection();
-				mouseModeF = &MainGame::updateBoardSectionPlaceComponent;
+				updateBoardSection = &MainGame::updateBoardSectionPlaceComponent;
 
 				//addingComponents[selectedComponentId]->SetButtonState(ButtonStates::IDLE);
 			}
@@ -268,7 +287,8 @@ private:
 	enum MouseMode {
 		Idle,
 		Route,
-		Place
+		Place,
+		Remove
 	};
 	MouseMode mouseMode = MouseMode::Idle;
 
@@ -282,17 +302,13 @@ private:
 	{
 		board = new Board(16, 16, 1);
 
-		mouseModeF = &MainGame::updateBoardSectionIdle;
+		updateBoardSection = &MainGame::updateBoardSectionIdle;
 	}
 	inline void destroyBoardSection()
 	{
 		delete board;
 	}
-	inline void updateBoardSection(RenderWindow* window, Time* elapsed)
-	{
-		(this->*mouseModeF)(window, elapsed);
-		return;
-	}
+	void (MainGame::* updateBoardSection)(RenderWindow* window, Time* elapsed);
 	void updateBoardSectionIdle(RenderWindow* window, Time* elapsed)
  	{ 
 		//Select component
@@ -338,7 +354,7 @@ private:
 	{ 
 		if(addComponent == nullptr)
 		{
-			mouseModeF = &MainGame::updateBoardSectionIdle;
+			updateBoardSection = &MainGame::updateBoardSectionIdle;
 			return;
 		}
 
@@ -388,10 +404,28 @@ private:
 				delete addComponent;
 			}
 			addComponent = nullptr;
-			mouseModeF = &MainGame::updateBoardSectionIdle;
+			updateBoardSection = &MainGame::updateBoardSectionIdle;
 		}
 	}
-	void (MainGame::*mouseModeF)(RenderWindow* window, Time* elapsed);
+	void updateBoardSectionRemoveComponent(RenderWindow* window, Time* elapsed)
+	{
+		Vector2i mousePos = sf::Mouse::getPosition(*window);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			try
+			{
+				Vector2i componentPos = board->getHoverTilePos(mousePos);
+				//board->getComponentOnBoard(componentPos);
+				board->removeComponent(componentPos);
+				updateBoardSection = &MainGame::updateBoardSectionIdle;
+			}
+			catch (const sf::String&)
+			{
+
+			}
+		}
+	}
+	
 	inline void renderBoardSection(RenderTarget* target)
 	{
 		board->Render(target);
@@ -404,16 +438,25 @@ private:
 
 	Board* board;
 	Component* addComponent = nullptr;
+	Component* selectedComponentTmp = nullptr;
 
 	//-----------------------------------------
 	// INFO near mouse
 	//-----------------------------------------
+	inline void initInfoNearMouse(Resources* res)
+	{
+		mouseInfoBox = new TextBox({ 100,50 }, { 0,0 }, res->GetFont(), "Inormacje dotycz¹ce pola", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), 12);
+	}
+	inline void destroyInfoNearMouse()
+	{
+		delete mouseInfoBox;
+	}
 	inline void updateInfoNearMouse(RenderWindow* window, Time* elapsed)
 	{
 		//if in board section
 
 		Vector2i mousePos = Mouse::getPosition(*window);
-		sf::String str = L"";
+		sf::String str = L"a";
 		try
 		{
 			Vector2i tmp = board->getHoverTilePos(mousePos);
