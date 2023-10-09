@@ -58,7 +58,7 @@ public:
 		initTaskSection(res);
 		initComponentSection(res);
 		initBoardSection();
-
+		initInfoNearMouse(res);
 		addComponent = nullptr;
 
 
@@ -358,19 +358,11 @@ private:
 			return;
 		}
 
-		//Cancel placeing component
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-		{
-			delete addComponent;
-			addComponent = nullptr; // not sure czy potrzebne
-			return;
-		}
-
 		//Rotate component
 		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 			rotated = false;
 		
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && addComponent != nullptr && !rotated)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && !rotated)
 		{
 			rotated = true;
 			addComponent->rotate();
@@ -389,6 +381,14 @@ private:
 
 		}
 		addComponent->Update(window, elapsed, board->getViewOrigin());
+
+		//Cancel placeing component
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+		{
+			delete addComponent;
+			addComponent = nullptr; // not sure czy potrzebne
+			return;
+		}
 
 		//Place component on board
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -418,6 +418,7 @@ private:
 				//board->getComponentOnBoard(componentPos);
 				board->removeComponent(componentPos);
 				updateBoardSection = &MainGame::updateBoardSectionIdle;
+				logger->Info("Change to idle");
 			}
 			catch (const sf::String&)
 			{
