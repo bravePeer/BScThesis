@@ -197,6 +197,7 @@ public:
 			break;
 		}
 
+		//tileSprite = GraphicAll::GetInstance()->getTileSprite(tileState);
 		tileSprite->setPosition(tileShape.getPosition());
 		target->draw(*tileSprite);
 		target->draw(tileShape);
@@ -290,6 +291,8 @@ class Board
 
 	//Vector2f viewOrigin = { 0.f, 0.f };
 	Vector2f viewOrigin = { 500.f, 15.f };
+
+	bool hideComponents = false;
 public:
 	Board()
 	{
@@ -362,13 +365,16 @@ public:
 		{
 			for (int i = 0; i < length; i++)
 			{
-				boardTiles[j*length + i].Render(target);
+				boardTiles[j * length + i].Render(target);
 			}
 		}
 
-		for (auto component : components)
+		if (!hideComponents)
 		{
-			component->Render(target);
+			for (auto component : components)
+			{
+				component->Render(target);
+			}
 		}
 	}
 	Vector2i getHoverTilePos(Vector2i& mouse)
@@ -461,16 +467,53 @@ public:
 		for (int i = 0; i < component->getPadsCount(); i++)
 		{
 			Vector2i buf = component->getBoardPosition() + padsPos[i];
-			boardTiles[buf.x + buf.y * length].setState(Tile::TileState::SMD_PAD);
+
+			if(component->getComponentType() == Component::ComponentType::SMD)
+				boardTiles[buf.x + buf.y * length].setState(Tile::TileState::SMD_PAD);
+			else if (component->getComponentType() == Component::ComponentType::THT)
+				boardTiles[buf.x + buf.y * length].setState(Tile::TileState::THT_PAD);
 		} 
 
 		component->setBoardPosition(pos);
 		components.push_back(component);
 		logger->Info("Added "+component->getName() + " pos:" + to_string(pos.x) + " " + to_string(pos.y));
 	}
+	void placeComponentForce(Component* component, Vector2i& pos)
+	{
+		if (!canPlaceComponent(component, pos))
+			throw sf::String(L"Can't place component! pos: ") + to_wstring(pos.x) + " " + to_wstring(pos.y);
+
+		for (int j = 0; j < component->getTileSize().y; j++)
+		{
+			for (int i = 0; i < component->getTileSize().x; i++) //j * length + i
+			{
+				//isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = true;
+				isComponentOnBoard[(j + pos.y) * length + (i + pos.x)] = component;
+			}
+		}
+
+		component->setBoardPosition(pos);
+
+		Vector2i* padsPos = component->getPadsPos();
+		for (int i = 0; i < component->getPadsCount(); i++)
+		{
+			Vector2i buf = pos;
+
+			if (component->getComponentType() == Component::ComponentType::SMD)
+				boardTiles[buf.x + buf.y * length].setState(Tile::TileState::SMD_PAD);
+			else if (component->getComponentType() == Component::ComponentType::THT)
+				boardTiles[buf.x + buf.y * length].setState(Tile::TileState::THT_PAD);
+		}
+
+		components.push_back(component);
+		logger->Info("Added " + component->getName() + " pos:" + to_string(pos.x) + " " + to_string(pos.y));
+	}
 	void removeComponent(Vector2i pos)
 	{
 		Component* toRemove = getComponentOnBoard(pos);
+		if(!toRemove->isRemovable())
+			throw sf::String("This component can not be removed");
+
 		if (toRemove == nullptr)
 			throw sf::String("No Component");
 
@@ -517,6 +560,15 @@ public:
 		}*/
 	}
 	
+	void setHideComponent(bool hide)
+	{
+		hideComponents = hide;
+	}
+	bool isHideComponent()
+	{
+		return hideComponents;
+	}
+
 	//---------Testing---------
 	void printComponentsMap()
 	{

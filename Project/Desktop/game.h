@@ -23,36 +23,40 @@ class MainGame: public State
 {
 public:
 	MainGame(){}
-	MainGame(Resources *res) {
+	MainGame(Resources* res) {
 		logger = new Logger("Game");
 
-		//GraphicAll::GetInstance()->LoadTestGraphic();
 		GraphicAll::GetInstance()->LoadGraphic();
 
 		view = new View({ 800,450 }, { 1600, 900 });
 		origin = view->getCenter();
 		oldOrigin = origin;
 
-		//Load components
-		components = new Component*[3];
-		Vector2i* tmp = new Vector2i[3];
+		//Load components from task
+		components = new Component * [4];
+		Vector2i* tmp = new Vector2i[2];
 		tmp[0].x = 0;
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Component(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorTexture());
-		components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorTexture());
-		components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture());
+		components[0] = new Component(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorTexture(), Component::ComponentType::SMD);
+		components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorTexture(), Component::ComponentType::SMD);
+		components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture(), Component::ComponentType::SMD);
 		delete[] tmp;
-		selectionComponent = new TextBox({ 350.f, 50.f }, {10.f, 700.f}, res->GetFont(), L"Wybierz komponent elektroniczny");
 
+		tmp = new Vector2i[1];
+		tmp[0].x = 0;
+		tmp[0].y = 0;
+		components[3] = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentType::THT);
+		Component* pinV = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentType::THT, false);
+		Component* pinGND = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentType::THT, false);
+		delete[] tmp;
 
-		
 		//addLedDiode = new Button({ 100.f,50.f }, { 120.f, 750.f }, res->GetFont(), L"LED");
-		
+
 		//Info section
-		selectedComponent = new TextBox({ 200.f, 100.f }, {1200.f, 700.f}, res->GetFont(), L"Opis komponentu");
-		
+		selectedComponent = new TextBox({ 200.f, 100.f }, { 1200.f, 700.f }, res->GetFont(), L"Opis komponentu");
+
 		//Load test components
 		initRouteSection(res);
 		initTaskSection(res);
@@ -62,11 +66,15 @@ public:
 		addComponent = nullptr;
 
 
+		Vector2i pinPos = { 0, 0 };
+		board->placeComponentForce(pinV, pinPos);
+		pinPos.x++;
+		pinGND->rotate();
+		board->placeComponentForce(pinGND, pinPos);
+
 		menuButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1500.f, 0.f), res->GetFont(), L"MENU");
 		helpButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1400.f, 0.f), res->GetFont(), L"Pomoc");
-
-
-			}
+	}
 	~MainGame() 
 	{
 		destroyTaskSection();
@@ -105,7 +113,6 @@ public:
 	}
 	void Render(RenderTarget* target)
 	{
-		
 		renderTaskSection(target);
 		
 		helpButton->Render(target);
@@ -172,6 +179,8 @@ private:
 	//-----------------------------------------
 	inline void initRouteSection(Resources* res)
 	{
+		hideComponentsButton = new Button({ 100.f, 50.f }, { 115.f, 735.f }, res->GetFont(), L"Ukryj");
+
 		addRouteButton = new Button({ 100.f,50.f }, { 10.f, 735.f }, res->GetFont(), L"Po³¹cz");
 		moveComponentButotn = new Button({ 100.f, 50.f }, { 10.f, 790.f }, res->GetFont(), L"Przesuñ");
 		removeComponentButton = new Button({ 100.f, 50.f }, { 10.f, 845.f }, res->GetFont(), L"Usuñ");
@@ -181,6 +190,7 @@ private:
 		delete addRouteButton;
 		delete removeComponentButton;
 		delete moveComponentButotn;
+		delete hideComponentsButton;
 	}
 	inline void updateRouteSection(RenderWindow* window, Time* elapsed)
 	{
@@ -204,18 +214,35 @@ private:
 		}
 
 		moveComponentButotn->Update(mousePos);
+		//TODO
 
+		hideComponentsButton->Update(mousePos);
+		if (hideComponentsButton->GetButtonState() == ButtonStates::PRESSED)
+		{
+			if (board->isHideComponent())
+			{
+				hideComponentsButton->SetString(L"Ukryj");
+				board->setHideComponent(false);
+			}
+			else
+			{
+				hideComponentsButton->SetString(L"Poka¿");
+				board->setHideComponent(true);
+			}
+		}
 	}
 	inline void renderRouteSection(RenderTarget* target)
 	{
 		removeComponentButton->Render(target);
 		addRouteButton->Render(target);
 		moveComponentButotn->Render(target);
+		hideComponentsButton->Render(target);
 	}
 
 	Button* removeComponentButton;
 	Button* moveComponentButotn;
 	Button* addRouteButton;
+	Button* hideComponentsButton;
 	unsigned short addRouteButtonState;
 
 	//-----------------------------------------
@@ -244,10 +271,13 @@ private:
 			Color(255, 10, 80, 50),
 			addingComponents,
 			7);
+
+		//selectionComponent = new TextBox({ 350.f, 50.f }, { 10.f, 700.f }, res->GetFont(), L"Wybierz komponent elektroniczny");
+
 	}
 	inline void destroyComponentSection()
 	{
-		delete selectionComponent;
+		//delete selectionComponent;
 	}
 	inline void updateComponentSection(RenderWindow* window, Time* elapsed)
 	{
@@ -271,10 +301,10 @@ private:
 	}
 	inline void renderComponentSection(RenderTarget* target)
 	{
-		selectionComponent->Render(target);
+		//selectionComponent->Render(target);
 	}
 
-	TextBox* selectionComponent;
+	//TextBox* selectionComponent;
 	TextBox* selectedComponent;
 
 	//Button* addLedDiode;
@@ -488,5 +518,4 @@ private:
 	}
 
 	TextBox* mouseInfoBox;
-
 };

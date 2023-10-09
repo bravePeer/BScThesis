@@ -5,6 +5,9 @@
 class Component
 {
 public:
+		enum class ComponentType {
+		SMD,THT
+	};
 	Component()
 	{
 		name = L"";
@@ -14,8 +17,8 @@ public:
 		padsCount = 0;
 		padsPos = nullptr;
 	}
-	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture)
-		:name(name), description(description), tileSize(tileSize), padsCount(padsCount)
+	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture, ComponentType type, bool removable = true)
+		:name(name), description(description), tileSize(tileSize), padsCount(padsCount),componentType(type), removable(removable)
 	{
 
 		sprite.setTexture(texture);
@@ -44,6 +47,8 @@ public:
 		delete[] padsPos;
 	}
 
+
+
 	//, Vector2f& origin
 	virtual void Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin)
 	{
@@ -69,7 +74,6 @@ public:
 	{
 
 	}
-
 
 	void rotate()
 	{
@@ -119,6 +123,14 @@ public:
 	{
 		return padsPos;
 	}
+
+	bool isRemovable()
+	{
+		return removable;
+	}
+	ComponentType getComponentType() {
+		return componentType;
+	}
 private:
 	enum Rotation
 	{
@@ -128,6 +140,8 @@ private:
 	int getComponentLength()
 	{
 		int m = max(tileSize.x, tileSize.y);
+		if (m == 1)
+			return IMAGE_TILE_LENGTH;
 		return (m % 2 == 0) ? (m - 1) * IMAGE_TILE_LENGTH + IMAGE_TILE_LENGTH / 2 : (m - 1) * IMAGE_TILE_LENGTH;
 	}
 
@@ -144,8 +158,21 @@ private:
 	Sprite sprite;
 	Vector2i spriteSize; //Future use to set bigger image
 	int rotation = Rotation::S;
+
+	bool removable;
+	ComponentType componentType;
 };
 
+class Goldpin : public Component
+{
+public:
+	Goldpin(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentType type, bool removable = true)
+		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable)
+	{
+
+	}
+private:
+};
 
 //class LedDiode : public Component
 //{
@@ -157,7 +184,6 @@ private:
 //	}
 //private:
 //};
-
 
 //class Resistor : public Component
 //{
