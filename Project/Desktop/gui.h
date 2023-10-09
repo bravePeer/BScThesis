@@ -564,23 +564,3 @@ private:
 	unsigned short maxAmountButtons;
 	float spaceBetweenButtons;
 };
-
-//Bazowy stan gry w gui.h póki co
-class State
-{
-public:
-	State() {}
-	virtual ~State() {}
-	virtual void AddLetter(wchar_t s) {}
-	virtual State* IsStateChanged()
-	{
-		return nullptr;
-	}
-	virtual void Update(RenderWindow* window, Time* elapsed)
-	{}
-	virtual void Render(RenderTarget* target)
-	{}
-private:
-
-};
-

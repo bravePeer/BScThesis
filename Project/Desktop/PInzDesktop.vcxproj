@@ -145,6 +145,7 @@
     <ClInclude Include="gui.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="resources.h" />
+    <ClInclude Include="state.h" />
     <ClInclude Include="task.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>

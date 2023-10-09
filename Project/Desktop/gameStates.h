@@ -2,6 +2,7 @@
 #include <iostream>
 #include "gui.h"
 #include "board.h"
+#include "state.h"
 
 //class State
 //{

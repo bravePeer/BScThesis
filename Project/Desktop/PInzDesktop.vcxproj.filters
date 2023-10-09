@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\GameStates">
+      <UniqueIdentifier>{d7cb0213-3cb5-4ae9-ac4e-696fbfd171ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,9 +27,6 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="logger.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="gameStates.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="gui.h">
@@ -52,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="task.h">
       <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="state.h">
+      <Filter>Pliki nagłówkowe\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="gameStates.h">
+      <Filter>Pliki nagłówkowe\GameStates</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
