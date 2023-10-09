@@ -10,9 +10,12 @@
 #define IMAGE_TILE_LENGTH 66
 //#define TILE_WIDTH 32
 
-#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistor.png"
+//#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistor.png"
+#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistorMirror.png"
 #define CAPACITOR_GRAPHIC_PATH "Resources\\Images\\simplecapacitor.png"
+#define DIODE_GRAPHIC_PATH "Resources\\Images\\simplediode.png"
 #define ROUTE_GRAPHIC_PATH "Resources\\Images\\routes.png"
+#define GOLDPIN_GRAPHIC_PATH "Resources\\Images\\goldpins.png"
 
 using namespace sf;
 using namespace std;
@@ -44,7 +47,9 @@ public:
 		
 		loadResistorGraphic();
 		loadCapacitorGraphic();
+		loadDiodeGraphic();
 		loadRouteGraphic();
+		loadGoldpinTexture();
 	}
 
 	const Texture* getTileTexture()
@@ -79,27 +84,30 @@ public:
 		return &testSprite;
 	}
 
+
+
 	void loadResistorGraphic()
 	{
-		if (!resistorTexture.loadFromFile(RESISTOR_GRAPHIC_PATH))
-		{
+
+		if (!resistorTexture.loadFromFile(RESISTOR_GRAPHIC_PATH)) {
 			logger->Error("Cant load simpleresistor.png");
 			//isTestGraphicsLoaded = false;
 			return;
 		}
 
-		resistorSprite.setTexture(resistorTexture);
+		//resistorSprite.setTexture(resistorTexture);
 		logger->Info("Loaded simpleresistor.png, size:" + to_string(resistorTexture.getSize().x) + " " + to_string(resistorTexture.getSize().y));
 		//isTestGraphicsLoaded = true;
 	}
-	const sf::Texture* getResistorTexture()
+
+	const sf::Texture& getResistorTexture()
 	{
-		return &resistorTexture;
+		return resistorTexture;
 	}
-	sf::Sprite* getResistorSprite()
-	{
-		return &resistorSprite;
-	}
+	//sf::Sprite* getResistorSprite()
+	//{
+	//	return &resistorSprite;
+	//}
 
 	void loadCapacitorGraphic()
 	{
@@ -110,17 +118,36 @@ public:
 			return;
 		}
 
-		capacitorSprite.setTexture(capacitorTexture);
+		//capacitorSprite.setTexture(capacitorTexture);
 		logger->Info("Loaded simpleresistor.png, size:" + to_string(capacitorTexture.getSize().x) + " " + to_string(capacitorTexture.getSize().y));
 		//isTestGraphicsLoaded = true;
 	}
-	const sf::Texture* getCapacitorTexture()
+	const sf::Texture& getCapacitorTexture()
 	{
-		return &capacitorTexture;
+		return capacitorTexture;
 	}
-	sf::Sprite* getCapacitorSprite()
+	//sf::Sprite* getCapacitorSprite()
+	//{
+	//	return &capacitorSprite;
+	//}
+
+
+	void loadDiodeGraphic()
 	{
-		return &capacitorSprite;
+		if (!diodeTexture.loadFromFile(DIODE_GRAPHIC_PATH))
+		{
+			logger->Error("Cant load simplediode.png");
+			//isTestGraphicsLoaded = false;
+			return;
+		}
+
+		//capacitorSprite.setTexture(capacitorTexture);
+		logger->Info("Loaded simplediode.png, size:" + to_string(diodeTexture.getSize().x) + " " + to_string(diodeTexture.getSize().y));
+
+	}
+	const sf::Texture& getDiodeTexture()
+	{
+		return diodeTexture;
 	}
 
 	void loadRouteGraphic()
@@ -140,6 +167,25 @@ public:
 		return &routeSprite;
 	}
 
+
+	void loadGoldpinTexture()
+	{
+		if (!goldpinTexture.loadFromFile(GOLDPIN_GRAPHIC_PATH))
+		{
+			logger->Error("Cant load goldpinTexture.png");
+			//isTestGraphicsLoaded = false;
+			return;
+		}
+
+		//capacitorSprite.setTexture(capacitorTexture);
+		logger->Info("Loaded goldpinTexture.png, size:" + to_string(goldpinTexture.getSize().x) + " " + to_string(goldpinTexture.getSize().y));
+
+	}
+	const sf::Texture& getGoldpinTexture()
+	{
+		return goldpinTexture;
+	}
+
 	bool IsGraphicLoaded()
 	{
 		return isTestGraphicsLoaded;
@@ -153,10 +199,10 @@ private:
 	static GraphicAll* graphicAll;
 
 	Texture resistorTexture;
-	Sprite resistorSprite;
-
+	//Sprite resistorSprite;
 	Texture capacitorTexture;
-	Sprite  capacitorSprite;
+	//Sprite  capacitorSprite;
+	Texture diodeTexture;
 
 	Texture testTexture;
 	Sprite testSprite;
@@ -176,6 +222,8 @@ private:
 			tilesSprite[i].setTextureRect(sf::IntRect(IMAGE_TILE_LENGTH * i, 0, 66, 48));
 		}
 	}
+
+	Texture goldpinTexture;
 
 	Texture routeTexture;
 	Sprite routeSprite;
@@ -232,7 +280,7 @@ private:
 
 		sectionRects[static_cast<int>(SectionConfig::BoardSection)] = FloatRect(0, 0, 1200, 800);
 		sectionRects[static_cast<int>(SectionConfig::RouteSection)] = FloatRect(0, 700, 200, 200);
-		sectionRects[static_cast<int>(SectionConfig::ComponentSection)] = FloatRect(200, 700, 1000, 200);
+		sectionRects[static_cast<int>(SectionConfig::ComponentSection)] = FloatRect(220, 700, 970, 200);
 		sectionRects[static_cast<int>(SectionConfig::InfoSection)] = FloatRect(1200, 700, 400, 200);
 		sectionRects[static_cast<int>(SectionConfig::TaskSection)] = FloatRect(1200, 100, 400, 600);
 		sectionRects[static_cast<int>(SectionConfig::MenuSection)] = FloatRect(1200, 0, 400, 100);
