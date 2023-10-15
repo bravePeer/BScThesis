@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
@@ -12,98 +11,28 @@
 using namespace sf;
 
 /*"Silnik" gry*/
+typedef void (*addLetterF)(wchar_t w);
 class Game
 {
 public:
-	Game()
-	{
-		logger = new Logger("\"Engine\"");
-
-		window = new RenderWindow(VideoMode(1600, 900, 64), "Praca Inzynierska", Style::Titlebar | Style::Close);
-		window->setVerticalSyncEnabled(true);
-		window->setFramerateLimit(60);
-		
-		//Settings::windowSize = window->getSize();
-
-		res.LoadResources();
-
-		//gameMenuState = STARTMENU;
-		events = new Event;
-
-		//gameState = new StartMenu;
-		gameState = new MainGame(&res);
-
-		logger->Info("Game engine initialized");
-	}
-	~Game()
-	{
-		//delete startMenu;
-		delete gameState;
-		delete events;
-		delete window;
-
-		logger->Info("Game engine deleted");
-		delete logger;
-	}
+	Game();
+	
+	~Game();
 
 	//Aktualizowanie
-	void Update()
-	{
-		Time elapsed = clock.restart();
-		
-		PollEvents();
-
-		gameState->Update(window, &elapsed);
-
-		if (State* s = gameState->IsStateChanged())
-		{
-			delete gameState;
-			gameState = s;
-		}
-	}
+	void Update();
+	
 
 	//Rysowanie
-	void Render()
-	{
-		window->clear(sf::Color(200, 200, 150, 255));
+	void Render();
+	
 
-		gameState->Render(window);
-
-		window->display();
-	}
-
-	bool IsRunning()
-	{
-		return window->isOpen();
-	}
+	bool IsRunning();
+	static addLetterF addLetter;
+	//static void (*addLetter)(wchar_t w);
 private:
-	void PollEvents()
-	{
-		while (window->pollEvent(*events))
-		{
-			switch (events->type)
-			{
-			case Event::Closed:
-				window->close();
-				break;
-			case Event::KeyPressed:
-				if (Keyboard::isKeyPressed(Keyboard::Escape))
-					window->close();
-				
-					break;
-			case Event::TextEntered:
-				 
-				gameState->AddLetter(events->text.unicode);
-				 
-				//if (dynamic_cast<LoginMenu*>(gameState))
-				//	dynamic_cast<LoginMenu*>(gameState)->AddLetter(events->text.unicode);
-				//else if(dynamic_cast<RegisterMenu*>(gameState))
-				//	dynamic_cast<RegisterMenu*>(gameState)->AddLetter(events->text.unicode);
-				//break;
-			}
-
-		}
-	}
+	void PollEvents();
+	
 
 	RenderWindow* window = nullptr;
 	Event* events = nullptr;
@@ -120,3 +49,5 @@ private:
 
 	Logger* logger;
 };
+
+//static void (Game::* addLetter)(wchar_t w) = nullptr;

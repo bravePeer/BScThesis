@@ -65,5 +65,3 @@ private:
 	static fstream file;
 };
 
-bool Logger::loggerInConsole = true;
-fstream Logger::file;

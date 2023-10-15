@@ -82,6 +82,10 @@ public:
 	{
 		return shape.getPosition();
 	}
+	const bool isButtonPressed()
+	{
+		return (buttonState == ButtonStates::PRESSED) ? true : false;
+	}
 	unsigned short GetButtonState()
 	{
 		return buttonState;
@@ -214,9 +218,8 @@ public:
 		text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
 
 	}
-	void Update(const Vector2f mousePos)
+	void Update( const Vector2f mousePos)
 	{
-
 		if (shape.getGlobalBounds().contains(mousePos))
 		{
 			if (inputBoxState == IDLE)
@@ -244,6 +247,12 @@ public:
 			break;
 		}
 
+		if (inputBoxState == PRESSED)
+		{
+			/*if(sf::Keyboard::isKeyPressed())*/
+		}
+	
+
 	}
 	void Render(RenderTarget* target)
 	{
@@ -258,6 +267,7 @@ protected:
 	String typed;
 
 	Color idleColor, hoverColor, activeColor;
+	Event event;
 
 	unsigned short inputBoxState = IDLE;
 };

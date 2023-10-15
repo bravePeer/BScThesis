@@ -231,7 +231,6 @@ private:
 	Logger* logger;
 };
 
-GraphicAll* GraphicAll::graphicAll = nullptr;
 
 //Zawiera ustawienia aplikacji np. wymiary poszczególnych sekcji i ich pozycje
 class Config
@@ -296,7 +295,7 @@ private:
 	FloatRect* sectionRects;
 };
 
-Config* Config::appConfig = nullptr;
+
 
 /*Grafiki do menu i fonty*/
 class Resources

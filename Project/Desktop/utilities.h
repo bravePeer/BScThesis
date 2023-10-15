@@ -20,46 +20,46 @@ enum ButtonStates {
 
 
 
-struct InGameResources
-{
-	int wood = 0;
-	int iron = 0;
-	int gold = 0;
-	int food = 0;
-};
+//struct InGameResources
+//{
+//	int wood = 0;
+//	int iron = 0;
+//	int gold = 0;
+//	int food = 0;
+//};
 
-InGameResources operator-(InGameResources a, InGameResources b)
-{
-	a.food -= b.food;
-	a.iron -= b.iron;
-	a.wood -= b.wood;
-	a.gold -= b.gold;
-	return a;
-}
-bool operator<=(InGameResources a, InGameResources b)
-{
-	if (a.food <= b.food && a.iron <= b.iron && a.gold <= b.gold && a.wood <= b.wood)
-		return true;
-	return false;
-}
+//InGameResources operator-(InGameResources a, InGameResources b)
+//{
+//	a.food -= b.food;
+//	a.iron -= b.iron;
+//	a.wood -= b.wood;
+//	a.gold -= b.gold;
+//	return a;
+//}
+//bool operator<=(InGameResources a, InGameResources b)
+//{
+//	if (a.food <= b.food && a.iron <= b.iron && a.gold <= b.gold && a.wood <= b.wood)
+//		return true;
+//	return false;
+//}
 
-bool operator<(Vector2i a, Vector2i b)
+inline bool operator<(Vector2i a, Vector2i b)
 {
 	return a.x < b.x&& a.y < b.y ? true : false;
 }
-bool operator<=(Vector2i a, Vector2i b)
+inline bool operator<=(Vector2i a, Vector2i b)
 {
 	return a.x <= b.x && a.y <= b.y ? true : false;
 }
-bool operator>=(Vector2i a, Vector2i b)
+inline bool operator>=(Vector2i a, Vector2i b)
 {
 	return a.x >= b.x && a.y >= b.y ? true : false;
 }
-Vector2i operator+(Vector2i a, unsigned short b)
+inline Vector2i operator+(Vector2i a, unsigned short b)
 {
 	return Vector2i(a.x + b, a.y + b);
 }
-Vector2i operator-(Vector2i a, unsigned short b)
+inline Vector2i operator-(Vector2i a, unsigned short b)
 {
 	return Vector2i(a.x - b, a.y - b);
 }
@@ -90,7 +90,7 @@ static Vector2i Screen2Map(Vector2i screen, Vector2i tileSize)
 	return map;
 }
 
-void Delay(Int32 ms)
+inline void Delay(Int32 ms)
 {
 	Clock clock;
 	clock.restart();
