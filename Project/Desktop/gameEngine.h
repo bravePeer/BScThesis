@@ -11,25 +11,22 @@
 using namespace sf;
 
 /*"Silnik" gry*/
-typedef void (*addLetterF)(wchar_t w);
+//typedef void (*addLetterF)(wchar_t w);
 class Game
 {
 public:
 	Game();
-	
+	Game(Game& game) = delete;
 	~Game();
 
 	//Aktualizowanie
 	void Update();
-	
-
 	//Rysowanie
 	void Render();
-	
 
 	bool IsRunning();
-	static addLetterF addLetter;
-	//static void (*addLetter)(wchar_t w);
+
+	RenderWindow* getWindow();
 private:
 	void PollEvents();
 	
@@ -41,7 +38,6 @@ private:
 
 	Resources res;
 	Clock clock;
-
 	
 	//Co ma byæ wyœwietlane w sensie ktore menu
 	short gameMenuState;

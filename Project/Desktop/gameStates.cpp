@@ -124,10 +124,6 @@ LoginMenu::LoginMenu(Resources* res)
 
 	loginInputBox = new InputBox({ 200,50 }, { 300, 240}, res->GetFont(), L"Login", Color(255, 0, 0, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
 	passwordInputBox = new InputBoxPassword({ 200,50 }, { 400, 170 }, res->GetFont(), L"Password", Color(255, 0, 0, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	//loginInputBox = new InputBox();
-	//passwordInputBox = new InputBoxPassword();
-	//auto lam = [](wchar_t w)->void {};
-	//Game::addLetter = lam;
 }
 
 LoginMenu::~LoginMenu()
@@ -164,4 +160,10 @@ void LoginMenu::Render(RenderTarget* target)
 
 	loginInputBox->Render(target);
 	passwordInputBox->Render(target);
+}
+
+void LoginMenu::AddLetter(wchar_t s)
+{
+	loginInputBox->AddLetter(s);
+	passwordInputBox->AddLetter(s);
 }

@@ -61,6 +61,11 @@ bool Game::IsRunning()
 	return window->isOpen();
 }
 
+RenderWindow* Game::getWindow()
+{
+	return window;
+}
+
 void Game::PollEvents()
 {
 	while (window->pollEvent(*events))
@@ -76,14 +81,7 @@ void Game::PollEvents()
 
 			break;
 		case Event::TextEntered:
-
-			//gameState->AddLetter(events->text.unicode);
-			//Game::addLetter = nullptr;
-			Game::addLetter = nullptr;
-			//if (Game::addLetter)
-				//Game::addLetter(events->text.unicode);
-
-				//(addLetter)(events->text.unicode);
+			gameState->AddLetter(events->text.unicode);
 			break;
 		}
 	}

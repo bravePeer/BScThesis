@@ -7,13 +7,16 @@
 
 //using namespace std;
 
-
-
 int main()
 {
 	Game game;
 	Logger logger("main");
 	//Logger::InitializeFileLogging();
+
+	sf::Clock clock;
+	sf::Time previousTime = clock.getElapsedTime();
+	sf::Time currentTime;
+	float fps;
 
 	while (game.IsRunning())
 	{
@@ -22,6 +25,11 @@ int main()
 
 		//rysowanie
 		game.Render();
+
+		currentTime = clock.getElapsedTime();
+		fps = 1.0f / (currentTime.asSeconds() - previousTime.asSeconds());
+		game.getWindow()->setTitle(L"Praca Inzynierska fps: " + to_wstring(static_cast<int>(fps)));
+		previousTime = currentTime;
 	}
 
 	//Logger::EndFileLogging();
