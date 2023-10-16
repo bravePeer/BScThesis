@@ -188,6 +188,8 @@ public:
 		text.setPosition(
 			shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f,
 			shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - text.getGlobalBounds().height / 2.f);
+
+		defaultString = _text;
 	}
 	~InputBox()
 	{}
@@ -203,6 +205,7 @@ public:
 	virtual void AddLetter(wchar_t s)
 	{
 		if (inputBoxState == PRESSED)
+		{
 			if (s == 8)
 			{
 				if (typed.getSize())
@@ -214,9 +217,12 @@ public:
 			{
 				typed += s;
 			}
-		text.setString(typed);
-		text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
-
+			if (typed.getSize() == 0)
+				text.setString(defaultString);
+			else
+				text.setString(typed);
+			text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
+		}
 	}
 	void Update( const Vector2f mousePos)
 	{
@@ -270,6 +276,8 @@ protected:
 	Event event;
 
 	unsigned short inputBoxState = IDLE;
+	sf::String defaultString;
+
 };
 
 class InputBoxPassword :public InputBox
@@ -300,6 +308,8 @@ public:
 		text.setPosition(
 			shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f,
 			shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - text.getGlobalBounds().height / 2.f);
+
+		defaultString = _text;
 	}
 	~InputBoxPassword()
 	{}
@@ -315,6 +325,7 @@ public:
 	void AddLetter(wchar_t s)
 	{
 		if (inputBoxState == PRESSED)
+		{
 			if (s == 8)
 			{
 				if (typed.getSize())
@@ -326,15 +337,18 @@ public:
 			{
 				typed += s;
 			}
-		String str = "";
-		for (unsigned short i = 0; i < typed.getSize(); i++)
-		{
-			str += letter;
+			String str = "";
+			for (unsigned short i = 0; i < typed.getSize(); i++)
+			{
+				str += letter;
+			}
+
+			if (typed.getSize() == 0)
+				text.setString(defaultString);
+			else
+				text.setString(str);
+			text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
 		}
-
-		text.setString(str);
-		text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
-
 	}
 	void Update(const Vector2f mousePos)
 	{
@@ -375,7 +389,6 @@ public:
 
 private:
 	wchar_t letter;
-
 };
 //Pole do wypisywania tekstu na ekranie
 class TextBox
