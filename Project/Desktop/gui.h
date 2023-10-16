@@ -502,7 +502,7 @@ public:
 			{
 				if (sumLengthButton + buttons[i]->getSize().x < _size.x)
 				{
-					sumLengthButton += buttons[i]->getSize().x;
+					sumLengthButton += static_cast<int>(buttons[i]->getSize().x);
 					maxAmountButtons++;
 				}
 			}

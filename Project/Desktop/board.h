@@ -406,7 +406,7 @@ public:
 	}
 
 
-	short tileNighbourDirection(Vector2i pos0, Vector2i pos1)
+	char tileNighbourDirection(Vector2i pos0, Vector2i pos1)
 	{
 		if (pos0.x == pos1.x)
 			if (pos0.y > pos1.y)

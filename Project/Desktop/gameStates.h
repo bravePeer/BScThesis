@@ -112,3 +112,18 @@ private:
 		CountP
 	};
 };
+
+class LevelSelect : public State
+{
+public:
+	LevelSelect() = delete;
+	LevelSelect(Resources* res);
+	LevelSelect(LevelSelect&) = delete;
+	~LevelSelect();
+
+	void Update(sf::RenderWindow* window, sf::Time* elapsed);
+	void Render(sf::RenderTarget* target);
+	//void AddLetter(wchar_t s) {}
+private:
+
+};

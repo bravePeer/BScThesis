@@ -137,7 +137,7 @@ private:
 		S, W, N, E
 	};
 
-	int getComponentLength()
+	unsigned int getComponentLength()
 	{
 		int m = max(tileSize.x, tileSize.y);
 		if (m == 1)

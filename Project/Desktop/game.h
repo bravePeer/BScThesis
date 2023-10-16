@@ -359,7 +359,7 @@ private:
 			}
 			catch (const sf::String& s)
 			{
-
+				s.getSize(); //Here was warning
 			}
 		}
 
@@ -377,7 +377,7 @@ private:
 		}
 		catch (const sf::String& s)
 		{
-
+			s.getSize(); //Here was warning
 		}
 	}
 	void updateBoardSectionPlaceComponent(RenderWindow* window, Time* elapsed)
@@ -406,9 +406,9 @@ private:
 			if (board->canPlaceComponent(addComponent, hoveredTile))
 				addComponent->setBoardPosition(hoveredTile);
 		}
-		catch (const sf::String& e)
+		catch (const sf::String& s)
 		{
-
+			s.getSize(); //Here was warning
 		}
 		addComponent->Update(window, elapsed, board->getViewOrigin());
 
