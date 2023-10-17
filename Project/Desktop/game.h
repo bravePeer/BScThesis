@@ -23,7 +23,7 @@ class MainGame: public State
 {
 public:
 	MainGame(){}
-	MainGame(Resources* res) {
+	MainGame(Resources* res, Level* level = nullptr) {
 		logger = new Logger("Game");
 
 		GraphicAll::GetInstance()->LoadGraphic();
@@ -33,7 +33,9 @@ public:
 		oldOrigin = origin;
 
 		//Load components from task
-		components = new Component * [4];
+		level->load();
+		components = level->getComponents();
+		/*components = new Component * [4];
 		Vector2i* tmp = new Vector2i[2];
 		tmp[0].x = 0;
 		tmp[0].y = 0;
@@ -42,9 +44,9 @@ public:
 		components[0] = new Component(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorTexture(), Component::ComponentType::SMD);
 		components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorTexture(), Component::ComponentType::SMD);
 		components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture(), Component::ComponentType::SMD);
-		delete[] tmp;
+		delete[] tmp;*/
 
-		tmp = new Vector2i[1];
+		Vector2i* tmp = new Vector2i[1];
 		tmp[0].x = 0;
 		tmp[0].y = 0;
 		components[3] = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentType::THT);

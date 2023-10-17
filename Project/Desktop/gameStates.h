@@ -1,8 +1,11 @@
 #pragma once
 #include <iostream>
+#include "SFML/Graphics.hpp"
 #include "gui.h"
 #include "board.h"
 #include "state.h"
+#include "level.h"
+
 
 
 class StartMenu : public State
@@ -125,5 +128,29 @@ public:
 	void Render(sf::RenderTarget* target);
 	//void AddLetter(wchar_t s) {}
 private:
+	Resources* res;
 
+	Level** levels;
+	int levelsCount;
+
+	Button* backButton;
+	//Button* resetViewButton;
+
+	//Level info box
+	Button* loadSaveButton;
+	Button* startNewSaveButton;
+	sf::RectangleShape* levelInfoBox;
+	TextBox* levelTitle;
+	TextBox* levelDesc;
+
+
+	Button** levelButtons;
+
+	enum class LevelInfoState
+	{
+		Hidden,
+		Showed,
+		Active
+	};
+	LevelInfoState levelInfoState;
 };

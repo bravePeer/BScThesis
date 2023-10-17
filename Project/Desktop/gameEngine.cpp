@@ -4,7 +4,8 @@ Game::Game()
 {
 	logger = new Logger("\"Engine\"");
 
-	window = new RenderWindow(VideoMode(1600, 900, 64), "Praca Inzynierska", Style::Titlebar | Style::Close);
+	const Vector2i &windowSize = Config::getInstance()->getWindowDimension();
+	window = new RenderWindow(VideoMode(windowSize.x, windowSize.y, 64), "Praca Inzynierska", Style::Titlebar | Style::Close);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(60);
 
