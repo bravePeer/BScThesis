@@ -143,8 +143,8 @@ private:
 	TextBox* levelTitle;
 	TextBox* levelDesc;
 
-
 	Button** levelButtons;
+	Level* startLevel;
 
 	enum class LevelInfoState
 	{

@@ -22,7 +22,7 @@ Aplikacja wymaga logowania, w celu zapisania postêpu gracza.
 class MainGame: public State
 {
 public:
-	MainGame(){}
+	MainGame() = delete;
 	MainGame(Resources* res, Level* level = nullptr) {
 		logger = new Logger("Game");
 
@@ -35,6 +35,7 @@ public:
 		//Load components from task
 		level->load();
 		components = level->getComponents();
+		componentsCount = level->getComponentsCount();
 		/*components = new Component * [4];
 		Vector2i* tmp = new Vector2i[2];
 		tmp[0].x = 0;
@@ -46,6 +47,7 @@ public:
 		components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture(), Component::ComponentType::SMD);
 		delete[] tmp;*/
 
+		//load board settings from level
 		Vector2i* tmp = new Vector2i[1];
 		tmp[0].x = 0;
 		tmp[0].y = 0;
@@ -76,6 +78,7 @@ public:
 
 		menuButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1500.f, 0.f), res->GetFont(), L"MENU");
 		helpButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1400.f, 0.f), res->GetFont(), L"Pomoc");
+		checkButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1200.f, 0.f), res->GetFont(), L"SprawdŸ");
 	}
 	~MainGame() 
 	{
@@ -112,6 +115,9 @@ public:
 		(this->*updateBoardSection)(window, elapsed);
 
 		updateInfoNearMouse(window, elapsed);
+
+		checkButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
+		
 	}
 	void Render(RenderTarget* target)
 	{
@@ -119,7 +125,7 @@ public:
 		
 		helpButton->Render(target);
 		menuButton->Render(target);
-		
+
 		renderRouteSection(target);
 
 		renderComponentSection(target);
@@ -128,6 +134,8 @@ public:
 
 		selectComponent->Render(target);
 		renderInfoNearMouse(target);
+
+		checkButton->Render(target);
 	}
 private:
 	Logger* logger;
@@ -139,6 +147,7 @@ private:
 	// Menu section
 	Button* menuButton;
 	Button* helpButton;
+	Button* checkButton;
 
 	//-----------------------------------------
 	// Task section
@@ -255,14 +264,18 @@ private:
 		Vector2f sectionPos = Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition();
 		Vector2f sectionSize = Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize();
 
-		addingComponents = new Button * [7];
-		addingComponents[0] = new Button({ 150.f, 120.f }, { 0.f,0.f }, res->GetFont(), components[0]->getName());
+		addingComponents = new Button * [componentsCount];
+		for (int i = 0; i < componentsCount; i++)
+		{
+			addingComponents[i] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[i]->getName());
+		}
+		/*addingComponents[0] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
 		addingComponents[1] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
 		addingComponents[2] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[2]->getName());
 		addingComponents[3] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
 		addingComponents[4] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
 		addingComponents[5] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
-		addingComponents[6] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
+		addingComponents[6] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());	*/
 		selectComponent = new SelectBox(
 			Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize(),
 			Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
@@ -272,7 +285,7 @@ private:
 			Color(255, 10, 80, 50),
 			Color(255, 10, 80, 50),
 			addingComponents,
-			7);
+			componentsCount);
 
 		//selectionComponent = new TextBox({ 350.f, 50.f }, { 10.f, 700.f }, res->GetFont(), L"Wybierz komponent elektroniczny");
 
@@ -315,6 +328,7 @@ private:
 
 	//Futeure load from outside
 	Component** components;
+	int componentsCount;
 
 	enum MouseMode {
 		Idle,

@@ -267,6 +267,7 @@ LevelSelect::LevelSelect(Resources* res)
 		components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorTexture(), Component::ComponentType::SMD);
 		components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture(), Component::ComponentType::SMD);
 		delete[] tmp;
+		*componentsCount = 3;
 		return components;
 		});
 
@@ -312,7 +313,11 @@ LevelSelect::LevelSelect(Resources* res)
 LevelSelect::~LevelSelect()
 {
 	for (int i = 0; i < levelsCount; i++)
+	{
+		if (levels[i] == startLevel)
+			continue;
 		delete levels[i];
+	}
 	delete[] levels;
 
 	for (int i = 0; i < levelsCount; i++)
@@ -342,7 +347,10 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 		loadSaveButton->Update(mousePos);
 		startNewSaveButton->Update(mousePos);
 		if (startNewSaveButton->isButtonPressed())
-			nextState = new MainGame(res);
+		{
+			
+			nextState = new MainGame(res, startLevel);
+		}
 
 		if (!levelInfoBox->getGlobalBounds().contains(mousePos))
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -366,6 +374,7 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 		else if (levelButtons[i]->GetButtonState() == ButtonStates::PRESSED)
 		{
 			levelInfoState = LevelInfoState::Active;
+			startLevel = levels[i];
 			/*levelTitle->SetString(levels[i]->getName());
 			levelDesc->SetString(levels[i]->getDesc());*/
 		}

@@ -73,6 +73,11 @@ Component** Level::getComponents()
 	return components;
 }
 
+int Level::getComponentsCount()
+{
+	return componentCount;
+}
+
 void Level::load()
 {
 	components = genComponents(&componentCount);

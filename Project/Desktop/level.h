@@ -21,6 +21,7 @@ public:
 	void setPrevLevels(Level** levels, int levelsCount);
 	void setGenerateComponents(std::function<Component**(int*)> genComponents);
 	Component** getComponents();
+	int getComponentsCount();
 
 	void load(); //load graphics
 private:
