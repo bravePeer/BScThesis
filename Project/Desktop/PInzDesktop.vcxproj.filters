@@ -16,6 +16,9 @@
     <Filter Include="Pliki nagłówkowe\GameStates">
       <UniqueIdentifier>{d7cb0213-3cb5-4ae9-ac4e-696fbfd171ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\Simulating">
+      <UniqueIdentifier>{f317bace-9065-492c-b6c3-239e8d4e8a2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,6 +37,9 @@
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="level.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="SimulationEngine.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -76,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="level.h">
       <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="SimulationEngine.h">
+      <Filter>Pliki nagłówkowe\Simulating</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

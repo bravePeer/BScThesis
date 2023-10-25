@@ -139,6 +139,7 @@
     <ClCompile Include="level.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SimulationEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="board.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="level.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="resources.h" />
+    <ClInclude Include="SimulationEngine.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="task.h" />
     <ClInclude Include="utilities.h" />
