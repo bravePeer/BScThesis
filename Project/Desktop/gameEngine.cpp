@@ -20,6 +20,8 @@ Game::Game()
 	//gameState = new MainGame(&res);
 
 	logger->Info("Game engine initialized");
+
+	hasFocus = true;
 }
 
 Game::~Game()
@@ -36,8 +38,6 @@ Game::~Game()
 void Game::Update()
 {
 	Time elapsed = clock.restart();
-
-	PollEvents();
 
 	gameState->Update(window, &elapsed);
 
@@ -62,6 +62,11 @@ bool Game::IsRunning()
 	return window->isOpen();
 }
 
+bool Game::HasFocus()
+{
+	return hasFocus;
+}
+
 RenderWindow* Game::getWindow()
 {
 	return window;
@@ -75,6 +80,12 @@ void Game::PollEvents()
 		{
 		case Event::Closed:
 			window->close();
+			break;
+		case Event::LostFocus:
+			hasFocus = false;
+			break;
+		case Event::GainedFocus:
+			hasFocus = true;
 			break;
 		case Event::KeyPressed:
 			if (Keyboard::isKeyPressed(Keyboard::Escape))

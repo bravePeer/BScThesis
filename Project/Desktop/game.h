@@ -4,6 +4,7 @@
 #include "resources.h"
 #include "task.h"
 #include "component.h"
+#include "simulationEngine.h"
 
 /*
 
@@ -32,6 +33,7 @@ public:
 		origin = view->getCenter();
 		oldOrigin = origin;
 
+		currentLevel = level;
 		//Load components from task
 		level->load();
 		components = level->getComponents();
@@ -117,7 +119,15 @@ public:
 		updateInfoNearMouse(window, elapsed);
 
 		checkButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
-		
+		if (checkButton->isButtonPressed())
+		{
+			board->saveBoard();
+			if (simulationEngine != nullptr)
+				delete simulationEngine;
+			simulationEngine = new SimulationEngine();
+			simulationEngine->simulate();
+			currentLevel->
+		}	
 	}
 	void Render(RenderTarget* target)
 	{
@@ -306,7 +316,10 @@ private:
 			if (selectedComponentId != -1 && addComponent == nullptr)
 			{
 				logger->Info("Selected " + to_string(selectedComponentId) + "component");
-				addComponent = new Component(components[selectedComponentId]);
+				if(dynamic_cast<Resistor*>(components[selectedComponentId]))
+					addComponent = new Resistor(dynamic_cast<Resistor*>(components[selectedComponentId]));
+				else
+					addComponent = new Component(components[selectedComponentId]);
 				selectComponent->ResetSelection();
 				updateBoardSection = &MainGame::updateBoardSectionPlaceComponent;
 
@@ -346,7 +359,7 @@ private:
 	//-----------------------------------------
 	inline void initBoardSection()
 	{
-		board = new Board(16, 16, 1);
+		board = new Board(12, 18, 1);
 
 		updateBoardSection = &MainGame::updateBoardSectionIdle;
 	}
@@ -534,4 +547,7 @@ private:
 	}
 
 	TextBox* mouseInfoBox;
+
+	SimulationEngine* simulationEngine;
+	Level* currentLevel;
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "component.h"
+#include <fstream>
 
 //#define TILE_LENGTH 64
 //#define TILE_WIDTH 32
@@ -221,6 +222,7 @@ public:
 	{
 		this->route &= ~route;
 	}
+	// 4 lesast significant bits are SWNE 
 	short getRoute()
 	{
 		return this->route;
@@ -567,6 +569,62 @@ public:
 	bool isHideComponent()
 	{
 		return hideComponents;
+	}
+
+	//Saving board as asc file
+	void saveBoard()
+	{
+		logger->Info("Create save file");
+		std::fstream file("save.asc", ios::out);
+		if (!file.good())
+			throw L"Can't create savefile!";
+
+		file << "Version 4\n";
+		file << "SHEET 1 100 4\n";
+
+		for (int j = 0; j < width; j++)
+		{
+			for (int i = 0; i < length; i++)
+			{
+				short route = boardTiles[j * length + i].getRoute();
+				if (route & 1) // South
+					file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16 ) << " " << to_string(j * 16 + 8) << "\n";
+
+				if (route & 2) // West
+					file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16 - 8) << " " << to_string(j * 16 ) << "\n";
+
+				if (route & 4) // North
+					file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16) << " " << to_string(j * 16 - 8) << "\n";
+
+				if (route & 8)  // East
+					file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16 + 8) << " " << to_string(j * 16 ) << "\n";
+			}
+		}
+
+		//Add voltage
+		file << "FLAG 16 0 0\n"; // GND
+		file << "SYMBOL _app\\myvoltage 0 0 R270\n";
+		file << "SYMATTR InstName V1\n";
+		file << "SYMATTR Value 12\n";
+
+		//Add components
+		for (Component* a : components)
+		{
+			if (a->getSimName() == "goldpin")
+				continue;
+			Vector2i boardPos = a->getBoardPosition();
+			int rotation = a->getRotation();
+
+			file << "SYMBOL " << a->getSimName() << " " << to_string(boardPos.x * 16) << " " << to_string(boardPos.y * 16) << " R" << to_string(rotation * 90) << "\n";
+			file << "SYMATTR InstName " << a->getId() << "\n";
+			file << "SYMATTR Value " << "1" << "\n";
+		}
+
+
+		//Simulation config
+		file << "TEXT -28 -20 Left 2 !.tran 10\n";
+
+		file.close();
 	}
 
 	//---------Testing---------

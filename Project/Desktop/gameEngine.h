@@ -25,10 +25,11 @@ public:
 	void Render();
 
 	bool IsRunning();
+	bool HasFocus();
 
 	RenderWindow* getWindow();
-private:
 	void PollEvents();
+private:
 	
 
 	RenderWindow* window = nullptr;
@@ -44,6 +45,7 @@ private:
 	State* gameState = nullptr;
 
 	Logger* logger;
+	bool hasFocus;
 };
 
 //static void (Game::* addLetter)(wchar_t w) = nullptr;

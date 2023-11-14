@@ -78,6 +78,11 @@ int Level::getComponentsCount()
 	return componentCount;
 }
 
+void Level::setCheckSimulation(std::function<void(Board*)> checkSimulation)
+{
+	this->checkSimulation = checkSimulation;
+}
+
 void Level::load()
 {
 	components = genComponents(&componentCount);

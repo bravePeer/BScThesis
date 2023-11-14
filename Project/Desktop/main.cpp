@@ -4,7 +4,6 @@
 //#include "world.h"
 #include "Logger.h"
 #include <SFML/Window.hpp>
-
 //using namespace std;
 
 int main()
@@ -20,6 +19,11 @@ int main()
 
 	while (game.IsRunning())
 	{
+		game.PollEvents();
+
+		if (!game.HasFocus())
+			continue;
+
 		//update
 		game.Update();
 

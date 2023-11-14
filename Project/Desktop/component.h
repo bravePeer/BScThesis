@@ -5,8 +5,8 @@
 class Component
 {
 public:
-		enum class ComponentType {
-		SMD,THT
+	enum class ComponentType {
+		SMD, THT
 	};
 	Component()
 	{
@@ -47,8 +47,6 @@ public:
 		delete[] padsPos;
 	}
 
-
-
 	//, Vector2f& origin
 	virtual void Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin)
 	{
@@ -68,7 +66,9 @@ public:
 		sprite.setPosition(globalPosition);
 		target->draw(sprite);
 	}
-	
+	virtual void incrementId()
+	{ }
+
 	//Rezystancje spadek napiêcia ect.
 	virtual void calculateValues()
 	{
@@ -94,6 +94,10 @@ public:
 		{
 			swap(padsPos[i].x, padsPos[i].y);
 		}
+	}
+	int getRotation()
+	{
+		return rotation;
 	}
 	Vector2i& getTileSize()
 	{
@@ -128,8 +132,17 @@ public:
 	{
 		return removable;
 	}
-	ComponentType getComponentType() {
+	ComponentType getComponentType() 
+	{
 		return componentType;
+	}
+	std::string& getSimName()
+	{
+		return componentSimName;
+	}
+	std::string& getId()
+	{
+		return componentId;
 	}
 private:
 	enum Rotation
@@ -161,6 +174,10 @@ private:
 
 	bool removable;
 	ComponentType componentType;
+
+	protected:
+	std::string componentSimName;
+	std::string componentId;
 };
 
 class Goldpin : public Component
@@ -169,7 +186,7 @@ public:
 	Goldpin(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentType type, bool removable = true)
 		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable)
 	{
-
+		componentSimName = "goldpin";
 	}
 private:
 };
@@ -185,16 +202,27 @@ private:
 //private:
 //};
 
-//class Resistor : public Component
-//{
-//public:
-//	Resistor(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite, Vector2u spriteSize)
-//		:Component(name, description, tileSize, padsCount, padsPos, sprite, spriteSize)
-//	{
-//
-//	}
-//private:
-//};
+//Change to static in class
+static int componentsCount = 0;
+class Resistor : public Component
+{
+public:
+	Resistor(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture, ComponentType type, bool removable = true)
+		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable)
+	{
+		componentSimName = "_app\\\\appres";
+		componentId = "res" + to_string(componentsCount);
+	}
+	Resistor(Resistor* resistor)
+		:Component(resistor)
+	{
+		componentSimName = "_app\\\\appres";
+		componentId = "res" + to_string(componentsCount);
+		componentsCount++;
+	}
+	
+private:
+};
 
 //class Capacitor : public Component
 //{

@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include <functional>
 #include "component.h"
+#include "board.h"
 
 class Level
 {
@@ -19,11 +20,15 @@ public:
 
 	//void setNextLevels(Level** levels); //moze nie potrzebne
 	void setPrevLevels(Level** levels, int levelsCount);
+	
 	void setGenerateComponents(std::function<Component**(int*)> genComponents);
 	Component** getComponents();
 	int getComponentsCount();
 
-	void load(); //load graphics
+	void setCheckSimulation(std::function<void(Board*)> checkSimulation);
+	//getConditions
+
+	void load();
 private:
 	sf::String id;
 	sf::String name;
@@ -40,4 +45,6 @@ private:
 	std::function<Component** (int*)> genComponents;
 	Component** components;
 	int componentCount;
+
+	std::function<void(Board*)> checkSimulation;
 };

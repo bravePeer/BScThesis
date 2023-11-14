@@ -39,7 +39,7 @@
     <ClCompile Include="level.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="SimulationEngine.cpp">
+    <ClCompile Include="simulationEngine.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClInclude Include="level.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="SimulationEngine.h">
+    <ClInclude Include="simulationEngine.h">
       <Filter>Pliki nagłówkowe\Simulating</Filter>
     </ClInclude>
   </ItemGroup>
