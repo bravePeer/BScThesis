@@ -138,19 +138,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="gameEngine.cpp" />
-    <ClCompile Include="gameStates.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="simulationEngine.cpp" />
+    <ClCompile Include="stateCloseMenu.cpp" />
+    <ClCompile Include="stateLevelSelect.cpp" />
+    <ClCompile Include="stateLoginMenu.cpp" />
+    <ClCompile Include="stateRegisterMenu.cpp" />
+    <ClCompile Include="stateStartMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="board.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameEngine.h" />
-    <ClInclude Include="gameStates.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="level.h" />
@@ -158,6 +161,11 @@
     <ClInclude Include="resources.h" />
     <ClInclude Include="simulationEngine.h" />
     <ClInclude Include="state.h" />
+    <ClInclude Include="stateCloseMenu.h" />
+    <ClInclude Include="stateLevelSelect.h" />
+    <ClInclude Include="stateLoginMenu.h" />
+    <ClInclude Include="stateRegisterMenu.h" />
+    <ClInclude Include="stateStartMenu.h" />
     <ClInclude Include="task.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>

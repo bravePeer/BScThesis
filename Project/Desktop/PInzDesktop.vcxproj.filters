@@ -19,28 +19,58 @@
     <Filter Include="Pliki nagłówkowe\Simulating">
       <UniqueIdentifier>{f317bace-9065-492c-b6c3-239e8d4e8a2a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\Levels">
+      <UniqueIdentifier>{1dfa3663-4120-479a-94a8-92835cacf712}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\Levels">
+      <UniqueIdentifier>{2d782058-38e8-4bb8-9315-b3d0dd297eeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\Simulating">
+      <UniqueIdentifier>{cac8a23d-3efa-413e-8a0e-90475c86dffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\Graphics">
+      <UniqueIdentifier>{97892745-8b34-498e-bceb-4e4e4d4db4d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\Graphics">
+      <UniqueIdentifier>{f7ff0909-690e-48bb-b9f3-22eb48bb419e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\GameStates">
+      <UniqueIdentifier>{f5020f5f-e1e5-4ddf-8943-2afa4ef86c37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="gameStates.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="logger.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="gameEngine.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="level.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>Pliki źródłowe\Levels</Filter>
     </ClCompile>
     <ClCompile Include="simulationEngine.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>Pliki źródłowe\Simulating</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics.cpp">
+      <Filter>Pliki źródłowe\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="stateCloseMenu.cpp">
+      <Filter>Pliki źródłowe\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="stateLevelSelect.cpp">
+      <Filter>Pliki źródłowe\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="stateLoginMenu.cpp">
+      <Filter>Pliki źródłowe\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="stateRegisterMenu.cpp">
+      <Filter>Pliki źródłowe\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="stateStartMenu.cpp">
+      <Filter>Pliki źródłowe\GameStates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,13 +80,7 @@
     <ClInclude Include="logger.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="gui.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="utilities.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="board.h">
@@ -65,26 +89,44 @@
     <ClInclude Include="component.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="resources.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="task.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="state.h">
       <Filter>Pliki nagłówkowe\GameStates</Filter>
     </ClInclude>
-    <ClInclude Include="gameStates.h">
-      <Filter>Pliki nagłówkowe\GameStates</Filter>
-    </ClInclude>
-    <ClInclude Include="level.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="simulationEngine.h">
       <Filter>Pliki nagłówkowe\Simulating</Filter>
+    </ClInclude>
+    <ClInclude Include="level.h">
+      <Filter>Pliki nagłówkowe\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="task.h">
+      <Filter>Pliki nagłówkowe\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="gui.h">
+      <Filter>Pliki nagłówkowe\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics.h">
+      <Filter>Pliki nagłówkowe\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="resources.h">
+      <Filter>Pliki nagłówkowe\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Pliki nagłówkowe\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="stateLevelSelect.h">
+      <Filter>Pliki nagłówkowe\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="stateRegisterMenu.h">
+      <Filter>Pliki nagłówkowe\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="stateLoginMenu.h">
+      <Filter>Pliki nagłówkowe\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="stateCloseMenu.h">
+      <Filter>Pliki nagłówkowe\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="stateStartMenu.h">
+      <Filter>Pliki nagłówkowe\GameStates</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

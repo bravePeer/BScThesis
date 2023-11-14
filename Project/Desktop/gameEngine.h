@@ -2,11 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
-//#include "settings.h"
-#include "gameStates.h"
 #include "utilities.h"
 #include "game.h"
 #include "Logger.h"
+#include "stateStartMenu.h"
 
 using namespace sf;
 

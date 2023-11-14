@@ -5,6 +5,8 @@
 #include "task.h"
 #include "component.h"
 #include "simulationEngine.h"
+#include "state.h"
+#include "level.h"
 
 /*
 
@@ -126,7 +128,7 @@ public:
 				delete simulationEngine;
 			simulationEngine = new SimulationEngine();
 			simulationEngine->simulate();
-			currentLevel->
+			
 		}	
 	}
 	void Render(RenderTarget* target)
