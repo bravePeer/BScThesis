@@ -83,6 +83,16 @@ void Level::setCheckSimulation(std::function<void(Board*)> checkSimulation)
 	this->checkSimulation = checkSimulation;
 }
 
+void Level::setCheckBoard(std::function<bool(Board*)> checkBoardFun)
+{
+	this->checkBoardFun = checkBoardFun;
+}
+
+bool Level::checkBoard(Board* board)
+{
+	return checkBoardFun(board);
+}
+
 void Level::load()
 {
 	components = genComponents(&componentCount);

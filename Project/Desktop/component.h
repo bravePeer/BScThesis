@@ -5,8 +5,11 @@
 class Component
 {
 public:
-	enum class ComponentType {
+	enum class ComponentTypePackage {
 		SMD, THT
+	};
+	enum class CompoenetType {
+		compoenet, goldpin, resistor, led
 	};
 	Component()
 	{
@@ -17,8 +20,8 @@ public:
 		padsCount = 0;
 		padsPos = nullptr;
 	}
-	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture, ComponentType type, bool removable = true)
-		:name(name), description(description), tileSize(tileSize), padsCount(padsCount),componentType(type), removable(removable)
+	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture, ComponentTypePackage type, bool removable = true)
+		:name(name), description(description), tileSize(tileSize), padsCount(padsCount),componentTypePackage(type), removable(removable)
 	{
 
 		sprite.setTexture(texture);
@@ -128,13 +131,18 @@ public:
 		return padsPos;
 	}
 
+	CompoenetType getComponentType()
+	{
+		return componentType;
+	}
+
 	bool isRemovable()
 	{
 		return removable;
 	}
-	ComponentType getComponentType() 
+	ComponentTypePackage getComponentTypePackage() 
 	{
-		return componentType;
+		return componentTypePackage;
 	}
 	std::string& getSimName()
 	{
@@ -158,9 +166,6 @@ private:
 		return (m % 2 == 0) ? (m - 1) * IMAGE_TILE_LENGTH + IMAGE_TILE_LENGTH / 2 : (m - 1) * IMAGE_TILE_LENGTH;
 	}
 
-	wstring name;
-	wstring description;
-
 	Vector2i tileSize; //dimension in tiles
 	int padsCount;
 	Vector2i* padsPos; //local coords
@@ -173,55 +178,93 @@ private:
 	int rotation = Rotation::S;
 
 	bool removable;
-	ComponentType componentType;
+	ComponentTypePackage componentTypePackage;
 
 	protected:
+	wstring name;
+	wstring description;
 	std::string componentSimName;
 	std::string componentId;
+
+	CompoenetType componentType;
 };
 
 class Goldpin : public Component
 {
 public:
-	Goldpin(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentType type, bool removable = true)
+	Goldpin(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentTypePackage type, bool removable = true)
 		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable)
 	{
 		componentSimName = "goldpin";
+		componentType = CompoenetType::goldpin;
 	}
 private:
 };
 
-//class LedDiode : public Component
-//{
-//public:
-//	LedDiode(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite, Vector2u spriteSize)
-//		:Component(name, description, tileSize, padsCount, padsPos, sprite, spriteSize)
-//	{
-//
-//	}
-//private:
-//};
+class LedDiode : public Component
+{
+public:
+	LedDiode(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentTypePackage type, bool removable = true)
+		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable)
+	{
+		if (name.length() == 0)
+			this->name = L"Dioda LED";
+		if (description.length() == 0)
+			this->description = L"Pod wp³ywem przep³ywu pr¹du œwieci. Posiada polaryzacjê - pr¹d p³ynie w jedn¹ stronê.";
+
+		componentType = CompoenetType::led;
+		componentSimName = "_app\\\\appled";
+		componentId = "led" + to_string(componentsCount);
+	}
+	LedDiode(LedDiode* ledDiode)
+		:Component(ledDiode)
+	{
+		componentType = CompoenetType::led;
+		componentSimName = "_app\\\\appled";
+		componentId = "led" + to_string(componentsCount);
+		componentsCount++;
+	}
+
+	static void resetComponentCounter()
+	{
+		componentsCount = 0;
+	}
+private:
+	static int componentsCount;
+};
 
 //Change to static in class
-static int componentsCount = 0;
+
 class Resistor : public Component
 {
 public:
-	Resistor(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture, ComponentType type, bool removable = true)
+	Resistor(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture, ComponentTypePackage type, bool removable = true)
 		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable)
 	{
+		if (name.length() == 0)
+			this->name = L"Opornik";
+		if (description.length() == 0)
+			this->description = L"Ogranicza p³yn¹cy pr¹d, zamienia czêœæ energii elektrycznje w ciep³o";
+
+		componentType = CompoenetType::resistor;
 		componentSimName = "_app\\\\appres";
 		componentId = "res" + to_string(componentsCount);
 	}
 	Resistor(Resistor* resistor)
 		:Component(resistor)
 	{
+		componentType = CompoenetType::resistor;
 		componentSimName = "_app\\\\appres";
 		componentId = "res" + to_string(componentsCount);
 		componentsCount++;
 	}
 	
+	static void resetComponentCounter()
+	{
+		componentsCount = 0;
+	}
 private:
+	static int componentsCount;
 };
 
 //class Capacitor : public Component

@@ -12,6 +12,7 @@
 #include "stateRegisterMenu.h"
 #include "stateStartMenu.h"
 #include "game.h"
+#include "levelsToLoad.h"
 
 class LevelSelect : public State
 {

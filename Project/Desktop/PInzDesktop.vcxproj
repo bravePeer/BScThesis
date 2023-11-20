@@ -137,9 +137,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="component.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="gameEngine.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="level.cpp" />
+    <ClCompile Include="levelsToLoad.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="simulationEngine.cpp" />
@@ -157,6 +160,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="level.h" />
+    <ClInclude Include="levelsToLoad.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="resources.h" />
     <ClInclude Include="simulationEngine.h" />
@@ -168,6 +172,9 @@
     <ClInclude Include="stateStartMenu.h" />
     <ClInclude Include="task.h" />
     <ClInclude Include="utilities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="levels.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

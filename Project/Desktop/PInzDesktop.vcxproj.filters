@@ -72,6 +72,15 @@
     <ClCompile Include="stateStartMenu.cpp">
       <Filter>Pliki źródłowe\GameStates</Filter>
     </ClCompile>
+    <ClCompile Include="levelsToLoad.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="component.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>Pliki źródłowe\GameStates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameEngine.h">
@@ -128,5 +137,11 @@
     <ClInclude Include="stateStartMenu.h">
       <Filter>Pliki nagłówkowe\GameStates</Filter>
     </ClInclude>
+    <ClInclude Include="levelsToLoad.h">
+      <Filter>Pliki nagłówkowe\Levels</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="levels.md" />
   </ItemGroup>
 </Project>

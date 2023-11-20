@@ -25,9 +25,14 @@ public:
 	Component** getComponents();
 	int getComponentsCount();
 
+	//Add simulation
 	void setCheckSimulation(std::function<void(Board*)> checkSimulation);
 	//getConditions
 
+	void setCheckBoard(std::function<bool(Board*)> checkBoardFun);
+	bool checkBoard(Board* board);
+
+	//Loads components to memory
 	void load();
 private:
 	sf::String id;
@@ -47,4 +52,5 @@ private:
 	int componentCount;
 
 	std::function<void(Board*)> checkSimulation;
+	std::function<bool(Board*)> checkBoardFun;
 };

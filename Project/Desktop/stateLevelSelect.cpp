@@ -12,25 +12,26 @@ LevelSelect::LevelSelect(Resources* res)
 	loadSaveButton = new Button({});
 	startNewSaveButton = new Button();
 
-	levelsCount = 2;
-	levels = new Level * [2];
-	levels[0] = new Level(L"T0", L"Test0", "Testowy opis blaaaaaaaaaaaaaaaaaawdawdawd\ndawdawdawd\nawd", false);
-	levels[1] = new Level(L"T2", L"Test1", "Testowy opawdawdawdawdawis", false);
+	levelsCount = 3;
+	levels = new Level * [3];
+	levels[0] = loadLevel0();
+	levels[1] = new Level(L"T0", L"Test0", "Testowy opis blaaaaaaaaaaaaaaaaaawdawdawd\ndawdawdawd\nawd", false);
+	levels[2] = new Level(L"T2", L"Test1", "Testowy opawdawdawdawdawis", false);
+	
 	Level** tmp = new Level * [1];
 	tmp[0] = levels[0];
 	levels[1]->setPrevLevels(tmp, 1);
 
-	levels[0]->setGenerateComponents([](int* componentsCount)->Component** {
-		//Tu kontynuuj jutro
+	levels[1]->setGenerateComponents([](int* componentsCount)->Component** {
 		Component** components = new Component * [4];
 		Vector2i* tmp = new Vector2i[2];
 		tmp[0].x = 0;
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorTexture(), Component::ComponentType::SMD);
-		components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorTexture(), Component::ComponentType::SMD);
-		components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture(), Component::ComponentType::SMD);
+		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorTexture(), Component::ComponentTypePackage::SMD);
+		components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorTexture(), Component::ComponentTypePackage::SMD);
+		components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture(), Component::ComponentTypePackage::SMD);
 		delete[] tmp;
 		*componentsCount = 3;
 		return components;
@@ -40,6 +41,7 @@ LevelSelect::LevelSelect(Resources* res)
 	levelButtons = new Button * [levelsCount];
 	levelButtons[0] = new Button({ 200,70 }, { 10,100 }, res->GetFont(), levels[0]->getName());
 	levelButtons[1] = new Button({ 200,70 }, { 250,100 }, res->GetFont(), levels[1]->getName());
+	levelButtons[2] = new Button({ 200,70 }, { 400,100 }, res->GetFont(), levels[1]->getName());
 
 
 	const Vector2i& windowSize = Config::getInstance()->getWindowDimension();

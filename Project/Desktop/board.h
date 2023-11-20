@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "component.h"
 #include <fstream>
+#include <map>
 
 //#define TILE_LENGTH 64
 //#define TILE_WIDTH 32
@@ -470,9 +471,9 @@ public:
 		{
 			Vector2i buf = component->getBoardPosition() + padsPos[i];
 
-			if(component->getComponentType() == Component::ComponentType::SMD)
+			if(component->getComponentTypePackage() == Component::ComponentTypePackage::SMD)
 				boardTiles[buf.x + buf.y * length].setState(Tile::TileState::SMD_PAD);
-			else if (component->getComponentType() == Component::ComponentType::THT)
+			else if (component->getComponentTypePackage() == Component::ComponentTypePackage::THT)
 				boardTiles[buf.x + buf.y * length].setState(Tile::TileState::THT_PAD);
 		} 
 
@@ -501,9 +502,9 @@ public:
 		{
 			Vector2i buf = pos;
 
-			if (component->getComponentType() == Component::ComponentType::SMD)
+			if (component->getComponentTypePackage() == Component::ComponentTypePackage::SMD)
 				boardTiles[buf.x + buf.y * length].setState(Tile::TileState::SMD_PAD);
-			else if (component->getComponentType() == Component::ComponentType::THT)
+			else if (component->getComponentTypePackage() == Component::ComponentTypePackage::THT)
 				boardTiles[buf.x + buf.y * length].setState(Tile::TileState::THT_PAD);
 		}
 
@@ -562,6 +563,29 @@ public:
 		}*/
 	}
 	
+	map<Component::CompoenetType, int> getComponentsCount()
+	{
+		map<Component::CompoenetType, int> componentsCount;
+
+		for (Component* component: components)
+		{
+			Component::CompoenetType componentType = component->getComponentType();
+			
+			map<Component::CompoenetType, int>::iterator it = componentsCount.find(componentType);
+			if (it == componentsCount.end())
+			{
+				componentsCount[componentType] = 1;
+			}
+			else
+			{
+				componentsCount[componentType]++;
+			}
+			cout << componentsCount[componentType] << endl;
+		}
+
+		return componentsCount;
+	}
+
 	void setHideComponent(bool hide)
 	{
 		hideComponents = hide;
@@ -575,7 +599,7 @@ public:
 	void saveBoard()
 	{
 		logger->Info("Create save file");
-		std::fstream file("save.asc", ios::out);
+		std::fstream file("save/save.asc", ios::out);
 		if (!file.good())
 			throw L"Can't create savefile!";
 
