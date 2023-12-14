@@ -13,6 +13,10 @@ Level::Level()
 
 	prevLevels = nullptr;
 	prevLevelsCount = 0;
+	pathToSave = "";
+
+	componentCount = 0;
+	components = nullptr;
 }
 
 Level::Level(sf::String id, sf::String name, sf::String desc, bool realized)
@@ -20,6 +24,10 @@ Level::Level(sf::String id, sf::String name, sf::String desc, bool realized)
 {
 	nextLevels = nullptr;
 	prevLevels = nullptr;
+	pathToSave = "";
+
+	componentCount = 0;
+	components = nullptr;
 }
 
 Level::~Level()
@@ -43,7 +51,7 @@ sf::String& Level::getDesc()
 	return desc;
 }
 
-bool Level::isRealized()
+const bool Level::isRealized() const
 {
 	return realized;
 }
@@ -96,4 +104,14 @@ bool Level::checkBoard(Board* board)
 void Level::load()
 {
 	components = genComponents(&componentCount);
+}
+
+void Level::setPathToSave(std::string path)
+{
+	pathToSave = path;
+}
+
+const std::string& Level::getPathToSave()
+{
+	return pathToSave;
 }

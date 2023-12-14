@@ -8,6 +8,7 @@
 #include "state.h"
 #include "level.h"
 #include "stateLevelSelect.h"
+#include  "boardSave.h"
 
 /*
 
@@ -27,7 +28,7 @@ class MainGame: public State
 {
 public:
 	MainGame() = delete;
-	MainGame(Resources* res, Level* level = nullptr);
+	MainGame(Resources* res, Level* level = nullptr, bool loadExistingLevel = false);
 	~MainGame();
 	
 	void AddLetter(wchar_t s) { }
@@ -59,9 +60,7 @@ private:
 	void renderTaskSection(RenderTarget* target);
 	
 
-	Task* testTask;
-	/*sf::Text* taskName;
-	sf::Text* taskDescription;*/
+	Task* testTask;  	
 	TextBox* taskName;
 	TextBox* taskDescription;
 	
@@ -87,10 +86,7 @@ private:
 	//-----------------------------------------
 	inline void initComponentSection(Resources* res);
 	
-	inline void destroyComponentSection()
-	{
-		//delete selectionComponent;
-	}
+	inline void destroyComponentSection();
 	inline void updateComponentSection(RenderWindow* window, Time* elapsed);
 	inline void renderComponentSection(RenderTarget* target)
 	{
@@ -142,10 +138,8 @@ private:
 	
 	inline void renderBoardSection(RenderTarget* target);
 
-
 	Board* board;
 	Component* addComponent = nullptr;
-	Component* selectedComponentTmp = nullptr;
 
 	//-----------------------------------------
 	// INFO near mouse

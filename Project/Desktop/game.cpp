@@ -1,6 +1,6 @@
 #include "game.h"
 
-MainGame::MainGame(Resources* res, Level* level)
+MainGame::MainGame(Resources* res, Level* level, bool loadExistingLevel)
 	:res(res)
 {
 	logger = new Logger("Game");
@@ -16,27 +16,7 @@ MainGame::MainGame(Resources* res, Level* level)
 	level->load();
 	components = level->getComponents();
 	componentsCount = level->getComponentsCount();
-	/*components = new Component * [4];
-	Vector2i* tmp = new Vector2i[2];
-	tmp[0].x = 0;
-	tmp[0].y = 0;
-	tmp[1].x = 1;
-	tmp[1].y = 0;
-	components[0] = new Component(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getResistorTexture(), Component::ComponentTypePackage::SMD);
-	components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getCapacitorTexture(), Component::ComponentTypePackage::SMD);
-	components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance()->getDiodeTexture(), Component::ComponentTypePackage::SMD);
-	delete[] tmp;*/
 
-	//load board settings from level
-	Vector2i* tmp = new Vector2i[1];
-	tmp[0].x = 0;
-	tmp[0].y = 0;
-	components[3] = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT);
-	Component* pinV = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
-	Component* pinGND = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
-	delete[] tmp;
-
-	//addLedDiode = new Button({ 100.f,50.f }, { 120.f, 750.f }, res->GetFont(), L"LED");
 
 	//Info section
 	selectedComponent = new TextBox({ 200.f, 100.f }, { 1200.f, 700.f }, res->GetFont(), L"Opis komponentu");
@@ -50,11 +30,39 @@ MainGame::MainGame(Resources* res, Level* level)
 	addComponent = nullptr;
 
 
-	Vector2i pinPos = { 0, 0 };
-	board->placeComponentForce(pinV, pinPos);
-	pinPos.x++;
-	pinGND->rotate();
-	board->placeComponentForce(pinGND, pinPos);
+	if (loadExistingLevel)
+	{
+		board = BoardSave::getInstance()->loadBoard(currentLevel->getPathToSave(), currentLevel);
+		if (board == nullptr)
+		{
+			logger->Info("Creating new save!");
+			loadExistingLevel = !loadExistingLevel;
+		}
+	}
+
+	if(!loadExistingLevel)
+	{
+		//TODO load dimensions from level
+		board = new Board(12, 18, 1);
+		//init board
+		Vector2i* tmp = new Vector2i[1];
+		tmp[0].x = 0;
+		tmp[0].y = 0;
+		Vector2i pinPos = { 0, 0 };
+
+		Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+		Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+		gnd->rotate();
+		delete[] tmp;
+
+		//Vcc
+		board->placeComponentForce(vcc, pinPos);
+
+		//GND
+		pinPos.x++;
+		board->placeComponentForce(gnd, pinPos);
+	}
+
 
 	menuButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1500.f, 0.f), res->GetFont(), L"MENU");
 	helpButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1400.f, 0.f), res->GetFont(), L"Pomoc");
@@ -73,10 +81,9 @@ MainGame::~MainGame()
 
 	delete menuButton;
 	delete helpButton;
+	delete checkButton;
 
-	delete selectedComponent;
-	//delete addLedDiode;
-	delete selectComponent;
+	delete currentLevel;
 
 	delete logger;
 }
@@ -105,17 +112,28 @@ void MainGame::Update(RenderWindow* window, Time* elapsed)
 	checkButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 	if (checkButton->isButtonPressed())
 	{
-		if (!currentLevel->checkBoard(board))
+		try
 		{
-			logger->Info("Wrong connections or components number!");
-			return;
+			if (!currentLevel->checkBoard(board))
+			{
+				logger->Info("Wrong connections or components number!");
+				return;
+			}
+			else
+				logger->Info("Good components number");
 		}
-
-		board->saveBoard();
+		catch (const std::string& info)
+		{
+			logger->Info(info);
+		}
+		
+		BoardSave::getInstance()->saveBoard(board, "save.asc");
+		
 		//if (simulationEngine != nullptr)
 			//delete simulationEngine;
-		//simulationEngine = new SimulationEngine();
-		//simulationEngine->simulate();
+		if(simulationEngine == nullptr)
+			simulationEngine = new SimulationEngine();
+		simulationEngine->simulate();
 	}
 }
 
@@ -141,13 +159,11 @@ void MainGame::Render(RenderTarget* target)
 inline void MainGame::initTaskSection(Resources* res)
 {
 	//loadTask
-	testTask = new Task(L"Zadanie testowe", L"Zadanie s³u¿¹ce \ndo przetestowania dzia³ania");
-
 	const Vector2f sectionPos = Config::getInstance()->getSectionConfig(Config::SectionConfig::TaskSection).getPosition();
 	const Vector2f sectionSize = Config::getInstance()->getSectionConfig(Config::SectionConfig::TaskSection).getSize();
 
-	taskName = new TextBox({ 400.f, 50.f }, sectionPos, res->GetFont(), testTask->getName());
-	taskDescription = new TextBox(sectionSize - Vector2f(0, 60), sectionPos + Vector2f(0.f, 60.f), res->GetFont(), testTask->getDescription());
+	taskName = new TextBox({ 400.f, 50.f }, sectionPos, res->GetFont(), currentLevel->getName());
+	taskDescription = new TextBox(sectionSize - Vector2f(0, 60), sectionPos + Vector2f(0.f, 60.f), res->GetFont(), currentLevel->getDesc());
 }
 
 inline void MainGame::destroyTaskSection()
@@ -238,13 +254,6 @@ inline void MainGame::initComponentSection(Resources* res)
 	{
 		addingComponents[i] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[i]->getName());
 	}
-	/*addingComponents[0] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
-	addingComponents[1] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
-	addingComponents[2] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[2]->getName());
-	addingComponents[3] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
-	addingComponents[4] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
-	addingComponents[5] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());
-	addingComponents[6] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[1]->getName());	*/
 	selectComponent = new SelectBox(
 		Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize(),
 		Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
@@ -255,9 +264,18 @@ inline void MainGame::initComponentSection(Resources* res)
 		Color(255, 10, 80, 50),
 		addingComponents,
 		componentsCount);
+}
 
-	//selectionComponent = new TextBox({ 350.f, 50.f }, { 10.f, 700.f }, res->GetFont(), L"Wybierz komponent elektroniczny");
+inline void MainGame::destroyComponentSection()
+{
+	for (int i = 0; i < componentsCount; i++)
+	{
+		delete addingComponents[i];
+	}
+	delete[] addingComponents;
 
+	delete selectedComponent;
+	delete selectComponent;
 }
 
 inline void MainGame::updateComponentSection(RenderWindow* window, Time* elapsed)
@@ -274,6 +292,8 @@ inline void MainGame::updateComponentSection(RenderWindow* window, Time* elapsed
 			logger->Info("Selected " + to_string(selectedComponentId) + "component");
 			if (dynamic_cast<Resistor*>(components[selectedComponentId]))
 				addComponent = new Resistor(dynamic_cast<Resistor*>(components[selectedComponentId]));
+			else if (dynamic_cast<LedDiode*>(components[selectedComponentId]))
+				addComponent = new LedDiode(dynamic_cast<LedDiode*>(components[selectedComponentId]));
 			else
 				addComponent = new Component(components[selectedComponentId]);
 			selectComponent->ResetSelection();
@@ -286,7 +306,7 @@ inline void MainGame::updateComponentSection(RenderWindow* window, Time* elapsed
 
 inline void MainGame::initBoardSection()
 {
-	board = new Board(12, 18, 1);
+	/*board = new Board(12, 18, 1);*/
 
 	updateBoardSection = &MainGame::updateBoardSectionIdle;
 }

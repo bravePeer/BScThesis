@@ -112,10 +112,14 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 	if (levelInfoState == LevelInfoState::Active)
 	{
 		loadSaveButton->Update(mousePos);
+		if (loadSaveButton->isButtonPressed())
+		{
+			nextState = new MainGame(res, startLevel, true);
+		}
+
 		startNewSaveButton->Update(mousePos);
 		if (startNewSaveButton->isButtonPressed())
 		{
-
 			nextState = new MainGame(res, startLevel);
 		}
 

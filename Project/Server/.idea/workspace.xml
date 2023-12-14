@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="092593bc-7884-497c-ba4e-154d1fe16c02" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../.$plan.drawio.bkp" beforeDir="false" afterPath="$PROJECT_DIR$/../../.$plan.drawio.bkp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/PInzDesktop.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/PInzDesktop.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/SimulationEngine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/SimulationEngine.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/SimulationEngine.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/SimulationEngine.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/board.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/board.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/component.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/component.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/game.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/game.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/game.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/graphics.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/graphics.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/level.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/level.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/level.h" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/level.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/levelsToLoad.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/levelsToLoad.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/save/save.asc" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/save/save.asc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Desktop/stateLevelSelect.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../Desktop/stateLevelSelect.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Thesis/sprawozdanie Bartłomiej Gojowczyk.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../../Thesis/sprawozdanie Bartłomiej Gojowczyk.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Thesis/sprawozdanie Bartłomiej Gojowczyk.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../../Thesis/sprawozdanie Bartłomiej Gojowczyk.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Thesis/szablon.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../../Thesis/szablon.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../plan.drawio" beforeDir="false" afterPath="$PROJECT_DIR$/../../plan.drawio" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="2Z7iz0VVRjSru6ce7uRC6atRSF0" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "future-game-states",
+    "last_opened_file_path": "D:/___Studia___/_PracaInzynierska_/BScThesis/Project/Server/backend",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="092593bc-7884-497c-ba4e-154d1fe16c02" name="Changes" comment="" />
+      <created>1701779778474</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1701779778474</updated>
+      <workItem from="1701779779922" duration="15000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

@@ -1,0 +1,14 @@
+CREATE TABLE `Users` (
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+	`login` VARCHAR(256) UNIQUE,
+	`password` VARCHAR(256)
+
+); 
+
+CREATE TABLE `Saves` (
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+	`userId` INT UNIQUE, 
+	`savedata` MEDIUMBLOB,
+	
+	FOREIGN KEY (userId) REFERENCES Users(id)
+);

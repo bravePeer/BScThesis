@@ -137,6 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="board.cpp" />
+    <ClCompile Include="boardSave.cpp" />
     <ClCompile Include="component.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameEngine.cpp" />
@@ -154,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="board.h" />
+    <ClInclude Include="boardSave.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameEngine.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="stateRegisterMenu.h" />
     <ClInclude Include="stateStartMenu.h" />
     <ClInclude Include="task.h" />
+    <ClInclude Include="tile.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>
   <ItemGroup>

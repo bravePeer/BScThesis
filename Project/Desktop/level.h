@@ -15,7 +15,7 @@ public:
 	sf::String& getName();
 	sf::String& getDesc();
 	
-	bool isRealized();
+	const bool isRealized() const ;
 	bool canRealize();
 
 	//void setNextLevels(Level** levels); //moze nie potrzebne
@@ -34,6 +34,9 @@ public:
 
 	//Loads components to memory
 	void load();
+
+	void setPathToSave(std::string path);
+	const std::string& getPathToSave();
 private:
 	sf::String id;
 	sf::String name;
@@ -53,4 +56,6 @@ private:
 
 	std::function<void(Board*)> checkSimulation;
 	std::function<bool(Board*)> checkBoardFun;
+
+	std::string pathToSave;
 };
