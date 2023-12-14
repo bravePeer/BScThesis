@@ -82,6 +82,10 @@ public:
 	{
 		return shape.getPosition();
 	}
+	const bool isButtonPressed()
+	{
+		return (buttonState == ButtonStates::PRESSED) ? true : false;
+	}
 	unsigned short GetButtonState()
 	{
 		return buttonState;
@@ -184,6 +188,8 @@ public:
 		text.setPosition(
 			shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f,
 			shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - text.getGlobalBounds().height / 2.f);
+
+		defaultString = _text;
 	}
 	~InputBox()
 	{}
@@ -199,6 +205,7 @@ public:
 	virtual void AddLetter(wchar_t s)
 	{
 		if (inputBoxState == PRESSED)
+		{
 			if (s == 8)
 			{
 				if (typed.getSize())
@@ -210,13 +217,15 @@ public:
 			{
 				typed += s;
 			}
-		text.setString(typed);
-		text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
-
+			if (typed.getSize() == 0)
+				text.setString(defaultString);
+			else
+				text.setString(typed);
+			text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
+		}
 	}
-	void Update(const Vector2f mousePos)
+	void Update( const Vector2f mousePos)
 	{
-
 		if (shape.getGlobalBounds().contains(mousePos))
 		{
 			if (inputBoxState == IDLE)
@@ -244,6 +253,12 @@ public:
 			break;
 		}
 
+		if (inputBoxState == PRESSED)
+		{
+			/*if(sf::Keyboard::isKeyPressed())*/
+		}
+	
+
 	}
 	void Render(RenderTarget* target)
 	{
@@ -258,8 +273,11 @@ protected:
 	String typed;
 
 	Color idleColor, hoverColor, activeColor;
+	Event event;
 
 	unsigned short inputBoxState = IDLE;
+	sf::String defaultString;
+
 };
 
 class InputBoxPassword :public InputBox
@@ -290,6 +308,8 @@ public:
 		text.setPosition(
 			shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f,
 			shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - text.getGlobalBounds().height / 2.f);
+
+		defaultString = _text;
 	}
 	~InputBoxPassword()
 	{}
@@ -305,6 +325,7 @@ public:
 	void AddLetter(wchar_t s)
 	{
 		if (inputBoxState == PRESSED)
+		{
 			if (s == 8)
 			{
 				if (typed.getSize())
@@ -316,15 +337,18 @@ public:
 			{
 				typed += s;
 			}
-		String str = "";
-		for (unsigned short i = 0; i < typed.getSize(); i++)
-		{
-			str += letter;
+			String str = "";
+			for (unsigned short i = 0; i < typed.getSize(); i++)
+			{
+				str += letter;
+			}
+
+			if (typed.getSize() == 0)
+				text.setString(defaultString);
+			else
+				text.setString(str);
+			text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
 		}
-
-		text.setString(str);
-		text.setPosition(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f, text.getPosition().y);
-
 	}
 	void Update(const Vector2f mousePos)
 	{
@@ -365,7 +389,6 @@ public:
 
 private:
 	wchar_t letter;
-
 };
 //Pole do wypisywania tekstu na ekranie
 class TextBox
@@ -479,7 +502,7 @@ public:
 			{
 				if (sumLengthButton + buttons[i]->getSize().x < _size.x)
 				{
-					sumLengthButton += buttons[i]->getSize().x;
+					sumLengthButton += static_cast<int>(buttons[i]->getSize().x);
 					maxAmountButtons++;
 				}
 			}
@@ -564,23 +587,3 @@ private:
 	unsigned short maxAmountButtons;
 	float spaceBetweenButtons;
 };
-
-//Bazowy stan gry w gui.h póki co
-class State
-{
-public:
-	State() {}
-	virtual ~State() {}
-	virtual void AddLetter(wchar_t s) {}
-	virtual State* IsStateChanged()
-	{
-		return nullptr;
-	}
-	virtual void Update(RenderWindow* window, Time* elapsed)
-	{}
-	virtual void Render(RenderTarget* target)
-	{}
-private:
-
-};
-

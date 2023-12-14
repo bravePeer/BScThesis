@@ -85,7 +85,6 @@ public:
 	}
 
 
-
 	void loadResistorGraphic()
 	{
 
@@ -231,7 +230,6 @@ private:
 	Logger* logger;
 };
 
-GraphicAll* GraphicAll::graphicAll = nullptr;
 
 //Zawiera ustawienia aplikacji np. wymiary poszczególnych sekcji i ich pozycje
 class Config
@@ -250,6 +248,11 @@ public:
 			appConfig = new Config;
 
 		return appConfig;
+	}
+
+	const Vector2i& getWindowDimension()
+	{
+		return windowDimension;
 	}
 
 	enum class SectionConfig
@@ -284,7 +287,6 @@ private:
 		sectionRects[static_cast<int>(SectionConfig::InfoSection)] = FloatRect(1200, 700, 400, 200);
 		sectionRects[static_cast<int>(SectionConfig::TaskSection)] = FloatRect(1200, 100, 400, 600);
 		sectionRects[static_cast<int>(SectionConfig::MenuSection)] = FloatRect(1200, 0, 400, 100);
-
 	}
 
 
@@ -292,11 +294,11 @@ private:
 	static Config* appConfig;
 	Logger* logger;
 
-	Vector2i windowDimension = { 1600, 400 };
+	Vector2i windowDimension = { 1600, 900 };
 	FloatRect* sectionRects;
 };
 
-Config* Config::appConfig = nullptr;
+
 
 /*Grafiki do menu i fonty*/
 class Resources
