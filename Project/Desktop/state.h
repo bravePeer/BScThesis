@@ -7,7 +7,7 @@ public:
 	State() :nextState(nullptr) {}
 	virtual ~State() {}
 	virtual void AddLetter(wchar_t s) {}
-	State* IsStateChanged()
+	State* GetNextState()
 	{
 		return nextState;
 	}

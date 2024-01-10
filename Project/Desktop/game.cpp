@@ -88,18 +88,26 @@ MainGame::~MainGame()
 	delete logger;
 }
 
-State* MainGame::IsStateChanged()
-{
-	return nullptr;
-}
-
 void MainGame::Update(RenderWindow* window, Time* elapsed)
 {
 	board->Update(window, elapsed);
 	helpButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
+	/*if (helpButton->isButtonPressed())
+	{
+		popupBox = new PopupBox(res->GetFont(), L"awdawda");
+	}
+	if (popupBox)
+	{
+		popupBox->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
+		if (popupBox->ShouldBeDestroyed())
+			delete popupBox;
+	}*/
+
 	menuButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 	if (menuButton->isButtonPressed())
 	{
+		if(User::getInstance().isLoggedIn())
+			Level::saveRealizedLevel(currentLevel->getId(), 0);
 		nextState = new LevelSelect(res);
 	}
 
@@ -154,6 +162,9 @@ void MainGame::Render(RenderTarget* target)
 	renderInfoNearMouse(target);
 
 	checkButton->Render(target);
+
+	//if (popupBox)
+	//	popupBox->Render(target);
 }
 
 inline void MainGame::initTaskSection(Resources* res)

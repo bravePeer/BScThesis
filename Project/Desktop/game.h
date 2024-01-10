@@ -32,7 +32,6 @@ public:
 	~MainGame();
 	
 	void AddLetter(wchar_t s) { }
-	State* IsStateChanged();
 	void Update(RenderWindow* window, Time* elapsed);
 	
 	void Render(RenderTarget* target);
@@ -48,6 +47,7 @@ private:
 	Button* menuButton;
 	Button* helpButton;
 	Button* checkButton;
+	PopupBox* popupBox;
 
 	//-----------------------------------------
 	// Task section

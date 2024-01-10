@@ -29,6 +29,18 @@ private:
 	InputBox* loginInputBox;
 	InputBoxPassword* passwordInputBox;
 
+	TextBox** textBoxes;
+
+	bool showLoginInfo;
+	TextBox* loginInfo;
+
+	enum TextBoxId
+	{
+		LoginT,
+		PasswordT,
+		CountT
+	};
+
 	enum ButtonId
 	{
 		Login,

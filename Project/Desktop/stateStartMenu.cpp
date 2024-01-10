@@ -1,7 +1,7 @@
 #include "stateStartMenu.h"
 
 //------StartMenu---------
-StartMenu::StartMenu(Resources* res, bool loged)
+StartMenu::StartMenu(Resources* res, bool logged)
 	:res(res)
 {
 
@@ -13,8 +13,17 @@ StartMenu::StartMenu(Resources* res, bool loged)
 	buttons[ButtonId::Exit] = new Button({ 200,50 }, { 200,420 }, res->GetFont(), L"Wyjœcie", Color(255, 0, 0, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
 
 	//if logged sombody
-	updateF = &StartMenu::updateNotLogged;
-	renderF = &StartMenu::renderNotLogged;
+	if (logged)
+	{
+		updateF = &StartMenu::updateLogged;
+		renderF = &StartMenu::renderLogged;
+		User::getInstance().getSavesFile();
+	}
+	else
+	{
+		updateF = &StartMenu::updateNotLogged;
+		renderF = &StartMenu::renderNotLogged;
+	}
 }
 StartMenu::~StartMenu()
 {
@@ -41,15 +50,15 @@ void StartMenu::updateLogged(RenderWindow* window, Time* elapsed)
 
 	buttons[ButtonId::Start]->Update(mousePos);
 	if (buttons[ButtonId::Start]->isButtonPressed())
-		;
+		nextState = new LevelSelect(res);
 
 	buttons[ButtonId::Logout]->Update(mousePos);
 	if (buttons[ButtonId::Logout]->isButtonPressed())
 	{
-		//TODO Logout stufff
+		User::getInstance().logout();
 
-		updateF = &StartMenu::updateNotLogged;//to nie tu bedzie
-		renderF = &StartMenu::renderNotLogged;//to nie tu bedzie
+		updateF = &StartMenu::updateNotLogged;//to nie tu bedzie (new) czemu?
+		renderF = &StartMenu::renderNotLogged;//to nie tu bedzie (new) czemu?
 	}
 
 

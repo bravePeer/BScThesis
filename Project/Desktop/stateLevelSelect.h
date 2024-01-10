@@ -13,6 +13,7 @@
 #include "stateStartMenu.h"
 #include "game.h"
 #include "levelsToLoad.h"
+#include "user.h"
 
 class LevelSelect : public State
 {
@@ -28,8 +29,8 @@ public:
 private:
 	Resources* res;
 
-	Level** levels;
-	int levelsCount;
+	//Level** levels;
+	//int levelsCount;
 
 	Button* backButton;
 	//Button* resetViewButton;
@@ -41,8 +42,12 @@ private:
 	TextBox* levelTitle;
 	TextBox* levelDesc;
 
-	Button** levelButtons;
+	//Button** levelButtons;
 	Level* startLevel;
+	
+	std::map<std::string, Level*> levelsMap;
+	std::map<std::string, Button*> levelButtonsMap;
+	std::map<std::string, RectangleShape*> levelButtonsHoverFilterMap;
 
 	enum class LevelInfoState
 	{

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Logger.h"
+using namespace applogger;
 
 //Dimension on screen
 #define TILE_LENGTH 64
