@@ -9,7 +9,7 @@ Run database:
 	docker run --name mysqlBCsThesis -v bscThesis_db_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d -p 33060:33060 mysql:latest
 
 Go in:
-	docker exec -it mysqlBCsThesis mysql
+		docker exec -it mysqlBCsThesis mysql
 
 Delete container:
 	 docker stop mysqlBCsThesis ; docker rm mysqlBCsThesis
@@ -160,7 +160,6 @@ public:
 
 	bool checkUser(std::string login, std::string pass)
 	{
-
 		try
 		{
 			this->connectDB();
@@ -184,7 +183,41 @@ public:
 
 	bool updateSaves(std::string login, std::string pass)
 	{
-		return true;
+		try
+		{
+			mysqlx::Schema schema = session->getSchema("BScThesisDatabase", true);
+			mysqlx::Table table = schema.getTable("Users");
+			mysqlx::RowResult result = table.select().where("login = :login AND password = :password").bind("login", login).bind("password", pass).execute();
+
+
+			std::fstream file(PATH_TO_SAVES_FOLDER "\\saves", std::ios::in | std::ios::binary);
+
+			std::streampos saveSize = 0;
+			saveSize = file.tellg();
+			file.seekg(0, std::ios::end);
+			saveSize = file.tellg() - saveSize;
+			file.seekg(0, std::ios::beg);
+
+			char* dataRaw = new char[saveSize] {0};
+
+
+			file.read(dataRaw, saveSize);
+			mysqlx::byte* bb = reinterpret_cast<mysqlx::byte*>(&(dataRaw[0]));
+			
+			mysqlx::bytes data(bb, saveSize);
+			
+			schema.getTable("Saves").update().set("savedata", data).where("userId = :userId").bind("userId", result.fetchOne().get(0)).execute();
+
+			delete[] dataRaw;
+			file.close();
+		}
+		catch (const mysqlx::Error& err)
+		{
+			logger->Error(err.what());
+			throw std::string(err.what());
+		}
+
+		return false;
 	}
 
 	bool getSaves(std::string login, std::string pass)

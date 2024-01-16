@@ -7,5 +7,12 @@
 #ifndef PCH_H
 #define PCH_H
 // w tym miejscu dodaj nagłówki, które mają być wstępnie kompilowane
+#include "../Desktop/board.h"
+#include "../Desktop/boardSave.h"
+#include "../Desktop/component.h"
+#include "../Desktop/user.h"
+#include "../Desktop/levelsToLoad.h"
+#include "../Desktop/level.h"
+#include "../Desktop/component.h"
 
 #endif //PCH_H

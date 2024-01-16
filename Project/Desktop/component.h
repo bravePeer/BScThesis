@@ -9,7 +9,7 @@ public:
 		SMD, THT
 	};
 	enum class CompoenetType {
-		compoenet, goldpin, resistor, led
+		compoenet, goldpin, resistor, led, capacitor, microcontroller
 	};
 	Component()
 	{
@@ -158,7 +158,7 @@ public:
 	{
 		return id;
 	}
-private:
+protected:
 	enum Rotation
 	{
 		S, W, N, E
@@ -274,13 +274,86 @@ private:
 	static int componentsCount;
 };
 
-//class Capacitor : public Component
-//{
-//public:
-//	Capacitor(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, Sprite* sprite, Vector2u spriteSize)
-//		:Component(name, description, tileSize, padsCount, padsPos, sprite, spriteSize)
-//	{
-//
-//	}
-//private:
-//};
+class Capacitor : public Component
+{
+public:
+	Capacitor(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentTypePackage type, bool removable = true, std::string id = "")
+		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable, id)
+	{
+		if (name.length() == 0)
+			this->name = L"Kondensator";
+		if (description.length() == 0)
+			this->description = L"Kumuluje ³adunek elektryczny";
+
+		componentType = CompoenetType::capacitor;
+		simSymbol = "_app\\\\appres"; // TODO
+		simName = "res" + to_string(componentsCount) + this->id;
+	}
+	Capacitor(Capacitor* resistor)
+		:Component(resistor)
+	{
+		componentType = CompoenetType::capacitor;
+		simSymbol = "_app\\\\appres";
+		simName = "res" + to_string(componentsCount) + this->id;
+		componentsCount++;
+	}
+	static void resetComponentCounter()
+	{
+		componentsCount = 0;
+	}
+private:
+	static int componentsCount;
+};
+
+class Microcontroller : public Component
+{
+public:
+	Microcontroller(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentTypePackage type, bool removable = true, std::string id = "")
+		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable, id)
+	{
+		if (name.length() == 0)
+			this->name = L"Kondensator";
+		if (description.length() == 0)
+			this->description = L"Kumuluje ³adunek elektryczny";
+
+		componentType = CompoenetType::microcontroller;
+		simSymbol = "_app\\\\appres"; // TODO
+		simName = "res" + to_string(componentsCount) + this->id;
+	}
+	Microcontroller(Microcontroller* resistor)
+		:Component(resistor)
+	{
+		componentType = CompoenetType::microcontroller;
+		simSymbol = "_app\\\\appres";
+		simName = "res" + to_string(componentsCount) + this->id;
+		componentsCount++;
+	}
+	static void resetComponentCounter()
+	{
+		componentsCount = 0;
+	}
+
+	//It shouldnt be like that
+	void Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin)
+	{
+		globalPosition = ScreenPos({ boardPosition.x+1, boardPosition.y +4}, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin;// -Vector2f(spriteSize.y - TILE_WIDTH, 0.f);
+
+		if (rotation % 2 == 1)
+		{
+			globalPosition.x -= getComponentLength() - IMAGE_TILE_LENGTH;
+		}
+
+		int m = max(tileSize.x, tileSize.y);
+		globalPosition.y -= sprite.getTexture()->getSize().y - (TILE_WIDTH + TILE_WIDTH / 2);
+
+		//globalPosition.y = globalPosition.y - (sprite->getTexture()->getSize().y - (m - 1) * TILE_WIDTH); //+(m % 2 == 0) ? TILE_WIDTH / 2 : 0);
+	}
+	void Render(RenderTarget* target)
+	{
+		
+		sprite.setPosition(globalPosition);
+		target->draw(sprite);
+	}
+private:
+	static int componentsCount;
+};

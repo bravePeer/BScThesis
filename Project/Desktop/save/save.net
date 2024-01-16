@@ -1,5 +1,9 @@
 * D:\___Studia___\_PracaInzynierska_\BScThesis\Project\Desktop\save\save.asc
 V1 NC_01 0 12
+res0id0 NC_02 NC_03 1
+D§led0id1 NC_04 NC_05 1
+.model D D
+.lib C:\Users\barte\AppData\Local\LTspice\lib\cmp\standard.dio
 .tran 10
 .backanno
 .end

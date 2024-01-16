@@ -60,6 +60,7 @@ void BoardSave::saveBoard(Board* board, const std::string& path)
 	//Add components
 	for (Component* a : board->components)
 	{
+		cout << "id: " << a->getId() << " sym:" << a->getSimSymbol() << endl;
 		if (a->getSimSymbol() == "goldpin")
 			continue;
 		Vector2i boardPos = a->getBoardPosition();
@@ -156,8 +157,8 @@ Board* BoardSave::loadBoard(const std::string& path, Level* level)
 	tmp[0].y = 0;
 	Vector2i pinPos = { 0, 0 };
 
-	Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
-	Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+	Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+	Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
 	gnd->rotate();
 	delete[] tmp;
 
@@ -201,7 +202,7 @@ Board* BoardSave::loadBoard(const std::string& path, Level* level)
 			file >> value; //value
 
 			//if(simName == "_app\\appres")
-			
+			cout << simName << endl;
 			std::string id = simName.substr(simName.find("id"));
 			for (int i = 0; i < level->getComponentsCount(); i++)
 			{

@@ -7,6 +7,7 @@ Level* loadLevelExampleOfImplemetation();
 Level* loadLevel0();
 
 Level* loadLevelSTART();
+Level* loadLevelTest();
 
 Level* loadLevelRES0();
 Level* loadLevelRES1();

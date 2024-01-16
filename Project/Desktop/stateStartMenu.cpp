@@ -41,6 +41,7 @@ void StartMenu::Update(RenderWindow* window, Time* elapsed)
 
 void StartMenu::Render(RenderTarget* target)
 {
+	target->draw(res->GetDemonstrationSprite());
 	(this->*renderF)(target);
 }
 

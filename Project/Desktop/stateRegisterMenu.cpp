@@ -101,6 +101,8 @@ void RegisterMenu::Update(RenderWindow* window, Time* elapsed)
 
 void RegisterMenu::Render(RenderTarget* target)
 {
+	target->draw(res->GetDemonstrationSprite()); 
+	
 	for (int i = 0; i < ButtonId::Count; i++)
 		buttons[i]->Render(target);
 

@@ -14,9 +14,14 @@ using namespace applogger;
 //#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistor.png"
 #define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistorMirror.png"
 #define CAPACITOR_GRAPHIC_PATH "Resources\\Images\\simplecapacitor.png"
-#define DIODE_GRAPHIC_PATH "Resources\\Images\\simplediode.png"
+//#define DIODE_GRAPHIC_PATH "Resources\\Images\\simplediode.png"
+//#define DIODE_GRAPHIC_PATH "Resources\\Images\\simplediode.png"
+#define DIODE_GRAPHIC_PATH "Resources\\Images\\simpleled.png"
+//#define LED_GRAPHIC_PATH "Resources\\Images\\simpleled.png"
 #define ROUTE_GRAPHIC_PATH "Resources\\Images\\routes.png"
 #define GOLDPIN_GRAPHIC_PATH "Resources\\Images\\goldpins.png"
+#define MICROCONTROLLER_DPAK8_GRAPHIC_PATH "Resources\\Images\\uC_DPAK_8pin.png"
+#define DEMONSTRATION_DPAK8_GRAPHIC_PATH "Resources\\Images\\demonstroation.png"
 
 using namespace sf;
 using namespace std;
@@ -25,12 +30,14 @@ using namespace std;
 class GraphicAll
 {
 public:
-	static GraphicAll* GetInstance()
+	static GraphicAll& GetInstance()
 	{
-		if (graphicAll == nullptr)
+		/*if (graphicAll == nullptr)
 			graphicAll = new GraphicAll();
-
-		return graphicAll;
+		
+		return graphicAll;*/
+		static GraphicAll graphic;
+		return graphic;
 	}
 	~GraphicAll()
 	{
@@ -50,6 +57,7 @@ public:
 		loadCapacitorGraphic();
 		loadDiodeGraphic();
 		loadRouteGraphic();
+		loadMicrocontrollerGraphic();
 		loadGoldpinTexture();
 	}
 
@@ -150,6 +158,24 @@ public:
 		return diodeTexture;
 	}
 
+	void loadMicrocontrollerGraphic()
+	{
+		if (!microcontrollerTexture.loadFromFile(MICROCONTROLLER_DPAK8_GRAPHIC_PATH))
+		{
+			logger->Error("Cant load" MICROCONTROLLER_DPAK8_GRAPHIC_PATH);
+			//isTestGraphicsLoaded = false;
+			return;
+		}
+
+		//capacitorSprite.setTexture(capacitorTexture);
+		logger->Info("Loaded " MICROCONTROLLER_DPAK8_GRAPHIC_PATH ", size:" + to_string(microcontrollerTexture.getSize().x) + " " + to_string(microcontrollerTexture.getSize().y));
+	}
+	const sf::Texture& getMicrocontrollerTexture()
+	{
+		return microcontrollerTexture;
+	}
+
+
 	void loadRouteGraphic()
 	{
 		if (!routeTexture.loadFromFile(ROUTE_GRAPHIC_PATH))
@@ -198,6 +224,7 @@ private:
 
 	static GraphicAll* graphicAll;
 
+	Texture microcontrollerTexture;
 	Texture resistorTexture;
 	//Sprite resistorSprite;
 	Texture capacitorTexture;
@@ -228,7 +255,7 @@ private:
 	Texture routeTexture;
 	Sprite routeSprite;
 
-	Logger* logger;
+	applogger::Logger* logger;
 };
 
 
@@ -337,6 +364,17 @@ public:
 			logger->Info("Successful loaded fonts");
 		else
 			logger->Error("CAN NOT load fonts ");
+
+		if(demonstrationTexture.loadFromFile(DEMONSTRATION_DPAK8_GRAPHIC_PATH))
+			logger->Info("Successful loaded demonstration texture");
+
+		demonstrationSprite.setTexture(demonstrationTexture);
+		demonstrationSprite.setPosition({ 600,150 });
+	}
+
+	Sprite& GetDemonstrationSprite()
+	{
+		return demonstrationSprite;
 	}
 
 	Texture* GetTextBoxTexture()
@@ -379,6 +417,9 @@ private:
 	Texture buttonTexture;
 	Texture buttonSpecificTexture;
 	Texture mainTextBox;
+	
+	Texture demonstrationTexture;
+	Sprite demonstrationSprite;
 	Font font;
 
 	Sprite testSprite;

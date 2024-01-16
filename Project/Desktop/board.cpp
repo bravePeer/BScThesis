@@ -118,6 +118,27 @@ Vector2f& Board::getViewOrigin()
 	return viewOrigin;
 }
 
+void Board::moveViewOrigin(Vector2f offset)
+{
+	viewOrigin += offset;
+
+	Vector2f startPos(0, 0);
+	Vector2f tmpPos = startPos;
+	for (int j = 0; j < width; j++)
+	{
+		for (int i = 0; i < length; i++)
+		{
+			boardTiles[j * length + i].SetPos(ScreenPos({ i,j }, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin);
+			//boardTiles[j * length + i].Move(viewOrigin);
+			tmpPos.x += TILE_LENGTH;
+		}
+		tmpPos.y += TILE_WIDTH / 2.f;
+		tmpPos.x = startPos.x - TILE_LENGTH * (j)-TILE_LENGTH / 2.f;
+	}
+
+	
+}
+
 char Board::tileNighbourDirection(Vector2i pos0, Vector2i pos1)
 {
 	if (pos0.x == pos1.x)

@@ -13,7 +13,7 @@ Level::Level()
 
 	prevLevels = nullptr;
 	prevLevelsCount = 0;
-	pathToSave = "";
+	pathToSave = "save.asc";
 
 	componentCount = 0;
 	components = nullptr;
@@ -152,11 +152,8 @@ void Level::loadRealizedLevels(map<string, Level*>& lev)
 	savedSavesCount.da[1] = data[61];
 	savedSavesCount.da[0] = data[60];
 
-	cout << "Levles count: " << savedSavesCount.data << endl;
-
 	if (savedSavesCount.data == 0)
 		return;
-
 	
 	DataRow saveId = {0};
 	DataRow saveFlags = {0};
@@ -167,34 +164,30 @@ void Level::loadRealizedLevels(map<string, Level*>& lev)
 	for(uint64_t i = 0; i < savedSavesCount.data; i++)
 	{
 		file.read(saveId.da, 8);
-		cout << saveId.da << endl;
 		unsigned int t = file.gcount();
 		if (t != 8)
-			throw  std::string("Bad save file 1! At pos: ") + to_string(pos);
+			throw  std::string("Bad save file! At pos: ") + to_string(pos);
 		pos += 8;
 
 		file.read(saveFlags.da, 1);
 		if (file.gcount() != 1)
-			throw  std::string("Bad save file 2! At pos: ") + to_string(pos);
+			throw  std::string("Bad save file! At pos: ") + to_string(pos);
 		pos += 1;
 
 		file.read(saveSize.da, 8);
 		if (file.gcount() != 8)
-			throw std::string("Bad save file 3! At pos: ") + to_string(pos);
+			throw std::string("Bad save file! At pos: ") + to_string(pos);
 		pos += 8;
 
 		pos += saveSize.data;
 		map<string, Level*>::iterator it = lev.find(string(saveId.da));
 		
 		file.seekg(pos);
-		cout << to_string(pos) << endl;
 
 		if (it == lev.end())
 			continue;
 
 		it->second->realized = 1;
-
-
 	}
 
 	file.close();
@@ -246,15 +239,6 @@ void Level::saveRealizedLevel(std::string levelId, uint8_t flags)
 		//char dataLevelSize[8];
 		DataRow levelSize = { 0 };
 		savesDB.read(levelSize.da, 8);
-
-		/*levelSize.da[7] = dataLevelSize[7];
-		levelSize.da[6] = dataLevelSize[6];
-		levelSize.da[5] = dataLevelSize[5];
-		levelSize.da[4] = dataLevelSize[4];
-		levelSize.da[3] = dataLevelSize[3];
-		levelSize.da[2] = dataLevelSize[2];
-		levelSize.da[1] = dataLevelSize[1];
-		levelSize.da[0] = dataLevelSize[0];*/
 
 		savesDBTemp.write(dataId, 8);
 		savesDBTemp.write(dataFlags, 1);
@@ -325,4 +309,85 @@ void Level::saveRealizedLevel(std::string levelId, uint8_t flags)
 	char cll[1] = { ' ' };
 	savesDBTemp.write(cll, 1);
 	savesDBTemp.close();
+}
+
+void Level::extractRelizedLevel(std::string levelId)
+{
+	std::ifstream file(".\\save\\saves", std::ios::in | std::ios::binary);
+	if (!file.good())
+		throw std::string("Error with save file");
+
+	unsigned int pos = 0;
+
+	char data[64];
+
+	file.read(data, 64);
+	if (file.gcount() != 64)
+		throw  std::string("Bad save file! At pos: ") + to_string(pos);
+	pos += 64;
+
+	DataRow savedSavesCount = { 0 };
+	savedSavesCount.da[3] = data[63];
+	savedSavesCount.da[2] = data[62];
+	savedSavesCount.da[1] = data[61];
+	savedSavesCount.da[0] = data[60];
+
+	if (savedSavesCount.data == 0)
+		return;
+
+	DataRow saveId = { 0 };
+	DataRow saveFlags = { 0 };
+	DataRow saveSize = { 0 };
+	file.seekg(pos);
+
+	bool saveDataFound = false;
+
+	for (uint64_t i = 0; i < savedSavesCount.data; i++)
+	{
+		file.read(saveId.da, 8);
+		unsigned int t = file.gcount();
+		if (t != 8)
+			throw  std::string("Bad save file! At pos: ") + to_string(pos);
+		pos += 8;
+
+		file.read(saveFlags.da, 1);
+		if (file.gcount() != 1)
+			throw  std::string("Bad save file! At pos: ") + to_string(pos);
+		pos += 1;
+
+		file.read(saveSize.da, 8);
+		if (file.gcount() != 8)
+			throw std::string("Bad save file! At pos: ") + to_string(pos);
+		pos += 8;
+
+		if (levelId.find(saveId.da, 0) != std::string::npos)
+		{
+			saveDataFound = true;
+			break;
+		}
+
+		pos += saveSize.data;
+
+		file.seekg(pos);
+	}
+
+	if (!saveDataFound)
+	{
+		file.close();
+		throw std::string("Can't find data to extract!");
+	}
+	
+	std::fstream saveL(".\\save\\save.asc", std::ios::out | std::ios::binary);
+	if (!saveL.good())
+		throw std::string("Can't open save.asc file!");
+	
+	char* dataTem = new char[saveSize.data];
+
+	file.read(dataTem, saveSize.data);
+	saveL.write(dataTem, saveSize.data);
+
+
+	delete[] dataTem;
+	saveL.close();
+	file.close();
 }

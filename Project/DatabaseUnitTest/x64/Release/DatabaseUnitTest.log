@@ -1,8 +1,9 @@
-﻿  DatabaseUnitTest.cpp
-     Trwa tworzenie biblioteki D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\DatabaseUnitTest.lib i obiektu D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\DatabaseUnitTest.exp
+﻿C:\Programs\Visual Studio\Visual Studio 2022\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: Katalog pośredni (x64\Release\) zawiera pliki udostępnione z innego projektu (DatabaseUnitTest.vcxproj). Może to spowodować niepoprawne zachowanie podczas oczyszczania i ponownej kompilacji.
+  DatabaseUnitTest.cpp
+     Trwa tworzenie biblioteki D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\UnitTest.lib i obiektu D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\UnitTest.exp
   Trwa generowanie kodu
-  15 of 693 functions ( 2.2%) were compiled, the rest were copied from previous compilation.
+  2 of 1410 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Zakończono generowanie kodu
-  DatabaseUnitTest.vcxproj -> D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\DatabaseUnitTest.dll
+  DatabaseUnitTest.vcxproj -> D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\UnitTest.dll

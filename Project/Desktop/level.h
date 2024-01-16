@@ -44,6 +44,7 @@ public:
 
 	static void loadRealizedLevels(map<string, Level*>& lev);
 	static void saveRealizedLevel(std::string levelId, uint8_t flags);
+	static void extractRelizedLevel(std::string levelId);
 private:
 	sf::String id;
 	sf::String name;

@@ -83,6 +83,8 @@ void LoginMenu::Update(RenderWindow* window, Time* elapsed)
 
 void LoginMenu::Render(RenderTarget* target)
 {
+	target->draw(res->GetDemonstrationSprite()); 
+	
 	Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition());
 	for (int i = 0; i < ButtonId::Count; i++)
 		buttons[i]->Render(target);

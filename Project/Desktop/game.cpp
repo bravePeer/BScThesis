@@ -5,7 +5,7 @@ MainGame::MainGame(Resources* res, Level* level, bool loadExistingLevel)
 {
 	logger = new Logger("Game");
 	
-	GraphicAll::GetInstance()->LoadGraphic();
+	GraphicAll::GetInstance().LoadGraphic();
 
 	view = new View({ 800,450 }, { 1600, 900 });
 	origin = view->getCenter();
@@ -32,6 +32,7 @@ MainGame::MainGame(Resources* res, Level* level, bool loadExistingLevel)
 
 	if (loadExistingLevel)
 	{
+		Level::extractRelizedLevel(currentLevel->getId());
 		board = BoardSave::getInstance()->loadBoard(currentLevel->getPathToSave(), currentLevel);
 		if (board == nullptr)
 		{
@@ -50,8 +51,8 @@ MainGame::MainGame(Resources* res, Level* level, bool loadExistingLevel)
 		tmp[0].y = 0;
 		Vector2i pinPos = { 0, 0 };
 
-		Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
-		Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance()->getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+		Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+		Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
 		gnd->rotate();
 		delete[] tmp;
 
@@ -106,6 +107,7 @@ void MainGame::Update(RenderWindow* window, Time* elapsed)
 	menuButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 	if (menuButton->isButtonPressed())
 	{
+		BoardSave::getInstance()->saveBoard(board, "save.asc");
 		if(User::getInstance().isLoggedIn())
 			Level::saveRealizedLevel(currentLevel->getId(), 0);
 		nextState = new LevelSelect(res);
@@ -143,6 +145,22 @@ void MainGame::Update(RenderWindow* window, Time* elapsed)
 			simulationEngine = new SimulationEngine();
 		simulationEngine->simulate();
 	}
+
+	const sf::Vector2f moveViewSpeed{50.f,50.f};
+	sf::Vector2f viewOffset{ 0.f,0.f };
+	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+		viewOffset.y = moveViewSpeed.y * elapsed->asSeconds();
+	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
+		viewOffset.y = -moveViewSpeed.y * elapsed->asSeconds();
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+		viewOffset.x = moveViewSpeed.x * elapsed->asSeconds();
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+		viewOffset.x = -moveViewSpeed.x * elapsed->asSeconds();
+	
+	if(viewOffset.x != 0.f || viewOffset.y != 0.f)
+		board->moveViewOrigin(viewOffset);
 }
 
 void MainGame::Render(RenderTarget* target)
@@ -305,6 +323,8 @@ inline void MainGame::updateComponentSection(RenderWindow* window, Time* elapsed
 				addComponent = new Resistor(dynamic_cast<Resistor*>(components[selectedComponentId]));
 			else if (dynamic_cast<LedDiode*>(components[selectedComponentId]))
 				addComponent = new LedDiode(dynamic_cast<LedDiode*>(components[selectedComponentId]));
+			else if (dynamic_cast<Microcontroller*>(components[selectedComponentId]))
+				addComponent = new Microcontroller(dynamic_cast<Microcontroller*>(components[selectedComponentId]));
 			else
 				addComponent = new Component(components[selectedComponentId]);
 			selectComponent->ResetSelection();

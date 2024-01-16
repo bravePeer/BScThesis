@@ -47,7 +47,7 @@ public:
 	const Vector2i getBoardDimension();
 
 	Vector2f& getViewOrigin();
-
+	void moveViewOrigin(Vector2f offset);
 
 	char tileNighbourDirection(Vector2i pos0, Vector2i pos1);
 	void addRoute(Vector2i pos0, Vector2i pos1);
