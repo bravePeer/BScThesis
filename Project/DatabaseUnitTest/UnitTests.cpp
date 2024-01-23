@@ -57,32 +57,27 @@ namespace UnitTest
 			std::string login = "userExists";
 			std::string pass = "pass";
 
+			// Be sure user not exist
 			bool isExists = dc.isUserExists(login);
-			if (isExists)
-			{
+			if (isExists) {
 				dc.removeUser(login, pass);
+				isExists = dc.isUserExists(login);
 			}
-
 			Assert::IsFalse(isExists);
 			
-
-			try
-			{
+			try {
 				Assert::IsTrue(dc.insertUser(login, pass));
 			}
-			catch (const std::string&)
-			{
+			catch (const std::string&) {
 				Microsoft::VisualStudio::CppUnitTestFramework::Logger::WriteMessage("User exists!");
 			}
 
 			Assert::IsTrue(dc.isUserExists(login));
 
-			try
-			{
+			try {
 				Assert::IsTrue(dc.removeUser(login, pass));
 			}
-			catch (const std::string&)
-			{
+			catch (const std::string&) {
 				Microsoft::VisualStudio::CppUnitTestFramework::Logger::WriteMessage("User NOT exists!");
 			}
 		}
@@ -210,6 +205,23 @@ namespace UnitTest
 	};
 	TEST_CLASS(Simulation)
 	{
+		TEST_METHOD(SimpleSimulation)
+		{
+			SimulationEngine sim;
+			sim.simulate();
+			float val = sim.getComponentValue("led0id1");
+			Microsoft::VisualStudio::CppUnitTestFramework::Logger::WriteMessage(to_string(val).c_str());
+			Assert::IsTrue(val != 0.f);
+		}
+		TEST_METHOD(TestLevel)
+		{
+			Level* level = loadLevel0();
+			level->load();
 
+			Component** components = level->getComponents();
+
+			Board* board = new Board(level->getBoardDimension().x, level->getBoardDimension().y, level->getBoardDimension().z);
+			
+		}
 	};
 }

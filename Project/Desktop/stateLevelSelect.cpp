@@ -92,7 +92,7 @@ LevelSelect::LevelSelect(Resources* res)
 	//levelButtons[2] = new Button({ 200,70 }, { 400,100 }, res->GetFont(), levels[1]->getName());
 
 
-	const Vector2i& windowSize = Config::getInstance()->getWindowDimension();
+	const Vector2i& windowSize = Config::getInstance().getWindowDimension();
 	levelInfoState = LevelInfoState::Hidden;
 	levelInfoBox = new RectangleShape({ 7.f * windowSize.x / 16.f,8.f * windowSize.y / 9.f });
 
@@ -178,13 +178,13 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 		loadSaveButton->Update(mousePos);
 		if (loadSaveButton->isButtonPressed())
 		{
-			nextState = new MainGame(res, startLevel, true);
+			nextState = new SolveLevel(res, startLevel, true);
 		}
 
 		startNewSaveButton->Update(mousePos);
 		if (startNewSaveButton->isButtonPressed())
 		{
-			nextState = new MainGame(res, startLevel);
+			nextState = new SolveLevel(res, startLevel);
 		}
 
 		if (!levelInfoBox->getGlobalBounds().contains(mousePos))

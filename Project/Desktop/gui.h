@@ -19,7 +19,7 @@ public:
 		font = nullptr;
 		flag = false;
 	}
-	Button(Vector2f _size, Vector2f _pos, Font* _font = nullptr, String _text = L"", Color _idle = Color(255, 0, 0, 255), Color _hover = Color(249, 0, 110, 255), Color _active = Color(150, 0, 0, 255), Texture* _texture = nullptr)
+	Button(Vector2f _size, Vector2f _pos, Font* _font = nullptr, String _text = L"", Color _idle = Color(79, 199, 79, 255), Color _hover = Color(38, 173, 38, 255), Color _active = Color(31, 146, 31, 255), Texture* _texture = nullptr)
 		:font(_font), idleColor(_idle), hoverColor(_hover), activeColor(_active)
 	{
 		shape.setSize(_size);
@@ -398,7 +398,7 @@ public:
 	{
 		font = nullptr;
 	}
-	TextBox(Vector2f _size, Vector2f _pos, Font* _font, String _text, Color _idle = Color(255, 0, 0, 255), Color _hover = Color(249, 0, 110, 255), Color _active = Color(150, 0, 0, 255), unsigned int _characterSize = 20, Texture* _texture = nullptr)
+	TextBox(Vector2f _size, Vector2f _pos, Font* _font, String _text, Color _idle = Color(79, 199, 79, 255), Color _hover = Color(249, 0, 110, 255), Color _active = Color(150, 0, 0, 255), unsigned int _characterSize = 20, Texture* _texture = nullptr)
 		:font(_font), idleColor(_idle), hoverColor(_hover), activeColor(_active), texture(_texture)
 	{
 		shape.setSize(_size);
@@ -519,12 +519,17 @@ public:
 		}
 
 		selected = -1;
+		hovered = -1;
 	}
 	~SelectBox() { }
 
 	short GetSelected()
 	{
 		return selected;
+	}
+	short GetHovered()
+	{
+		return hovered;
 	}
 	void ResetSelection()
 	{
@@ -534,6 +539,7 @@ public:
 
 	void Update(RenderWindow* window)
 	{
+		hovered = -1;
 		for (unsigned short i = 0; i < maxAmountButtons; i++)
 		{
 			if (i == selected)
@@ -544,10 +550,15 @@ public:
 			buttons[i]->Update(static_cast<Vector2f>(Mouse::getPosition(*window)));
 
 
-
 			if (buttons[i]->GetButtonState() == PRESSED)
 			{
 				selected = i;
+			}
+
+			
+			if (buttons[i]->GetButtonState() == HOVER)
+			{
+				hovered = i;
 			}
 		}
 	}
@@ -582,6 +593,7 @@ private:
 	Button** buttons;
 	unsigned short amountButtons;
 	short selected;
+	short hovered;
 
 	//Max number of buttons inside selectbox rect
 	unsigned short maxAmountButtons;
@@ -602,7 +614,7 @@ public:
 
 		size_t linesCount = _str.find("\n", 0);
 		
-		//Vector2i windowDim = Config::getInstance()->getWindowDimension();
+		//Vector2i windowDim = Config::getInstance().getWindowDimension();
 
 		const Vector2f buttonDim = { 50.f, 50.f };
 

@@ -30,14 +30,21 @@ public:
 	int getComponentsCount();
 
 	//Add simulation
-	void setCheckSimulation(std::function<void(Board*)> checkSimulation);
+	void setCheckSimulation(std::function<bool(Board*)> checkSimulation);
 	//getConditions
 
 	void setCheckBoard(std::function<bool(Board*)> checkBoardFun);
 	bool checkBoard(Board* board);
+	bool checkSimulation(Board* board);
 
 	//Loads components to memory
 	void load();
+
+	void setBoardDimension(sf::Vector3i boardDimension);
+	Vector3i getBoardDimension();
+
+	void setInitBoardFun(std::function<bool(Board*)> initBoardFun);
+	bool initBoard(Board* board);
 
 	void setPathToSave(std::string path);
 	const std::string& getPathToSave();
@@ -60,11 +67,15 @@ private:
 	std::vector<std::string> prevLevelsIds;
 
 	std::function<Component** (int*)> genComponents;
+	std::function<bool(Board*)> initBoardFun;
+
 	Component** components;
 	int componentCount;
 
-	std::function<void(Board*)> checkSimulation;
+	std::function<bool(Board*)> checkSimulationFun;
 	std::function<bool(Board*)> checkBoardFun;
+
+	Vector3i boardDimnesion;
 
 	std::string pathToSave;
 

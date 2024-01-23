@@ -140,7 +140,7 @@
     <ClCompile Include="board.cpp" />
     <ClCompile Include="boardSave.cpp" />
     <ClCompile Include="component.cpp" />
-    <ClCompile Include="game.cpp" />
+    <ClCompile Include="stateSolveLevel.cpp" />
     <ClCompile Include="appEngine.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="level.cpp" />
@@ -158,8 +158,9 @@
     <ClInclude Include="board.h" />
     <ClInclude Include="boardSave.h" />
     <ClInclude Include="component.h" />
+    <ClInclude Include="componentDesc.h" />
     <ClInclude Include="databaseConnector.h" />
-    <ClInclude Include="game.h" />
+    <ClInclude Include="stateSolveLevel.h" />
     <ClInclude Include="appEngine.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="gui.h" />
@@ -174,7 +175,6 @@
     <ClInclude Include="stateLoginMenu.h" />
     <ClInclude Include="stateRegisterMenu.h" />
     <ClInclude Include="stateStartMenu.h" />
-    <ClInclude Include="task.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="user.h" />
     <ClInclude Include="utilities.h" />

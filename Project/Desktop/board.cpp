@@ -97,7 +97,7 @@ Vector2i Board::getHoverTilePos(Vector2i& mouse)
 				return Vector2i(i, j);
 		}
 	}
-	throw sf::String(L"Poza granicami p�ytki");
+	throw sf::String(L"Poza granicami płytki");
 }
 
 Tile& Board::getTile(Vector2i pos)
@@ -323,6 +323,29 @@ map<Component::CompoenetType, int> Board::getComponentsCount()
 			componentsCount[componentType]++;
 		}
 		//cout << componentsCount[componentType] << endl;
+	}
+
+
+	return componentsCount;
+}
+
+map<std::string, int> Board::getComponentsCountById()
+{
+	map<std::string, int> componentsCount;
+
+	for (Component* component : components)
+	{
+		std::string componentType = component->getId();
+
+		map<std::string, int>::iterator it = componentsCount.find(componentType);
+		if (it == componentsCount.end())
+		{
+			componentsCount[componentType] = 1;
+		}
+		else
+		{
+			componentsCount[componentType]++;
+		}
 	}
 
 

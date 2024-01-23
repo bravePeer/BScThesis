@@ -64,6 +64,8 @@ public:
 
 	map<Component::CompoenetType, int> getComponentsCount();
 
+	map<std::string, int> getComponentsCountById();
+
 
 	void setHideComponent(bool hide);
 

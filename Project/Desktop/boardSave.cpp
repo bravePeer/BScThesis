@@ -68,7 +68,7 @@ void BoardSave::saveBoard(Board* board, const std::string& path)
 
 		file << "SYMBOL " << a->getSimSymbol() << " " << to_string(boardPos.x * 16) << " " << to_string(boardPos.y * 16) << " R" << to_string(rotation * 90) << "\n";
 		file << "SYMATTR InstName " << a->getSimName() << "\n";
-		file << "SYMATTR Value " << "1" << "\n";
+		file << "SYMATTR Value " << a->getSimValue() << "\n";
 	}
 
 	//Simulation config

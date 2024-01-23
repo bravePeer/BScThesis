@@ -11,7 +11,7 @@
 #include "stateLoginMenu.h"
 #include "stateRegisterMenu.h"
 #include "stateStartMenu.h"
-#include "game.h"
+#include "stateSolveLevel.h"
 #include "levelsToLoad.h"
 #include "user.h"
 

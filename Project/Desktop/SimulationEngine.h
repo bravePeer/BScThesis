@@ -16,8 +16,10 @@ public:
 	void convertBoard();
 	void simulate();
 
+	float getComponentValue(std::string name, float time = 0);
 	//getComponentValue(componentName, time?)
 
 private:
+	PyObject* moduleMain;
 	Board* board;
 };

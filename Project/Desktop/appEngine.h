@@ -3,7 +3,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include "utilities.h"
-#include "game.h"
+#include "stateSolveLevel.h"
 #include "Logger.h"
 #include "stateStartMenu.h"
 

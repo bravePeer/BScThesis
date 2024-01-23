@@ -17,6 +17,10 @@ Level::Level()
 
 	componentCount = 0;
 	components = nullptr;
+
+	initBoardFun = [](Board* board)->bool {
+		return false;
+		};
 }
 
 Level::Level(sf::String id, sf::String name, sf::String desc, bool realized)
@@ -28,6 +32,29 @@ Level::Level(sf::String id, sf::String name, sf::String desc, bool realized)
 
 	componentCount = 0;
 	components = nullptr;
+
+	boardDimnesion = { 12, 18, 1 };
+
+	initBoardFun = [](Board* board)->bool {
+		Vector2i* tmp = new Vector2i[1];
+		tmp[0].x = 0;
+		tmp[0].y = 0;
+		Vector2i pinPos = { 0, 0 };
+
+		Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+		Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+		gnd->rotate();
+		delete[] tmp;
+
+		//Vcc
+		board->placeComponentForce(vcc, pinPos);
+
+		//GND
+		pinPos.x++;
+		board->placeComponentForce(gnd, pinPos);
+
+		return true;
+		};
 }
 
 Level::~Level()
@@ -101,9 +128,9 @@ int Level::getComponentsCount()
 	return componentCount;
 }
 
-void Level::setCheckSimulation(std::function<void(Board*)> checkSimulation)
+void Level::setCheckSimulation(std::function<bool(Board*)> checkSimulation)
 {
-	this->checkSimulation = checkSimulation;
+	this->checkSimulationFun = checkSimulation;
 }
 
 void Level::setCheckBoard(std::function<bool(Board*)> checkBoardFun)
@@ -114,6 +141,11 @@ void Level::setCheckBoard(std::function<bool(Board*)> checkBoardFun)
 bool Level::checkBoard(Board* board)
 {
 	return checkBoardFun(board);
+}
+
+bool Level::checkSimulation(Board* board)
+{
+	return checkSimulationFun(board);
 }
 
 void Level::load()
@@ -390,4 +422,26 @@ void Level::extractRelizedLevel(std::string levelId)
 	delete[] dataTem;
 	saveL.close();
 	file.close();
+}
+
+void Level::setBoardDimension(sf::Vector3i boardDimension)
+{
+	this->boardDimnesion = boardDimension;
+}
+
+Vector3i Level::getBoardDimension()
+{
+	return this->boardDimnesion;
+}
+
+
+void Level::setInitBoardFun(std::function<bool(Board*)> initBoardFun)
+{
+	this->initBoardFun = initBoardFun;
+}
+
+
+bool Level::initBoard(Board* board)
+{
+	return initBoardFun(board);
 }

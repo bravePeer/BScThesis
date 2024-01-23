@@ -4,7 +4,7 @@ AppEngine::AppEngine()
 {
 	logger = new Logger("\"Engine\"");
 
-	const Vector2i &windowSize = Config::getInstance()->getWindowDimension();
+	const Vector2i &windowSize = Config::getInstance().getWindowDimension();
 	window = new RenderWindow(VideoMode(windowSize.x, windowSize.y, 64), "Praca Inzynierska", Style::Titlebar | Style::Close);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(60);

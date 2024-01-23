@@ -3,18 +3,25 @@
 \usepackage{graphicx}
 \usepackage[center]{caption}
 \usepackage{pdfpages}
+\usepackage{enumitem}
 \setmainfont{Times New Roman}
 
 
 \linespread{1.5}
 
 \renewcommand{\figurename}{Rys.}
-
-
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{subfig}
+% \usepackage{minipa}
 \usepackage{geometry}
 \newgeometry{tmargin=2cm, bmargin=2cm, lmargin=2cm, rmargin=2cm}
 \newcommand{\noaka}{\hspace{-6mm}}
-\newcommand{\aka}{\hspace{1cm}}
+
+%old
+% \newcommand{\aka}{\hspace{1cm}}
+\newcommand{\aka}{\noindent\hspace{1cm}}
+
 \newcommand{\citate}[1]{$^{[\ref{#1}]}$}
 
 \newcounter{questionsCount}
@@ -52,3 +59,38 @@
   tabsize=2
 }
 \lstset{style=mystyle}
+
+
+
+\newcommand{\mycaption}[1]{#1 \\ Źródło: opracowanie własne}
+
+%use cases
+\newenvironment{usecase}{}{}
+\newcommand{\addusecase}[1]{\textbf{Przypadek użycia:} #1\\}
+\newcommand{\addactor}[1]{\textbf{Aktor:} #1\\}
+\newcommand{\adddesc}[1]{\textbf{Opis:} #1\\}
+\newcommand{\addcondition}[1]{\textbf{Warunki wstępne:} #1\\}
+
+\newcommand{\addpath}{\textbf{Przepływ zdarzeń:}}
+
+\newlist{usecases}{enumerate}{3}
+\setlist[usecases, 1]{
+  label=\arabic{usecasesi}.,
+  itemsep=0pt,
+  parsep=0pt,
+  nosep
+}
+
+\setlist[usecases, 2]{
+  label=\arabic{usecasesi}.\alph{usecasesii}.,
+  itemsep=0pt,
+  parsep=0pt,
+  nosep
+}
+
+\setlist[usecases, 3]{
+  label=\arabic{usecasesi}.\alph{usecasesii}.\arabic{usecasesiii}.,
+  itemsep=0pt,
+  parsep=0pt,
+  nosep
+}

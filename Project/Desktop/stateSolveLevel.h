@@ -2,13 +2,14 @@
 #include <SFML/Graphics.hpp>
 #include "gui.h"
 #include "resources.h"
-#include "task.h"
+
 #include "component.h"
 #include "simulationEngine.h"
 #include "state.h"
 #include "level.h"
 #include "stateLevelSelect.h"
 #include  "boardSave.h"
+#include "componentDesc.h"
 
 /*
 
@@ -24,12 +25,12 @@ Aplikacja wymaga logowania, w celu zapisania postêpu gracza.
 //Ka¿de zadanie zawiera opis elementów oraz 
 
 //Main game state
-class MainGame: public State
+class SolveLevel: public State
 {
 public:
-	MainGame() = delete;
-	MainGame(Resources* res, Level* level = nullptr, bool loadExistingLevel = false);
-	~MainGame();
+	SolveLevel() = delete;
+	SolveLevel(Resources* res, Level* level = nullptr, bool loadExistingLevel = false);
+	~SolveLevel();
 	
 	void AddLetter(wchar_t s) { }
 	void Update(RenderWindow* window, Time* elapsed);
@@ -60,10 +61,12 @@ private:
 	void renderTaskSection(RenderTarget* target);
 	
 
-	Task* testTask;  	
 	TextBox* taskName;
 	TextBox* taskDescription;
 	
+	bool showSimulationCheckResponse;
+	TextBox* simulationCheckResponse;
+
 	//-----------------------------------------
 	// Route section - Bottom 
 	//-----------------------------------------
@@ -73,7 +76,7 @@ private:
 	inline void updateRouteSection(RenderWindow* window, Time* elapsed);
 	
 	inline void renderRouteSection(RenderTarget* target);
-
+	ComponentDesc* componentDesc;
 
 	Button* removeComponentButton;
 	Button* moveComponentButotn;
@@ -122,7 +125,7 @@ private:
 
 	inline void destroyBoardSection();
 
-	void (MainGame::* updateBoardSection)(RenderWindow* window, Time* elapsed);
+	void (SolveLevel::* updateBoardSection)(RenderWindow* window, Time* elapsed);
 	void updateBoardSectionIdle(RenderWindow* window, Time* elapsed)
  	{ 
 		//Select component

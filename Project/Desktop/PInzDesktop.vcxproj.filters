@@ -78,7 +78,7 @@
     <ClCompile Include="component.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
+    <ClCompile Include="stateSolveLevel.cpp">
       <Filter>Pliki źródłowe\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="board.cpp">
@@ -113,9 +113,6 @@
     <ClInclude Include="level.h">
       <Filter>Pliki nagłówkowe\Levels</Filter>
     </ClInclude>
-    <ClInclude Include="task.h">
-      <Filter>Pliki nagłówkowe\Levels</Filter>
-    </ClInclude>
     <ClInclude Include="gui.h">
       <Filter>Pliki nagłówkowe\Graphics</Filter>
     </ClInclude>
@@ -125,7 +122,7 @@
     <ClInclude Include="resources.h">
       <Filter>Pliki nagłówkowe\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
+    <ClInclude Include="stateSolveLevel.h">
       <Filter>Pliki nagłówkowe\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="stateLevelSelect.h">
@@ -157,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="user.h">
       <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="componentDesc.h">
+      <Filter>Pliki nagłówkowe\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

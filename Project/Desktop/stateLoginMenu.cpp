@@ -7,19 +7,19 @@ LoginMenu::LoginMenu(Resources* res)
 	:res(res)
 {
 	buttons = new Button * [ButtonId::Count];
-	buttons[ButtonId::Login] = new Button({ 200,50 }, { 200,450 }, res->GetFont(), L"Zaloguj", Color(255, 0, 0, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	buttons[ButtonId::Back] = new Button({ 200,50 }, { 200,510 }, res->GetFont(), L"Powrót", Color(255, 0, 0, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	buttons[ButtonId::Login] = new Button({ 200,50 }, { 200,450 }, res->GetFont(), L"Zaloguj", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255) );
+	buttons[ButtonId::Back] = new Button({ 200,50 }, { 200,510 }, res->GetFont(), L"Powrót", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
 
-	loginInputBox = new InputBox({ 200,50 }, { 200, 230 }, res->GetFont(), L"...", Color(255, 0, 0, 100), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	passwordInputBox = new InputBoxPassword({ 200,50 }, { 200, 290 }, res->GetFont(), L"...", Color(255, 0, 0, 100), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	loginInputBox = new InputBox({ 200,50 }, { 200, 230 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	passwordInputBox = new InputBoxPassword({ 200,50 }, { 200, 290 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
 
 	textBoxes = new TextBox*[TextBoxId::CountT];
-	textBoxes[TextBoxId::LoginT] = new TextBox({ 80,50 }, { 100,230 }, res->GetFont(), L"Loign:", sf::Color(255, 0, 0, 0));
-	textBoxes[TextBoxId::PasswordT] = new TextBox({ 80,50 }, { 100,290 }, res->GetFont(), L"Has³o:", sf::Color(255, 0, 0, 0));
+	textBoxes[TextBoxId::LoginT] = new TextBox({ 80,50 }, { 100,230 }, res->GetFont(), L"Loign:", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	textBoxes[TextBoxId::PasswordT] = new TextBox({ 80,50 }, { 100,290 }, res->GetFont(), L"Has³o:", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
 
 
 	showLoginInfo = false;
-	loginInfo = new TextBox({ 300,50 }, { 100,350 }, res->GetFont(), "", sf::Color(255, 10, 10, 100), sf::Color(249, 0, 110, 255), sf::Color(150, 0, 0, 255), 25);
+	loginInfo = new TextBox({ 300,50 }, { 100,350 }, res->GetFont(), "", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255), 25);
 }
 
 LoginMenu::~LoginMenu()

@@ -95,7 +95,12 @@ Level* loadLevelTest()
 
 Level* loadLevel0()
 {
-	Level* level = new Level(L"P0", L"Pocz¹tki", L"Pocz¹tkowy poziom, \nktóry s³u¿y do zapoznania siê z aplikacj¹.", false);
+	const wchar_t* desc = LR"END(
+Pocz¹tkowy poziom, 
+który s³u¿y do zapoznania siê z aplikacj¹.
+)END"; 
+
+	Level* level = new Level(L"P0", L"Pocz¹tki", desc, false);
 	level->setPathToSave("save.asc");
 	level->setGenerateComponents(([](int* componentsCount)->Component** {
 		*componentsCount = 2;
@@ -109,6 +114,8 @@ Level* loadLevel0()
 		delete[] tmp;
 		return components;
 		}));
+
+
 
 	//Set components conditions
 	level->setCheckBoard([](Board* board)->bool {
@@ -124,6 +131,8 @@ Level* loadLevel0()
 		});
 
 	level->setCheckSimulation([](Board* board)->bool {
+
+
 		return true;
 		});
 
@@ -132,7 +141,23 @@ Level* loadLevel0()
 
 Level* loadLevelSTART()
 {
-	Level* level = new Level(L"START", L"Pocz¹tki", L"awd", true);
+	const wchar_t* desc = LR"END(
+Pocz¹tkowy poziom, który s³u¿y do zapoznania siê z aplikacj¹
+oraz z podstawowymi pojêciami. 
+
+Pr¹dem elektrycznym nazywamy uporz¹dkowany ruch ³adunków
+elektrycznych, czyli taki, w którym ³adunek elektryczny
+przemieszcza siê w jednym kierunku. Przyjête zosta³o, 
+¿e pr¹d p³ynie od + do -. Iloœæ przep³ywaj¹cego pr¹du
+to natê¿enie oznaczane literk¹ 'i' lub 'I', jednost¹ 
+jest Amper (A).
+
+Napiêcie elektryczne to ró¿nica potencja³ów, analogi¹
+jest ró¿nica wysokoœci. Napiêcie jest oznaczane literk¹
+'u', jednost¹ jest Volt (V).
+
+)END";
+	Level* level = new Level(L"START", L"Pocz¹tki", desc, true);
 	level->setPrevLevelsIds({ });
 
 	level->setPathToSave("save.asc");
@@ -144,8 +169,10 @@ Level* loadLevelSTART()
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
+		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznej w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
+		components[0]->setSimValue("100R");
 		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
+		components[1]->setSimValue("QTLP690C");
 
 		delete[] tmp;
 
@@ -154,12 +181,27 @@ Level* loadLevelSTART()
 
 
 	level->setCheckBoard([](Board* board)->bool {
-		map<Component::CompoenetType, int> componentsCount = board->getComponentsCount();
+		map<std::string, int> componentsCount = board->getComponentsCountById();
+
+		/*for (map<std::string, int>::iterator it  = componentsCount.begin(); it != componentsCount.end(); it++)
+		{
+			cout << it->first << ": " << it->second << endl;
+		}*/
+
+		if (componentsCount.find("id0")->second != 1)
+			return false;
+
+		if (componentsCount.find("id1")->second != 1)
+			return false;
 
 		return true;
 		});
 
-	//level->setCheckSimulation();
+	level->setCheckSimulation([](Board* board)->bool {
+		
+
+		return true;
+		});
 
 	return level;
 }

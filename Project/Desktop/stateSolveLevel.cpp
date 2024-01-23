@@ -1,6 +1,6 @@
-#include "game.h"
+#include "stateSolveLevel.h"
 
-MainGame::MainGame(Resources* res, Level* level, bool loadExistingLevel)
+SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 	:res(res)
 {
 	logger = new Logger("Game");
@@ -19,7 +19,7 @@ MainGame::MainGame(Resources* res, Level* level, bool loadExistingLevel)
 
 
 	//Info section
-	selectedComponent = new TextBox({ 200.f, 100.f }, { 1200.f, 700.f }, res->GetFont(), L"Opis komponentu");
+	//selectedComponent = new TextBox({ 200.f, 100.f }, { 1200.f, 700.f }, res->GetFont(), L"Opis komponentu");
 
 	//Load test components
 	initRouteSection(res);
@@ -29,6 +29,7 @@ MainGame::MainGame(Resources* res, Level* level, bool loadExistingLevel)
 	initInfoNearMouse(res);
 	addComponent = nullptr;
 
+	componentDesc = new ComponentDesc(res);
 
 	if (loadExistingLevel)
 	{
@@ -44,33 +45,24 @@ MainGame::MainGame(Resources* res, Level* level, bool loadExistingLevel)
 	if(!loadExistingLevel)
 	{
 		//TODO load dimensions from level
-		board = new Board(12, 18, 1);
+		board = new Board(currentLevel->getBoardDimension().x, currentLevel->getBoardDimension().y, currentLevel->getBoardDimension().z);
 		//init board
-		Vector2i* tmp = new Vector2i[1];
-		tmp[0].x = 0;
-		tmp[0].y = 0;
-		Vector2i pinPos = { 0, 0 };
-
-		Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
-		Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
-		gnd->rotate();
-		delete[] tmp;
-
-		//Vcc
-		board->placeComponentForce(vcc, pinPos);
-
-		//GND
-		pinPos.x++;
-		board->placeComponentForce(gnd, pinPos);
+		level->initBoard(board);
 	}
 
+	FloatRect configValue = Config::getInstance().getSectionConfig(Config::SectionConfig::MenuSection);
+	auto calPos = [&configValue](int i)->float {
+		return configValue.left + ((configValue.width - 20.f) / 3 + 10) * i;
+		};
 
-	menuButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1500.f, 0.f), res->GetFont(), L"MENU");
-	helpButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1400.f, 0.f), res->GetFont(), L"Pomoc");
-	checkButton = new Button(sf::Vector2f(100.f, 50.f), sf::Vector2f(1200.f, 0.f), res->GetFont(), L"SprawdŸ");
+	menuButton = new Button(sf::Vector2f((configValue.width - 20.f) / 3, configValue.height), sf::Vector2f(calPos(2), 0.f), res->GetFont(), L"Powrót");
+	helpButton = new Button(sf::Vector2f((configValue.width - 20.f) / 3, configValue.height), sf::Vector2f(calPos(1), 0.f), res->GetFont(), L"Pomoc");
+	checkButton = new Button(sf::Vector2f((configValue.width - 20.f) / 3, configValue.height), sf::Vector2f(calPos(0), 0.f), res->GetFont(), L"SprawdŸ");
+
+	simulationCheckResponse = new TextBox({ 300.f, 50.f }, { 700.f, 0.f }, res->GetFont(), L"", sf::Color(0,0,0,0));
 }
 
-MainGame::~MainGame()
+SolveLevel::~SolveLevel()
 {
 	destroyTaskSection();
 	destroyComponentSection();
@@ -86,10 +78,12 @@ MainGame::~MainGame()
 
 	delete currentLevel;
 
+	delete componentDesc;
+
 	delete logger;
 }
 
-void MainGame::Update(RenderWindow* window, Time* elapsed)
+void SolveLevel::Update(RenderWindow* window, Time* elapsed)
 {
 	board->Update(window, elapsed);
 	helpButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
@@ -127,6 +121,8 @@ void MainGame::Update(RenderWindow* window, Time* elapsed)
 			if (!currentLevel->checkBoard(board))
 			{
 				logger->Info("Wrong connections or components number!");
+				simulationCheckResponse->SetString(L"Z³a liczba wykorzystanych elementów!");
+				showSimulationCheckResponse = true;
 				return;
 			}
 			else
@@ -144,6 +140,12 @@ void MainGame::Update(RenderWindow* window, Time* elapsed)
 		if(simulationEngine == nullptr)
 			simulationEngine = new SimulationEngine();
 		simulationEngine->simulate();
+		simulationEngine->getComponentValue("led0id1");
+		if (!currentLevel->checkSimulation(board))
+		{
+			simulationCheckResponse->SetString(L"Z³e po³¹czenie elementów!");
+			showSimulationCheckResponse = true;
+		}
 	}
 
 	const sf::Vector2f moveViewSpeed{50.f,50.f};
@@ -163,7 +165,7 @@ void MainGame::Update(RenderWindow* window, Time* elapsed)
 		board->moveViewOrigin(viewOffset);
 }
 
-void MainGame::Render(RenderTarget* target)
+void SolveLevel::Render(RenderTarget* target)
 {
 	renderTaskSection(target);
 
@@ -181,43 +183,58 @@ void MainGame::Render(RenderTarget* target)
 
 	checkButton->Render(target);
 
-	//if (popupBox)
-	//	popupBox->Render(target);
+	if (simulationCheckResponse)
+		simulationCheckResponse->Render(target);
+
+	componentDesc->Render(target);
 }
 
-inline void MainGame::initTaskSection(Resources* res)
+inline void SolveLevel::initTaskSection(Resources* res)
 {
 	//loadTask
-	const Vector2f sectionPos = Config::getInstance()->getSectionConfig(Config::SectionConfig::TaskSection).getPosition();
-	const Vector2f sectionSize = Config::getInstance()->getSectionConfig(Config::SectionConfig::TaskSection).getSize();
+	const Vector2f sectionPos = Config::getInstance().getSectionConfig(Config::SectionConfig::TaskSection).getPosition();
+	const Vector2f sectionSize = Config::getInstance().getSectionConfig(Config::SectionConfig::TaskSection).getSize();
 
-	taskName = new TextBox({ 400.f, 50.f }, sectionPos, res->GetFont(), currentLevel->getName());
-	taskDescription = new TextBox(sectionSize - Vector2f(0, 60), sectionPos + Vector2f(0.f, 60.f), res->GetFont(), currentLevel->getDesc());
+	taskName = new TextBox({ sectionSize.x, 50.f }, sectionPos, res->GetFont(), currentLevel->getName());
+	taskDescription = new TextBox(
+		sectionSize - Vector2f(0, 5), 
+		sectionPos + Vector2f(0.f, 50.f), 
+		res->GetFont(), 
+		currentLevel->getDesc(), 
+		Color(79, 199, 79, 200),  
+		Color(38, 173, 38, 200), 
+		Color(31, 146, 31, 200),
+		16U);
 }
 
-inline void MainGame::destroyTaskSection()
+inline void SolveLevel::destroyTaskSection()
 {
-	delete testTask;
 	delete taskName;
 	delete taskDescription;
 }
 
-void MainGame::renderTaskSection(RenderTarget* target)
+void SolveLevel::renderTaskSection(RenderTarget* target)
 {
 	taskDescription->Render(target);
 	taskName->Render(target);
 }
 
-inline void MainGame::initRouteSection(Resources* res)
+inline void SolveLevel::initRouteSection(Resources* res)
 {
-	hideComponentsButton = new Button({ 100.f, 50.f }, { 115.f, 735.f }, res->GetFont(), L"Ukryj");
+	FloatRect configValue = Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection);
 
-	addRouteButton = new Button({ 100.f,50.f }, { 10.f, 735.f }, res->GetFont(), L"Po³¹cz");
-	moveComponentButotn = new Button({ 100.f, 50.f }, { 10.f, 790.f }, res->GetFont(), L"Przesuñ");
-	removeComponentButton = new Button({ 100.f, 50.f }, { 10.f, 845.f }, res->GetFont(), L"Usuñ");
+	auto calPos = [&configValue](int i)->float {
+		return configValue.top + ((configValue.height - 30.f) / 4 + 10) * i;
+		};
+	
+	hideComponentsButton = new Button({ configValue.left - 20.f,(configValue.height - 30.f) / 4 }, { 10.f, calPos(1)}, res->GetFont(), L"Ukryj");
+
+	addRouteButton = new Button({ configValue.left - 20.f,(configValue.height - 40.f) / 4 }, { 10.f, calPos(0) }, res->GetFont(), L"Po³¹cz");
+	moveComponentButotn = new Button({ configValue.left - 20.f, (configValue.height - 40.f) / 4 }, { 10.f, calPos(3) }, res->GetFont(), L"Przesuñ");
+	removeComponentButton = new Button({ configValue.left - 20.f, (configValue.height - 40.f) / 4 }, { 10.f, calPos(2) }, res->GetFont(), L"Usuñ");
 }
 
-inline void MainGame::destroyRouteSection()
+inline void SolveLevel::destroyRouteSection()
 {
 	delete addRouteButton;
 	delete removeComponentButton;
@@ -225,7 +242,7 @@ inline void MainGame::destroyRouteSection()
 	delete hideComponentsButton;
 }
 
-inline void MainGame::updateRouteSection(RenderWindow* window, Time* elapsed)
+inline void SolveLevel::updateRouteSection(RenderWindow* window, Time* elapsed)
 {
 	Vector2f mousePos = sf::Vector2f(Mouse::getPosition(*window));
 
@@ -233,7 +250,7 @@ inline void MainGame::updateRouteSection(RenderWindow* window, Time* elapsed)
 	if (addRouteButton->GetButtonState() == ButtonStates::PRESSED)
 	{
 		mouseMode = MouseMode::Route;
-		updateBoardSection = &MainGame::updateBoardSectionRoute;
+		updateBoardSection = &SolveLevel::updateBoardSectionRoute;
 		logger->Info("Button pressed");
 		board->printRoutMap();
 	}
@@ -242,7 +259,7 @@ inline void MainGame::updateRouteSection(RenderWindow* window, Time* elapsed)
 	if (removeComponentButton->GetButtonState() == ButtonStates::PRESSED)
 	{
 		mouseMode = MouseMode::Remove;
-		updateBoardSection = &MainGame::updateBoardSectionRemoveComponent;
+		updateBoardSection = &SolveLevel::updateBoardSectionRemoveComponent;
 		logger->Info("Remove button pressed");
 	}
 
@@ -265,7 +282,7 @@ inline void MainGame::updateRouteSection(RenderWindow* window, Time* elapsed)
 	}
 }
 
-inline void MainGame::renderRouteSection(RenderTarget* target)
+inline void SolveLevel::renderRouteSection(RenderTarget* target)
 {
 	removeComponentButton->Render(target);
 	addRouteButton->Render(target);
@@ -273,10 +290,10 @@ inline void MainGame::renderRouteSection(RenderTarget* target)
 	hideComponentsButton->Render(target);
 }
 
-inline void MainGame::initComponentSection(Resources* res)
+inline void SolveLevel::initComponentSection(Resources* res)
 {
-	Vector2f sectionPos = Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition();
-	Vector2f sectionSize = Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize();
+	Vector2f sectionPos = Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection).getPosition();
+	Vector2f sectionSize = Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection).getSize();
 
 	addingComponents = new Button * [componentsCount];
 	for (int i = 0; i < componentsCount; i++)
@@ -284,18 +301,18 @@ inline void MainGame::initComponentSection(Resources* res)
 		addingComponents[i] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[i]->getName());
 	}
 	selectComponent = new SelectBox(
-		Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getSize(),
-		Config::getInstance()->getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
+		Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection).getSize(),
+		Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
 		res->GetFont(),
 		"Select Component",
-		Color(255, 10, 80, 50),
+		Color(46, 207, 73, 50),
 		Color(255, 10, 80, 50),
 		Color(255, 10, 80, 50),
 		addingComponents,
 		componentsCount);
 }
 
-inline void MainGame::destroyComponentSection()
+inline void SolveLevel::destroyComponentSection()
 {
 	for (int i = 0; i < componentsCount; i++)
 	{
@@ -303,18 +320,18 @@ inline void MainGame::destroyComponentSection()
 	}
 	delete[] addingComponents;
 
-	delete selectedComponent;
+	//delete selectedComponent;
 	delete selectComponent;
 }
 
-inline void MainGame::updateComponentSection(RenderWindow* window, Time* elapsed)
+inline void SolveLevel::updateComponentSection(RenderWindow* window, Time* elapsed)
 {
 	Vector2i mousePos = Mouse::getPosition(*window);
 
 	if (Mouse::getPosition(*window).y > 600.f)
 	{
 		selectComponent->Update(window);
-
+		
 		int selectedComponentId = selectComponent->GetSelected();
 		if (selectedComponentId != -1 && addComponent == nullptr)
 		{
@@ -328,66 +345,69 @@ inline void MainGame::updateComponentSection(RenderWindow* window, Time* elapsed
 			else
 				addComponent = new Component(components[selectedComponentId]);
 			selectComponent->ResetSelection();
-			updateBoardSection = &MainGame::updateBoardSectionPlaceComponent;
+			updateBoardSection = &SolveLevel::updateBoardSectionPlaceComponent;
 
 			//addingComponents[selectedComponentId]->SetButtonState(ButtonStates::IDLE);
 		}
+
+		short hoveredComponentId = selectComponent->GetHovered();
+		if (hoveredComponentId != -1)
+		{
+			componentDesc->setComponent(components[hoveredComponentId]);
+			componentDesc->setRender(true);
+		}
+		else
+			componentDesc->setRender(false);
 	}
 }
 
-inline void MainGame::initBoardSection()
+inline void SolveLevel::initBoardSection()
 {
 	/*board = new Board(12, 18, 1);*/
 
-	updateBoardSection = &MainGame::updateBoardSectionIdle;
+	updateBoardSection = &SolveLevel::updateBoardSectionIdle;
 }
 
-inline void MainGame::destroyBoardSection()
+inline void SolveLevel::destroyBoardSection()
 {
 	delete board;
 }
 
-void MainGame::updateBoardSectionRoute(RenderWindow* window, Time* elapsed)
+void SolveLevel::updateBoardSectionRoute(RenderWindow* window, Time* elapsed)
 {
 	Vector2i mousePos = sf::Mouse::getPosition(*window);
-
-	//Add route
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-	{
-		try
-		{
-			if (board->getHoverTilePos(mousePos) != lastTileHover)
-				board->addRoute(lastTileHover, board->getHoverTilePos(mousePos));
-		}
-		catch (const sf::String& s)
-		{
-			s.getSize(); //Here was warning
-		}
-	}
-
-	//Delete route
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-	{
-		if (board->getHoverTilePos(mousePos) != lastTileHover)
-			board->removeRoute(lastTileHover, board->getHoverTilePos(mousePos));
-		//mouseMode = MouseMode::Idle;
-	}
-
+	
 	try
 	{
-		lastTileHover = board->getHoverTilePos(mousePos);
+		sf::Vector2i tempTileHover = board->getHoverTilePos(mousePos);
+
+		//Add route
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			if (tempTileHover != lastTileHover)
+				board->addRoute(lastTileHover, tempTileHover);
+		}
+
+		//Delete route
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+		{
+			if (tempTileHover != lastTileHover)
+				board->removeRoute(lastTileHover, tempTileHover);
+		}
+
+		lastTileHover = tempTileHover;
 	}
 	catch (const sf::String& s)
 	{
-		s.getSize(); //Here was warning
+		s.getSize(); 
 	}
 }
 
-void MainGame::updateBoardSectionPlaceComponent(RenderWindow* window, Time* elapsed)
+void SolveLevel::updateBoardSectionPlaceComponent(RenderWindow* window, Time* elapsed)
 {
 	if (addComponent == nullptr)
 	{
-		updateBoardSection = &MainGame::updateBoardSectionIdle;
+		updateBoardSection = &SolveLevel::updateBoardSectionIdle;
 		return;
 	}
 
@@ -437,11 +457,11 @@ void MainGame::updateBoardSectionPlaceComponent(RenderWindow* window, Time* elap
 			delete addComponent;
 		}
 		addComponent = nullptr;
-		updateBoardSection = &MainGame::updateBoardSectionIdle;
+		updateBoardSection = &SolveLevel::updateBoardSectionIdle;
 	}
 }
 
-void MainGame::updateBoardSectionRemoveComponent(RenderWindow* window, Time* elapsed)
+void SolveLevel::updateBoardSectionRemoveComponent(RenderWindow* window, Time* elapsed)
 {
 	Vector2i mousePos = sf::Mouse::getPosition(*window);
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -451,7 +471,7 @@ void MainGame::updateBoardSectionRemoveComponent(RenderWindow* window, Time* ela
 			Vector2i componentPos = board->getHoverTilePos(mousePos);
 			//board->getComponentOnBoard(componentPos);
 			board->removeComponent(componentPos);
-			updateBoardSection = &MainGame::updateBoardSectionIdle;
+			updateBoardSection = &SolveLevel::updateBoardSectionIdle;
 			logger->Info("Change to idle");
 		}
 		catch (const sf::String&)
@@ -461,27 +481,27 @@ void MainGame::updateBoardSectionRemoveComponent(RenderWindow* window, Time* ela
 	}
 }
 
-inline void MainGame::renderBoardSection(RenderTarget* target)
+inline void SolveLevel::renderBoardSection(RenderTarget* target)
 {
 	board->Render(target);
 
-	selectedComponent->Render(target);
+	//selectedComponent->Render(target);
 
 	if (addComponent != nullptr)
 		addComponent->Render(target);
 }
 
-inline void MainGame::initInfoNearMouse(Resources* res)
+inline void SolveLevel::initInfoNearMouse(Resources* res)
 {
 	mouseInfoBox = new TextBox({ 100,50 }, { 0,0 }, res->GetFont(), "Inormacje dotycz¹ce pola", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), 12);
 }
 
-inline void MainGame::destroyInfoNearMouse()
+inline void SolveLevel::destroyInfoNearMouse()
 {
 	delete mouseInfoBox;
 }
 
-inline void MainGame::updateInfoNearMouse(RenderWindow* window, Time* elapsed)
+inline void SolveLevel::updateInfoNearMouse(RenderWindow* window, Time* elapsed)
 {
 	//if in board section
 
@@ -512,7 +532,7 @@ inline void MainGame::updateInfoNearMouse(RenderWindow* window, Time* elapsed)
 	mouseInfoBox->Update();
 }
 
-inline void MainGame::renderInfoNearMouse(RenderTarget* target)
+inline void SolveLevel::renderInfoNearMouse(RenderTarget* target)
 {
 	mouseInfoBox->Render(target);
 }

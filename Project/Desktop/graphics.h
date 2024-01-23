@@ -263,6 +263,11 @@ private:
 class Config
 {
 public:
+	Config()
+	{
+		logger = new Logger("Config");
+		loadSectionConfig();
+	}
 	~Config() 
 	{
 		delete[] sectionRects;
@@ -270,13 +275,11 @@ public:
 	}
 	Config(Config& other) = delete;
 	void operator=(const Config&) = delete;
-	static Config* getInstance()
+	/*static Config& getInstance()
 	{
-		if (appConfig == nullptr)
-			appConfig = new Config;
-
-		return appConfig;
-	}
+		static Config instance;
+		return instance;
+	}*/
 
 	const Vector2i& getWindowDimension()
 	{
@@ -300,26 +303,23 @@ public:
 		return sectionRects[static_cast<int>(configId)];
 	}
 private:
-	Config() 
+	/*Config() 
 	{
 		logger = new Logger("Config");
 		loadSectionConfig();
-	}
+	}*/
 	inline void loadSectionConfig()
 	{
 		sectionRects = new FloatRect[static_cast<int>(SectionConfig::Last)];
 
 		sectionRects[static_cast<int>(SectionConfig::BoardSection)] = FloatRect(0, 0, 1200, 800);
 		sectionRects[static_cast<int>(SectionConfig::RouteSection)] = FloatRect(0, 700, 200, 200);
-		sectionRects[static_cast<int>(SectionConfig::ComponentSection)] = FloatRect(220, 700, 970, 200);
+		sectionRects[static_cast<int>(SectionConfig::ComponentSection)] = FloatRect(220, 700, 870, 200);
 		sectionRects[static_cast<int>(SectionConfig::InfoSection)] = FloatRect(1200, 700, 400, 200);
-		sectionRects[static_cast<int>(SectionConfig::TaskSection)] = FloatRect(1200, 100, 400, 600);
-		sectionRects[static_cast<int>(SectionConfig::MenuSection)] = FloatRect(1200, 0, 400, 100);
+		sectionRects[static_cast<int>(SectionConfig::TaskSection)] = FloatRect(1100, 60, 500, 840);
+		sectionRects[static_cast<int>(SectionConfig::MenuSection)] = FloatRect(1100, 0, 500, 50);
 	}
 
-
-
-	static Config* appConfig;
 	Logger* logger;
 
 	Vector2i windowDimension = { 1600, 900 };
@@ -344,21 +344,6 @@ public:
 	{
 		bool loaded = true;
 
-		//Load gui graphics
-		/*if (!texboxTexture.loadFromFile("Resources\\Textures\\Gui\\resourcesTextBoxTexture.png"))
-			loaded = false;
-		if (!buttonTexture.loadFromFile("Resources\\Textures\\Gui\\Frame.png"))
-			loaded = false;
-		if (!buttonSpecificTexture.loadFromFile("Resources\\Textures\\Gui\\menu_nextRoundTexture.png"))
-			loaded = false;
-		if (!mainTextBox.loadFromFile("Resources\\Textures\\Gui\\mainTextBox.png"))
-			loaded = false;
-
-		if (loaded)
-			logger->Info("Successful loaded gui textures");
-		else
-			logger->Error("CAN NOT load gui textures");*/
-
 		//Load fonts
 		if (font.loadFromFile("Resources\\comic.ttf"))
 			logger->Info("Successful loaded fonts");
@@ -377,23 +362,6 @@ public:
 		return demonstrationSprite;
 	}
 
-	Texture* GetTextBoxTexture()
-	{
-		return &texboxTexture;
-	}
-
-	Texture* GetButtonTexture()
-	{
-		return &buttonTexture;
-	}
-	Texture* GetButtonSpecificTexture()
-	{
-		return &buttonSpecificTexture;
-	}
-	Texture* GetMainTextBoxTexture()
-	{
-		return &mainTextBox;
-	}
 
 	Font* GetFont()
 	{
@@ -404,25 +372,13 @@ public:
 		return font;
 	}
 
-	string GetMapPresetPath()
-	{
-		return mapPresetsPath;
-	}
 
 
 private:
 	Logger* logger;
 
-	Texture texboxTexture;
-	Texture buttonTexture;
-	Texture buttonSpecificTexture;
-	Texture mainTextBox;
 	
 	Texture demonstrationTexture;
 	Sprite demonstrationSprite;
 	Font font;
-
-	Sprite testSprite;
-
-	string mapPresetsPath = "Resources\\Presets\\";
 };

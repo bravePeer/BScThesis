@@ -19,9 +19,10 @@ public:
 		tileSize = { 0,0 };
 		padsCount = 0;
 		padsPos = nullptr;
+
 	}
-	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture, ComponentTypePackage type, bool removable = true, std::string id = "")
-		:name(name), description(description), tileSize(tileSize), padsCount(padsCount),componentTypePackage(type), removable(removable), id(id)
+	Component(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos,const Texture& texture, ComponentTypePackage type, bool removable = true, std::string id = "", std::string value= "")
+		:name(name), description(description), tileSize(tileSize), padsCount(padsCount),componentTypePackage(type), removable(removable), id(id), simValue(value)
 	{
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, getComponentLength(), texture.getSize().y));
@@ -32,10 +33,11 @@ public:
 		{
 			this->padsPos[i] = padsPos[i];
 		}
+		simValue = "1";
 	}
 	Component(Component* component)
 		:name(component->name), description(component->description), tileSize(component->tileSize), padsCount(component->padsCount), sprite(component->sprite),
-		spriteSize(component->spriteSize), id(component->id)
+		spriteSize(component->spriteSize), id(component->id), simValue(component->simValue)
 	{
 		this->globalPosition = { 0,0 };
 		this->padsPos = new Vector2i[component->padsCount];
@@ -158,6 +160,14 @@ public:
 	{
 		return id;
 	}
+	void setSimValue(std::string value)
+	{
+		simValue = value;
+	}
+	std::string& getSimValue()
+	{
+		return simValue;
+	}
 protected:
 	enum Rotation
 	{
@@ -191,6 +201,7 @@ protected:
 	wstring description;
 	std::string simSymbol;
 	std::string simName;
+	std::string simValue;
 	std::string id;
 
 	CompoenetType componentType;
