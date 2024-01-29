@@ -48,8 +48,8 @@ public:
 
 		/*tileShape.setTexture(GraphicAll::GetInstance().getTileTexture());
 		tileShape.setTextureRect(IntRect(0,0,64,48));*/
-		tileSprite = GraphicAll::GetInstance().getTileSprite(0);
-		tileRoute = GraphicAll::GetInstance().getRouteGraphic();
+		tileSprite = GraphicManager::GetInstance().getTileSprite(0);
+		tileRoute = GraphicManager::GetInstance().getRouteGraphic();
 
 		route = 0;
 	}
@@ -208,7 +208,7 @@ public:
 	void setState(TileState tileState)
 	{
 		this->tileState = tileState;
-		tileSprite = GraphicAll::GetInstance().getTileSprite(tileState);
+		tileSprite = GraphicManager::GetInstance().getTileSprite(tileState);
 	}
 	void setRoute(char route)
 	{

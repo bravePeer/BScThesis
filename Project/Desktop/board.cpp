@@ -217,7 +217,12 @@ void Board::placeComponent(Component* component, Vector2i& pos)
 
 	component->setBoardPosition(pos);
 	components.push_back(component);
-	logger->Info("Added " + component->getName() + " pos:" + to_string(pos.x) + " " + to_string(pos.y));
+	
+	logger->Info("Added " + component->getId() + " pos:" + to_string(pos.x) + " " + to_string(pos.y));
+
+	sort(components.begin(), components.end(), [](Component* i, Component* j) {
+		return (i->getGlobalPos().y > j->getGlobalPos().y);
+		});
 }
 
 void Board::placeComponentForce(Component* component, Vector2i& pos)
@@ -313,7 +318,7 @@ map<Component::CompoenetType, int> Board::getComponentsCount()
 		Component::CompoenetType componentType = component->getComponentType();
 
 		map<Component::CompoenetType, int>::iterator it = componentsCount.find(componentType);
-		cout << (int)componentType << endl;
+		//cout << (int)componentType << endl;
 		if (it == componentsCount.end())
 		{
 			componentsCount[componentType] = 1;
@@ -362,94 +367,94 @@ bool Board::isHideComponent()
 	return hideComponents;
 }
 
-void Board::saveBoard()
-{
-	logger->Info("Create save file");
-	std::fstream file("save/save.asc", ios::out);
-	if (!file.good())
-		throw L"Can't create savefile!";
+//void Board::saveBoard()
+//{
+//	logger->Info("Create save file");
+//	std::fstream file("save/save.asc", ios::out);
+//	if (!file.good())
+//		throw L"Can't create savefile!";
+//
+//	file << "Version 4\n";
+//	file << "SHEET 1 " + to_string(length) + " " + to_string(width) + "\n"; // board dimension
+//
+//
+//	for (int j = 0; j < width; j++)
+//	{
+//		for (int i = 0; i < length; i++)
+//		{
+//			short route = boardTiles[j * length + i].getRoute();
+//			if (route & 1) // South
+//				file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16) << " " << to_string(j * 16 + 8) << "\n";
+//
+//			if (route & 2) // West
+//				file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16 - 8) << " " << to_string(j * 16) << "\n";
+//
+//			if (route & 4) // North
+//				file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16) << " " << to_string(j * 16 - 8) << "\n";
+//
+//			if (route & 8)  // East
+//				file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16 + 8) << " " << to_string(j * 16) << "\n";
+//		}
+//	}
+//
+//	//Add voltage
+//	file << "FLAG 16 0 0\n"; // GND
+//	file << "SYMBOL _app\\myvoltage 0 0 R270\n";
+//	file << "SYMATTR InstName V1\n";
+//	file << "SYMATTR Value 12\n";
+//
+//	//Add components
+//	for (Component* a : components)
+//	{
+//		if (a->getSimName() == "goldpin")
+//			continue;
+//		Vector2i boardPos = a->getBoardPosition();
+//		int rotation = a->getRotation();
+//
+//		file << "SYMBOL " << a->getSimName() << " " << to_string(boardPos.x * 16) << " " << to_string(boardPos.y * 16) << " R" << to_string(rotation * 90) << "\n";
+//		file << "SYMATTR InstName " << a->getSimName() << "\n";
+//		file << "SYMATTR Value " << "1" << "\n";
+//	}
+//
+//
+//	//Simulation config
+//	file << "TEXT -28 -20 Left 2 !.tran 10\n";
+//
+//	file.close();
+//}
 
-	file << "Version 4\n";
-	file << "SHEET 1 " + to_string(length) + " " + to_string(width) + "\n"; // board dimension
-
-
-	for (int j = 0; j < width; j++)
-	{
-		for (int i = 0; i < length; i++)
-		{
-			short route = boardTiles[j * length + i].getRoute();
-			if (route & 1) // South
-				file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16) << " " << to_string(j * 16 + 8) << "\n";
-
-			if (route & 2) // West
-				file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16 - 8) << " " << to_string(j * 16) << "\n";
-
-			if (route & 4) // North
-				file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16) << " " << to_string(j * 16 - 8) << "\n";
-
-			if (route & 8)  // East
-				file << "WIRE " << to_string(i * 16) << " " << to_string(j * 16) << " " << to_string(i * 16 + 8) << " " << to_string(j * 16) << "\n";
-		}
-	}
-
-	//Add voltage
-	file << "FLAG 16 0 0\n"; // GND
-	file << "SYMBOL _app\\myvoltage 0 0 R270\n";
-	file << "SYMATTR InstName V1\n";
-	file << "SYMATTR Value 12\n";
-
-	//Add components
-	for (Component* a : components)
-	{
-		if (a->getSimName() == "goldpin")
-			continue;
-		Vector2i boardPos = a->getBoardPosition();
-		int rotation = a->getRotation();
-
-		file << "SYMBOL " << a->getSimName() << " " << to_string(boardPos.x * 16) << " " << to_string(boardPos.y * 16) << " R" << to_string(rotation * 90) << "\n";
-		file << "SYMATTR InstName " << a->getSimName() << "\n";
-		file << "SYMATTR Value " << "1" << "\n";
-	}
-
-
-	//Simulation config
-	file << "TEXT -28 -20 Left 2 !.tran 10\n";
-
-	file.close();
-}
-
-void Board::loadBoard(const std::string& path)
-{
-	fstream file(path, ios::in);
-	if (!file.good())
-	{
-		logger->Error("Cant open save file: " + path);
-		return;
-	}
-	char buffer[128];
-
-	file.getline(buffer, 128, '\n'); // Version
-	file.getline(buffer, 128, '\n'); // Sheet
-
-	//Load wires
-	std::string wire;
-	Vector2i pos0;
-	Vector2i pos1;
-
-	while (file >> wire)
-	{
-		if (wire != "WIRE")
-			break;
-		file >> pos0.x;
-		file >> pos0.y;
-		file >> pos1.x;
-		file >> pos1.y;
-		addRoute(pos0, pos1);
-	}
-
-
-	file.close();
-}
+//void Board::loadBoard(const std::string& path)
+//{
+//	fstream file(path, ios::in);
+//	if (!file.good())
+//	{
+//		logger->Error("Cant open save file: " + path);
+//		return;
+//	}
+//	char buffer[128];
+//
+//	file.getline(buffer, 128, '\n'); // Version
+//	file.getline(buffer, 128, '\n'); // Sheet
+//
+//	//Load wires
+//	std::string wire;
+//	Vector2i pos0;
+//	Vector2i pos1;
+//
+//	while (file >> wire)
+//	{
+//		if (wire != "WIRE")
+//			break;
+//		file >> pos0.x;
+//		file >> pos0.y;
+//		file >> pos1.x;
+//		file >> pos1.y;
+//		addRoute(pos0, pos1);
+//	}
+//
+//
+//	file.close();
+//}
 
 void Board::printComponentsMap()
 {

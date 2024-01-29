@@ -4,7 +4,8 @@
 class State
 {
 public:
-	State() :nextState(nullptr) {}
+	State() :nextState(nullptr), res(nullptr) {}
+	State(Resources* res) :nextState(nullptr), res(res) {}
 	virtual ~State() {}
 	virtual void AddLetter(wchar_t s) {}
 	State* GetNextState()
@@ -17,4 +18,5 @@ public:
 	{}
 protected:
 	State* nextState;
+	Resources* res;
 };

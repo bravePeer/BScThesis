@@ -167,7 +167,6 @@
     <ClInclude Include="level.h" />
     <ClInclude Include="levelsToLoad.h" />
     <ClInclude Include="logger.h" />
-    <ClInclude Include="resources.h" />
     <ClInclude Include="simulationEngine.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="stateCloseMenu.h" />

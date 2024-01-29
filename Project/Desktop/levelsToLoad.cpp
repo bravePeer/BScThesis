@@ -1,4 +1,4 @@
-#include "levelsToLoad.h"
+ï»¿#include "levelsToLoad.h"
 
 Level* loadLevelExampleOfImplemetation()
 {
@@ -16,8 +16,8 @@ Level* loadLevelExampleOfImplemetation()
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
-		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
+		components[0] = new Resistor(L"Rezystor", L"Zamienia czÄ™Å›Ä‡ energii elektrycznje w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id0");
+		components[1] = new LightEmittingDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id1");
 
 		delete[] tmp;
 
@@ -44,7 +44,7 @@ Level* loadLevelExampleOfImplemetation()
 
 Level* loadLevelTest()
 {
-	Level* level = new Level(L"Test0", L"Test", L"Poziom testuj¹cy", false);
+	Level* level = new Level(L"Test0", L"Test", L"Poziom testujÄ…cy", false);
 	level->setPathToSave("save.asc");
 	level->setGenerateComponents(([](int* componentsCount)->Component** {
 		*componentsCount = 4;
@@ -52,9 +52,9 @@ Level* loadLevelTest()
 		Vector2i* tmp = new Vector2i[2];
 		tmp[0].x = 0; tmp[0].y = 0;
 		tmp[1].x = 1; tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
-		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
-		components[2] = new Capacitor(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getCapacitorTexture(), Component::ComponentTypePackage::SMD, true, "id2");
+		components[0] = new Resistor(L"Rezystor", L"Zamienia czÄ™Å›Ä‡ energii elektrycznje w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id0");
+		components[1] = new LightEmittingDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id1");
+		components[2] = new Capacitor(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id2");
 		delete[] tmp;
 		tmp = new Vector2i[8];
 		tmp[0].x = 0; tmp[0].y = 0;
@@ -67,7 +67,7 @@ Level* loadLevelTest()
 		tmp[6].x = 2; tmp[6].y = 3;
 		tmp[7].x = 3; tmp[7].y = 3;
 
-		components[3] = new Microcontroller(L"uc", L"awd", Vector2i(4, 4), 8, tmp, GraphicAll::GetInstance().getMicrocontrollerTexture(), Component::ComponentTypePackage::SMD, true, "id3");
+		components[3] = new Microcontroller(L"uc", L"awd", Vector2i(4, 4), 8, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id3");
 		delete[] tmp;
 
 		return components;
@@ -86,8 +86,139 @@ Level* loadLevelTest()
 		return true;
 		});
 
-	level->setCheckSimulation([](Board* board)->bool {
+	level->setCheckSimulation([](Board* board, SimulationEngine* sim)->bool {
 		return true;
+		});
+
+	return level;
+}
+
+Level* loadMicrocontrollerLevel()
+{
+	const wchar_t* desc = LR"(
+W tym poziomie nauczysz siÄ™ jak zasilaÄ‡ mikrokontroler!
+
+Mikrokontroler jest scalonym ukÅ‚adem mikroprocesorowym, 
+czyli zawierÄ…cym procesor, pamiÄ™Ä‡ RAM, wejÅ›cia/wyjÅ›cia
+i czÄ™sto pamiÄ™Ä‡ FLASH. Mikrokontroler wykonuje wczeÅ›niej 
+skompilowany i wgrany program. Z reguÅ‚y jedna z nÃ³Å¼ek
+jest nÃ³Å¼kÄ… resetujÄ…cÄ…, co oznacza, Å¼e gdy zostanie podany
+stan niski to ukÅ‚ad siÄ™ zresetuje i bÄ™dzie w stanie resetu.
+
+Warunki zaliczenia zadania:
+PodÅ‚Ä…cz mikorkontroler do zasilania przez stabilizator 
+napiÄ™cia. NÃ³Å¼kÄ™ reset do zasilania mikrokontrolera przez 
+opornik 1kÎ© tak aby nie spaliÄ‡ ukÅ‚adu. NÃ³Å¼kÄ™ numer 2 podÅ‚Ä…cz 
+do niebieskiego goldpina. Natomiast do nÃ³Å¼ek 3, 5, 6, 7
+diody Å›wiecÄ…ce. UwaÅ¼aj aby nie spaliÄ‡ ukÅ‚adu ani diod!
+
+PamiÄ™taj!
+Po najechaniu na nazwÄ™ elementu elektronicznego 
+zobaczysz jego opis.
+
+)";
+
+	Level* level = new Level(L"ZEL1", L"Zasilanie\nmikrokontrolera", desc, true);
+	level->setPrevLevelsIds({ });
+
+	level->setPathToSave("save.asc");
+	level->setBoardDimension({ 15, 15, 1});
+	level->setInitBoardFun([](Board* board)->bool {
+		Vector2i* tmp = new Vector2i[1];
+		tmp[0].x = 0;
+		tmp[0].y = 0;
+		Vector2i pinPos = { 0, 0 };
+
+		Component* vcc = new Goldpin(L"ZÅ‚Ä…cze goldpin", L"", { 1,1 }, 1, tmp, GraphicManager::GetInstance().getComponentTexture("goldpin"), Component::ComponentTypePackage::THT, false);
+		Component* gnd = new Goldpin(L"ZÅ‚Ä…cze goldpin", L"", { 1,1 }, 1, tmp, GraphicManager::GetInstance().getComponentTexture("goldpin"), Component::ComponentTypePackage::THT, false);
+		Component* reg = new Goldpin(L"ZÅ‚Ä…cze goldpin", L"", { 1,1 }, 1, tmp, GraphicManager::GetInstance().getComponentTexture("goldpin"), Component::ComponentTypePackage::THT, false);
+		gnd->rotate();
+		delete[] tmp;
+		reg->rotate();
+		reg->rotate();
+
+		//Vcc
+		board->placeComponentForce(vcc, pinPos);
+
+		//GND
+		pinPos.x++;
+		board->placeComponentForce(gnd, pinPos);
+
+		pinPos = {10,10};
+		board->placeComponentForce(reg, pinPos);
+		return true;
+		});
+
+	level->setComponentsGraphicsToLoad([]()->void {
+		GraphicManager& graphics = GraphicManager::GetInstance();
+		graphics.addGraphicToLoad("resistor", RESISTOR_10k_GRAPHIC_PATH);
+		graphics.addGraphicToLoad("resistor2", RESISTOR_200_GRAPHIC_PATH);
+		graphics.addGraphicToLoad("diode", DIODE_GRAPHIC_PATH);
+		graphics.addGraphicToLoad("goldpin", GOLDPIN_GRAPHIC_PATH);
+		graphics.addGraphicToLoad("capacitor", CAPACITOR_GRAPHIC_PATH);
+		graphics.addGraphicToLoad("uc", MICROCONTROLLER_DPAK8_GRAPHIC_PATH);
+		});
+
+	level->setGenerateComponents(([](int* componentsCount)->Component** {
+		*componentsCount = 6;
+		Component** components = new Component * [*componentsCount];
+		Vector2i* tmp = new Vector2i[2];
+		tmp[0].x = 0;
+		tmp[0].y = 0;
+		tmp[1].x = 1;
+		tmp[1].y = 0;
+		components[0] = new Resistor(L"Rezystor\n1kÎ©", L"Zamienia czÄ™Å›Ä‡ energii elektrycznej w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture("resistor"), Component::ComponentTypePackage::SMD, true, "id0");
+		components[0]->setSimValue("1000R");
+		components[4] = new Resistor(L"Rezystor\n200Î©", L"Zamienia czÄ™Å›Ä‡ energii elektrycznej w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture("resistor2"), Component::ComponentTypePackage::SMD, true, "id7");
+		components[4]->setSimValue("200R");
+		components[1] = new LightEmittingDiode(L"LED", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture("diode"), Component::ComponentTypePackage::SMD, true, "id1");
+		components[1]->setSimValue("QTLP690C");
+		components[5] = new Capacitor(L"Capacitor", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture("capacitor"), Component::ComponentTypePackage::SMD, true, "id2");
+		components[5]->setSimValue("10C");
+
+
+		delete[] tmp;
+		tmp = new Vector2i[8];
+		tmp[0].x = 0; tmp[0].y = 0;
+		tmp[1].x = 1; tmp[1].y = 0;
+		tmp[2].x = 2; tmp[2].y = 0;
+		tmp[3].x = 3; tmp[3].y = 0;
+
+		tmp[4].x = 0; tmp[4].y = 3;
+		tmp[5].x = 1; tmp[5].y = 3;
+		tmp[6].x = 2; tmp[6].y = 3;
+		tmp[7].x = 3; tmp[7].y = 3;
+
+		components[3] = new Microcontroller(L"Mikrokontroler", L"awd", Vector2i(4, 4), 8, tmp, GraphicManager::GetInstance().getComponentTexture("uc"), Component::ComponentTypePackage::SMD, true, "id3");
+		components[2] = new Microcontroller(L"Stabilizator\nnapiÄ™cia", L"awd", Vector2i(4, 4), 8, tmp, GraphicManager::GetInstance().getComponentTexture("uc"), Component::ComponentTypePackage::SMD, true, "id3");
+		delete[] tmp;
+
+		return components;
+		}));
+
+
+	level->setCheckBoard([](Board* board)->bool {
+		map<std::string, int> componentsCount = board->getComponentsCountById();
+
+		/*for (map<std::string, int>::iterator it  = componentsCount.begin(); it != componentsCount.end(); it++)
+		{
+			cout << it->first << ": " << it->second << endl;
+		}*/
+
+	/*	if (componentsCount.find("id0")->second != 1)
+			return false;*/
+
+		/*if (componentsCount.find("id1")->second != 1)
+			return false;*/
+
+		return false;
+		});
+
+	level->setCheckSimulation([](Board* board, SimulationEngine* sim)->bool {
+		float val = sim->getComponentValue("res0id0");
+		if (abs(sim->getComponentValue("res0id0")) > 0.1)
+			return true;
+		return false;
 		});
 
 	return level;
@@ -96,11 +227,11 @@ Level* loadLevelTest()
 Level* loadLevel0()
 {
 	const wchar_t* desc = LR"END(
-Pocz¹tkowy poziom, 
-który s³u¿y do zapoznania siê z aplikacj¹.
+PoczÄ…tkowy poziom, 
+ktÃ³ry sÅ‚uÅ¼y do zapoznania siÄ™ z aplikacjÄ….
 )END"; 
 
-	Level* level = new Level(L"P0", L"Pocz¹tki", desc, false);
+	Level* level = new Level(L"P0", L"PoczÄ…tki", desc, false);
 	level->setPathToSave("save.asc");
 	level->setGenerateComponents(([](int* componentsCount)->Component** {
 		*componentsCount = 2;
@@ -108,8 +239,8 @@ który s³u¿y do zapoznania siê z aplikacj¹.
 		Vector2i* tmp = new Vector2i[2];
 		tmp[0].x = 0; tmp[0].y = 0;
 		tmp[1].x = 1; tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
-		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
+		components[0] = new Resistor(L"Rezystor", L"Zamienia czÄ™Å›Ä‡ energii elektrycznje w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id0");
+		components[1] = new LightEmittingDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id1");
 
 		delete[] tmp;
 		return components;
@@ -130,7 +261,7 @@ który s³u¿y do zapoznania siê z aplikacj¹.
 		return true;
 		});
 
-	level->setCheckSimulation([](Board* board)->bool {
+	level->setCheckSimulation([](Board* board, SimulationEngine* sim)->bool {
 
 
 		return true;
@@ -142,37 +273,63 @@ który s³u¿y do zapoznania siê z aplikacj¹.
 Level* loadLevelSTART()
 {
 	const wchar_t* desc = LR"END(
-Pocz¹tkowy poziom, który s³u¿y do zapoznania siê z aplikacj¹
-oraz z podstawowymi pojêciami. 
+PoczÄ…tkowy poziom, ktÃ³ry sÅ‚uÅ¼y do zapoznania siÄ™ z aplikacjÄ…
+oraz z podstawowymi pojÄ™ciami. 
 
-Pr¹dem elektrycznym nazywamy uporz¹dkowany ruch ³adunków
-elektrycznych, czyli taki, w którym ³adunek elektryczny
-przemieszcza siê w jednym kierunku. Przyjête zosta³o, 
-¿e pr¹d p³ynie od + do -. Iloœæ przep³ywaj¹cego pr¹du
-to natê¿enie oznaczane literk¹ 'i' lub 'I', jednost¹ 
+PrÄ…dem elektrycznym nazywamy uporzÄ…dkowany ruch Å‚adunkÃ³w
+elektrycznych, czyli taki, w ktÃ³rym Å‚adunek elektryczny
+przemieszcza siÄ™ w jednym kierunku. PrzyjÄ™te zostaÅ‚o, 
+Å¼e prÄ…d pÅ‚ynie od + do -. IloÅ›Ä‡ przepÅ‚ywajÄ…cego prÄ…du
+to natÄ™Å¼enie oznaczane literkÄ… 'i' lub 'I', jednostÄ… 
 jest Amper (A).
 
-Napiêcie elektryczne to ró¿nica potencja³ów, analogi¹
-jest ró¿nica wysokoœci. Napiêcie jest oznaczane literk¹
-'u', jednost¹ jest Volt (V).
+NapiÄ™cie elektryczne to rÃ³Å¼nica potencjaÅ‚Ã³w, analogiÄ…
+jest rÃ³Å¼nica wysokoÅ›ci. NapiÄ™cie jest oznaczane literkÄ…
+'u', jednostÄ… jest Volt (V).
+
+Do dodania elementu elektronicznego na pÅ‚ytkÄ™ kliknij
+na odpowiedni przycisk z nazwÄ…, nastÄ™pnie umieÅ›Ä‡ go
+na pÅ‚ytce
+
+Do dodania poÅ‚Ä…czenia naciÅ›nij przycisk "PoÅ‚Ä…cz"
+i trzymajÄ…c lewy przycisk myszy na pÅ‚ytce przesuÅ„
+kursor, aby usunÄ…Ä‡ zamiast trzymaÄ‡ lewy przycisk 
+myszy trzymal prawy przycisk myszy.
+
+Po dodaniu i poÅ‚Ä…czeniu kliknij przycisk "SprawdÅº"
+w celu sprawdzenia poprawnoÅ›Ä‡i poÅ‚Ä…czenia elementÃ³w 
+elektronicznych.
+
+Warunki zaliczenia zadania:
+PoÅ‚Ä…cz rezystor z ÅºrÃ³dÅ‚em zasilania.
+Czerwony kolor odpowiada zasilaniu (+), natomiast 
+czarny to masa (tutaj -).
 
 )END";
-	Level* level = new Level(L"START", L"Pocz¹tki", desc, true);
+	Level* level = new Level(L"ASTART", L"PoczÄ…tki", desc, true);
 	level->setPrevLevelsIds({ });
-
+	level->setBoardDimension({ 5, 5, 1 });
 	level->setPathToSave("save.asc");
+
+	level->setComponentsGraphicsToLoad([]()->void {
+		GraphicManager& graphics = GraphicManager::GetInstance();
+		graphics.addGraphicToLoad("resistor", RESISTOR_10k_GRAPHIC_PATH);
+		//graphics.addGraphicToLoad("diode", DIODE_GRAPHIC_PATH);
+		graphics.addGraphicToLoad("goldpin", GOLDPIN_GRAPHIC_PATH);
+		});
+
 	level->setGenerateComponents(([](int* componentsCount)->Component** {
-		*componentsCount = 2;
+		*componentsCount = 1;
 		Component** components = new Component * [*componentsCount];
 		Vector2i* tmp = new Vector2i[2];
 		tmp[0].x = 0;
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznej w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
-		components[0]->setSimValue("100R");
-		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
-		components[1]->setSimValue("QTLP690C");
+		components[0] = new Resistor(L"Rezystor\n1kÎ©", L"Zamienia czÄ™Å›Ä‡ energii elektrycznej w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture("resistor"), Component::ComponentTypePackage::SMD, true, "id0");
+		components[0]->setSimValue("1000R");
+	/*	components[1] = new LightEmittingDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture("diode"), Component::ComponentTypePackage::SMD, true, "id1");
+		components[1]->setSimValue("QTLP690C");*/
 
 		delete[] tmp;
 
@@ -191,16 +348,17 @@ jest ró¿nica wysokoœci. Napiêcie jest oznaczane literk¹
 		if (componentsCount.find("id0")->second != 1)
 			return false;
 
-		if (componentsCount.find("id1")->second != 1)
-			return false;
+		/*if (componentsCount.find("id1")->second != 1)
+			return false;*/
 
 		return true;
 		});
 
-	level->setCheckSimulation([](Board* board)->bool {
-		
-
-		return true;
+	level->setCheckSimulation([](Board* board, SimulationEngine* sim)->bool {
+		float val = sim->getComponentValue("res0id0");
+		if (abs(sim->getComponentValue("res0id0")) > 0.01)
+			return true;
+		return false;
 		});
 
 	return level;
@@ -208,10 +366,12 @@ jest ró¿nica wysokoœci. Napiêcie jest oznaczane literk¹
 
 Level* loadLevelRES0()
 {
-	Level* level = new Level(L"RES0", L"Opornoœæ", L"Poznaj opór!");
-	level->setPrevLevelsIds({ "START" });
+	Level* level = new Level(L"RES0", L"OpÃ³r", L"Poznaj opÃ³r!");
+	level->setPrevLevelsIds({ "ASTART" });
 
 	level->setPathToSave("save.asc");
+
+
 
 	level->setGenerateComponents(([](int* componentsCount)->Component** {
 		*componentsCount = 2;
@@ -221,8 +381,8 @@ Level* loadLevelRES0()
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
-		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
+		components[0] = new Resistor(L"Rezystor", L"Zamienia czÄ™Å›Ä‡ energii elektrycznje w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id0");
+		components[1] = new LightEmittingDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id1");
 
 		delete[] tmp;
 
@@ -249,7 +409,7 @@ Level* loadLevelRES0()
 
 Level* loadLevelRES1()
 {
-	Level* level = new Level(L"RES1", L"Opór po³¹czenia równoleg³ego", L"Poznaj opór w przypadku ³¹czenia oporników równolegle!");
+	Level* level = new Level(L"RES1", L"OpÃ³r, poÅ‚Ä…czenie\nrÃ³wnolegÅ‚e", L"Poznaj opÃ³r w przypadku Å‚Ä…czenia opornikÃ³w rÃ³wnolegle!");
 	level->setPrevLevelsIds({ "RES0" });
 
 	level->setPathToSave("save.asc");
@@ -262,8 +422,8 @@ Level* loadLevelRES1()
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
-		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
+		components[0] = new Resistor(L"Rezystor", L"Zamienia czÄ™Å›Ä‡ energii elektrycznje w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id0");
+		components[1] = new LightEmittingDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id1");
 
 		delete[] tmp;
 
@@ -290,7 +450,7 @@ Level* loadLevelRES1()
 
 Level* loadLevelCAP0()
 {
-	Level* level = new Level(L"CAP0", L"Pojemnoœæ", L"Poznaj pojemnoœæ!");
+	Level* level = new Level(L"CAP0", L"PojemnoÅ›Ä‡", L"Poznaj pojemnoÅ›Ä‡!");
 	level->setPrevLevelsIds({ "RES0" });
 
 	level->setPathToSave("save.asc");
@@ -303,8 +463,8 @@ Level* loadLevelCAP0()
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
-		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
+		components[0] = new Resistor(L"Rezystor", L"Zamienia czÄ™Å›Ä‡ energii elektrycznje w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id0");
+		components[1] = new LightEmittingDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id1");
 
 		delete[] tmp;
 
@@ -331,7 +491,7 @@ Level* loadLevelCAP0()
 
 Level* loadLevelLED0()
 {
-	Level* level = new Level(L"LED0", L"Dioda œwiec¹ca!", L"Poznaj diodê LED!");
+	Level* level = new Level(L"LED0", L"Dioda Å›wiecÄ…ca!", L"Poznaj diodÄ™ LED!");
 	level->setPrevLevelsIds({ "RES0" });
 
 	level->setPathToSave("save.asc");
@@ -344,8 +504,8 @@ Level* loadLevelLED0()
 		tmp[0].y = 0;
 		tmp[1].x = 1;
 		tmp[1].y = 0;
-		components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD, true, "id0");
-		components[1] = new LedDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD, true, "id1");
+		components[0] = new Resistor(L"Rezystor", L"Zamienia czÄ™Å›Ä‡ energii elektrycznje w ciepÅ‚o", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id0");
+		components[1] = new LightEmittingDiode(L"", L"", Vector2i(2, 1), 2, tmp, GraphicManager::GetInstance().getComponentTexture(""), Component::ComponentTypePackage::SMD, true, "id1");
 
 		delete[] tmp;
 
@@ -368,4 +528,9 @@ Level* loadLevelLED0()
 	//level->setCheckSimulation();
 
 	return level;
+}
+
+Level* emptyLevel(sf::String id, sf::String name, sf::String desc)
+{
+	return new Level(id, name, desc);
 }

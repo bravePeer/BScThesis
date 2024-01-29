@@ -1,5 +1,4 @@
-TEST_METHOD(TestInsertUser)
-{
+TEST_METHOD(TestInsertUser) {
 	DatabaseConnector dc;
 	std::string login = "user1";
 	std::string pass = "pass";

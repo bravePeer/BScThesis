@@ -255,10 +255,6 @@ public:
 		return false;
 	}
 
-	std::string getTest()
-	{
-		return "test";
-	}
 private:
 	void connectDB()
 	{

@@ -1,0 +1,54 @@
++ Level()
++ Level(sf::String id, sf::String name, sf::String desc, bool realized = false)
++ ~Level()
++ getId(): sf::String&
++ getName(): sf::String&
++ getDesc(): sf::String&
++ getComponents(): Component**
++ getBoardDimension(): Vector3i   
++ isRealized(): bool
++ canRealize(): bool
++ canRealize(std::map<std::string,Level*>&): bool
++ setPrevLevels(Level**, int): void
++ setPrevLevelsIds(std::vector<std::string>): void
++ setComponentsGraphicsToLoad(std::function<void()>): void
++ setGenerateComponents(std::function<Component**(int*)>): void
++ getComponentsCount(): int 
++ setCheckSimulation(std::function<bool(Board*)>): void
++ setCheckBoard(std::function<bool(Board*)>): void
++ checkBoard(Board*): bool
++ checkSimulation(Board*): bool
++ load(): void
++ setBoardDimension(sf::Vector3i): void
++ setInitBoardFun(std::function<bool(Board*)>): void
++ initBoard(Board*): bool
+
+
+	static:
++ loadRealizedLevels(map<string, Level*>&): void
++ saveRealizedLevel(std::string, uint8_t): void
++ extractRelizedLevel(std::string): void
+private:
+- id: sf::String
+- name: sf::String
+- desc: sf::String
+- realized: bool
+- nextLevelsCount: int 
+- prevLevels: Level** 
+- prevLevelsCount: int 
+- prevLevelsIds: std::vector<std::string>			
+- componentsGraphicsToLoad: std::function<void()>   			
+- genComponents: std::function<Component** (int*)> 
+- initBoardFun: std::function<bool(Board*)> 		
+- components: Component**
+- componentCount: int
+- checkSimulationFun: std::function<bool(Board*)> 
+- checkBoardFun: std::function<bool(Board*)> 
+- boardDimnesion: Vector3i 
+- pathToSave: std::string
+
+	union DataRow
+	{
+		uint64_t data
+		char da[8]
+	}

@@ -1,7 +1,7 @@
 #include "stateLevelSelect.h"
 
 LevelSelect::LevelSelect(Resources* res)
-	:res(res)
+	:State(res)
 {
 	//if logged
 	//	get data
@@ -16,39 +16,45 @@ LevelSelect::LevelSelect(Resources* res)
 
 
 	//Generating levels
-	
+	levelsMap.insert(std::pair<std::string, Level*>("WEL0", emptyLevel(L"EL0", L"Opór po³¹czenie\nszeregowe")));
+	levelsMap.insert(std::pair<std::string, Level*>("WEL1", emptyLevel(L"EL1", L"Pojemnoœæ po³¹czenie\nszeregowe")));
+	levelsMap.insert(std::pair<std::string, Level*>("WEL6", emptyLevel(L"EL2", L"Pojemnoœæ po³¹czenie\nrównoleg³e")));
+	levelsMap.insert(std::pair<std::string, Level*>("WEL2", emptyLevel(L"EL3", L"Tranzystor\nbipolarny")));
+	levelsMap.insert(std::pair<std::string, Level*>("WEL3", emptyLevel(L"EL4", L"Tranzystor\nMOSFET")));
+	levelsMap.insert(std::pair<std::string, Level*>("WEL4", emptyLevel(L"EL5", L"Indukcyjnoœæ")));
+	levelsMap.insert(std::pair<std::string, Level*>("WEL5", emptyLevel(L"EL6", L"Obwód RLC")));
 
-	levelsMap.insert(std::pair<std::string, Level*>("TEST", loadLevelTest()));
-	levelsMap.insert(std::pair<std::string, Level*>("START", loadLevelSTART()));
+	//TODO IMPORTANT dodaj coœ jeszcze
+	levelsMap.insert(std::pair<std::string, Level*>("ZEL0", emptyLevel(L"Ea0", L"Stabilizator napiêcia", 
+LR"(
+W tym poziomie dowiesz siê co to stabilizator napiêcia!
+
+Otó¿ stabilizator napiêcia to uk³ad scalony, którego zadaniem
+jest utrzymywanie okreœlonego sta³ego napiêcia wyjœciowego 
+niezale¿nie od jego wejœcia. 
+
+Warunki zaliczenia zadania:
+Pod³¹cz stabilizator napiêcia liniowego do mikrokontrolera,
+w taki sposób aby napiêcie na zasilaniu mikrokontrolera 
+nie przekracza³o 5V. Pamiêtaj o dodaniu dodatkowych 
+kondensatorów miêdzy wejœcie i masê oraz wyjœcie i masê, 
+w celu zapewnienia stabilnej pracy uk³adu w przypadku gdy
+mikrokontroler potrzebowa³by wiêcej pr¹du ni¿ jest 
+w stanie stabilizator napiêcia dostarczyæ.
+
+
+
+)")));
+	levelsMap.insert(std::pair<std::string, Level*>("ZEL1", loadMicrocontrollerLevel()));
+
+	
+	//levelsMap.insert(std::pair<std::string, Level*>("TEST", loadLevelTest()));
+	levelsMap.insert(std::pair<std::string, Level*>("ASTART", loadLevelSTART()));
 	levelsMap.insert(std::pair<std::string, Level*>("RES0", loadLevelRES0()));
 	levelsMap.insert(std::pair<std::string, Level*>("RES1", loadLevelRES1()));
 	levelsMap.insert(std::pair<std::string, Level*>("CAP0", loadLevelCAP0()));
 	levelsMap.insert(std::pair<std::string, Level*>("LED0", loadLevelLED0()));
 
-	// old generating
-	//levelsCount = 3;
-	//levels = new Level * [3];
-	//levels[0] = loadLevel0();
-	//levels[1] = new Level(L"T0", L"Test0", "Testowy opis blaaaaaaaaaaaaaaaaaawdawdawd\ndawdawdawd\nawd", false);
-	//levels[2] = new Level(L"T2", L"Test1", "Testowy opawdawdawdawdawis", false);
-	//
-	//Level** tmp = new Level * [1];
-	//tmp[0] = levels[0];
-	//levels[1]->setPrevLevels(tmp, 1);
-	//levels[1]->setGenerateComponents([](int* componentsCount)->Component** {
-	//	Component** components = new Component * [4];
-	//	Vector2i* tmp = new Vector2i[2];
-	//	tmp[0].x = 0;
-	//	tmp[0].y = 0;
-	//	tmp[1].x = 1;
-	//	tmp[1].y = 0;
-	//	components[0] = new Resistor(L"Opornik", L"Zamienia czêœæ energii elektrycznje w ciep³o", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getResistorTexture(), Component::ComponentTypePackage::SMD);
-	//	components[1] = new Component(L"Kondensator", L"Kumuluje ³adunek elektryczny", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getCapacitorTexture(), Component::ComponentTypePackage::SMD);
-	//	components[2] = new Component(L"Dioda", L"Pr¹d p³ynie w jedn¹ stronê", Vector2i(2, 1), 2, tmp, GraphicAll::GetInstance().getDiodeTexture(), Component::ComponentTypePackage::SMD);
-	//	delete[] tmp;
-	//	*componentsCount = 3;
-	//	return components;
-	//	});
 
 
 	if (User::getInstance().isLoggedIn())
@@ -59,16 +65,17 @@ LevelSelect::LevelSelect(Resources* res)
 		}
 		catch (const std::string& exception)
 		{
-			cout << exception;
+			
+			//cout << exception;
 			throw exception;
 		}
 	}
 
 	//levelButtonsMap.insert(std::pair<std::string, Button*>("START", new Bu));
 
-	Vector2f buttonSize = { 200.,70. };
+	Vector2f buttonSize = { 220.,80. };
 	int maxVerticalButtons = 5;
-	Vector2f buttonGap = { 20., 20. };
+	Vector2f buttonGap = { 40., 20. };
 	Vector2f buttonsStart = { 10., 100. };
 
 	auto calcButtonPos = [buttonsStart, buttonSize, buttonGap, maxVerticalButtons](int &i)->Vector2f {
@@ -92,10 +99,10 @@ LevelSelect::LevelSelect(Resources* res)
 	//levelButtons[2] = new Button({ 200,70 }, { 400,100 }, res->GetFont(), levels[1]->getName());
 
 
-	const Vector2i& windowSize = Config::getInstance().getWindowDimension();
+	const Vector2i& windowSize = res->getConfig().getWindowDimension();
 	levelInfoState = LevelInfoState::Hidden;
 	levelInfoBox = new RectangleShape({ 7.f * windowSize.x / 16.f,8.f * windowSize.y / 9.f });
-
+	levelInfoBox->setFillColor(sf::Color(90, 170, 90, 100));
 	levelInfoBox->setPosition(windowSize.x - 7.f * windowSize.x / 16.f - 50.f, 50.f);
 
 	int buttonOffset = 5;
@@ -197,8 +204,10 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 	for (auto& levelButton : levelButtonsMap)
 	{
 		levelButton.second->Update(mousePos);
-		if (!levelsMap[levelButton.first]->canRealize(levelsMap))
-			continue;
+		try
+		{
+			if (!levelsMap[levelButton.first]->canRealize(levelsMap))
+				continue;
 
 			if (levelButton.second->GetButtonState() == ButtonStates::HOVER)
 			{
@@ -219,6 +228,12 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 				if (levelInfoState != LevelInfoState::Active)
 					levelInfoState = LevelInfoState::Hidden;
 			}
+		}
+		catch (const std::exception&)
+		{
+
+		}
+		
 	}
 
 	//for (int i = 0; i < levelsCount; i++)

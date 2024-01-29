@@ -4,14 +4,15 @@ AppEngine::AppEngine()
 {
 	logger = new Logger("\"Engine\"");
 
-	const Vector2i &windowSize = Config::getInstance().getWindowDimension();
+	res.LoadResources();
+
+	const Vector2i &windowSize = res.getConfig().getWindowDimension();
 	window = new RenderWindow(VideoMode(windowSize.x, windowSize.y, 64), "Praca Inzynierska", Style::Titlebar | Style::Close);
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(60);
 
 	//Settings::windowSize = window->getSize();
 
-	res.LoadResources();
 
 	//gameMenuState = STARTMENU;
 	//events = new Event;

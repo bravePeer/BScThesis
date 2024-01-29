@@ -5,11 +5,14 @@
 \usepackage{pdfpages}
 \usepackage{enumitem}
 \setmainfont{Times New Roman}
-
-
+\usepackage[polish]{babel}
+\addto\captionspolish{\renewcommand{\refname}{Bibliografia}}
+\usepackage{lscape}
+% \usepackage{rotating}
 \linespread{1.5}
 
 \renewcommand{\figurename}{Rys.}
+
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{subfig}
@@ -58,7 +61,7 @@
   showtabs=false,                  
   tabsize=2
 }
-\lstset{style=mystyle}
+\lstset{style=mystyle,texcl=true}
 
 
 

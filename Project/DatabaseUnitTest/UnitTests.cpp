@@ -160,7 +160,7 @@ namespace UnitTest
 			// ...
 
 			Board* board = new Board(20, 20, 1);
-			BoardSave::getInstance()->saveBoard(board, "save.asc");
+			BoardSave::getInstance().saveBoard(board, "save.asc");
 
 			Vector2i* tmp = new Vector2i[1];
 			tmp[0].x = 0;
@@ -173,14 +173,14 @@ namespace UnitTest
 			board->placeComponent(new Resistor(dynamic_cast<Resistor*>(components[0])), pinPos);
 			delete[] tmp;
 			
-			BoardSave::getInstance()->saveBoard(board, "save.asc");
+			BoardSave::getInstance().saveBoard(board, "save.asc");
 			Level::saveRealizedLevel(level->getId(), 0);
 			User::getInstance().syncSavesFile();
 
 			User::getInstance().getSavesFile();
 			Level::extractRelizedLevel(level->getId());
 			
-			Board* newBoard = BoardSave::getInstance()->loadBoard("save.asc", level);
+			Board* newBoard = BoardSave::getInstance().loadBoard("save.asc", level);
 
 			for (int i = 0; i < 20; i++)
 			{
@@ -207,21 +207,52 @@ namespace UnitTest
 	{
 		TEST_METHOD(SimpleSimulation)
 		{
+			string saveData = R"(
+Version 4
+SHEET 1 88 148
+WIRE 64 0 16 0
+WIRE 0 48 0 0
+WIRE 48 48 0 48
+WIRE 64 48 64 0
+FLAG 16 0 0
+SYMBOL _app\\myvoltage 0 0 R270
+SYMATTR InstName V1
+SYMATTR Value 12
+SYMBOL _app\\appres 48 48 R0
+SYMATTR InstName res0id0
+SYMATTR Value 1
+TEXT -32 -24 Left 2 !.tran 10
+
+)";
+			fstream file;
+			file.open("save/save.asc", ios::out);
+			file.write(saveData.c_str(), saveData.size());
+
 			SimulationEngine sim;
 			sim.simulate();
-			float val = sim.getComponentValue("led0id1");
+			float val = sim.getComponentValue("res0id0");
 			Microsoft::VisualStudio::CppUnitTestFramework::Logger::WriteMessage(to_string(val).c_str());
 			Assert::IsTrue(val != 0.f);
 		}
 		TEST_METHOD(TestLevel)
 		{
-			Level* level = loadLevel0();
+			Level* level = loadLevelSTART();
 			level->load();
 
 			Component** components = level->getComponents();
-
 			Board* board = new Board(level->getBoardDimension().x, level->getBoardDimension().y, level->getBoardDimension().z);
+			level->initBoard(board);
 			
+			Vector2i pos = { 0,1 };
+			board->placeComponent(new Resistor(dynamic_cast<Resistor*>(components[0])), pos);
+			board->addRoute({ 0,0 }, { 0,1 });
+			board->addRoute({ 1,0 }, { 1,1 });
+
+
+			BoardSave::getInstance().saveBoard(board, "save.asc");
+			SimulationEngine sim;
+			sim.simulate();
+			Assert::IsTrue(level->checkSimulation(board, &sim));
 		}
 	};
 }

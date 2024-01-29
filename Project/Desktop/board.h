@@ -4,7 +4,6 @@
 #include <fstream>
 #include <map>
 #include "tile.h"
-//#include "boardSave.h"
 
 //#define TILE_LENGTH 64
 //#define TILE_WIDTH 32
@@ -61,6 +60,10 @@ public:
 	void removeComponent(Vector2i pos);
 	Component* getComponentOnBoard(Vector2i pos);
 
+	void sortComponents()
+	{
+		
+	}
 
 	map<Component::CompoenetType, int> getComponentsCount();
 
@@ -72,8 +75,8 @@ public:
 	bool isHideComponent();
 
 	//Saving board as asc file
-	void saveBoard();
-	void loadBoard(const std::string& path);
+	//void saveBoard();
+	//void loadBoard(Level* level);
 
 
 	//---------Testing---------

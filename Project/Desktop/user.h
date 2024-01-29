@@ -24,7 +24,7 @@ public:
 	bool loginExistingUser(string login, string password)
 	{
 		this->login = login;
-		this->password = password;
+		//this->password = password;
 		if (database->checkUser(login, password))
 		{
 			loggedIn = true;

@@ -38,7 +38,6 @@ public:
 	void Render(RenderTarget* target);
 private:
 	Logger* logger;
-	Resources* res;
 
 	View* view;
 	Vector2f origin;

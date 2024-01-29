@@ -27,7 +27,6 @@ public:
 	void Render(sf::RenderTarget* target);
 	//void AddLetter(wchar_t s) {}
 private:
-	Resources* res;
 
 	//Level** levels;
 	//int levelsCount;

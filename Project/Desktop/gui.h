@@ -494,7 +494,6 @@ public:
 		text.setFillColor(Color::White);
 		SetTextPosition();
 
-
 		int sumLengthButton = 0;
 		if (maxAmountButtons == 0)
 		{
@@ -547,16 +546,16 @@ public:
 				continue;
 			}
 
-			buttons[i]->Update(static_cast<Vector2f>(Mouse::getPosition(*window)));
+			buttons[i+offset]->Update(static_cast<Vector2f>(Mouse::getPosition(*window)));
 
 
-			if (buttons[i]->GetButtonState() == PRESSED)
+			if (buttons[i+offset]->GetButtonState() == PRESSED)
 			{
 				selected = i;
 			}
 
 			
-			if (buttons[i]->GetButtonState() == HOVER)
+			if (buttons[i+offset]->GetButtonState() == HOVER)
 			{
 				hovered = i;
 			}
@@ -567,10 +566,15 @@ public:
 	{
 		target->draw(shape);
 
+		
 		for (short i = 0; i < maxAmountButtons; i++)
 		{
-			buttons[i]->Render(target);
+			buttons[i + offset]->Render(target);
 		}
+	}
+	void setButtonOffset(short offset)
+	{
+		this->offset = offset;
 	}
 
 private:
@@ -594,7 +598,7 @@ private:
 	unsigned short amountButtons;
 	short selected;
 	short hovered;
-
+	short offset = 0;
 	//Max number of buttons inside selectbox rect
 	unsigned short maxAmountButtons;
 	float spaceBetweenButtons;
@@ -614,7 +618,7 @@ public:
 
 		size_t linesCount = _str.find("\n", 0);
 		
-		//Vector2i windowDim = Config::getInstance().getWindowDimension();
+		//Vector2i windowDim = res->getConfig().getWindowDimension();
 
 		const Vector2f buttonDim = { 50.f, 50.f };
 

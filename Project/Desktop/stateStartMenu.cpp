@@ -2,7 +2,7 @@
 
 //------StartMenu---------
 StartMenu::StartMenu(Resources* res, bool logged)
-	:res(res)
+	:State(res)
 {
 
 	buttons = new Button * [ButtonId::Count];

@@ -168,6 +168,10 @@ public:
 	{
 		return simValue;
 	}
+	Vector2f& getGlobalPos()
+	{
+		return globalPosition;
+	}
 protected:
 	enum Rotation
 	{
@@ -196,7 +200,6 @@ protected:
 	bool removable;
 	ComponentTypePackage componentTypePackage;
 
-protected:
 	wstring name;
 	wstring description;
 	std::string simSymbol;
@@ -219,10 +222,15 @@ public:
 private:
 };
 
-class LedDiode : public Component
+class Diode:public Component
+{
+
+};
+
+class LightEmittingDiode : public Component
 {
 public:
-	LedDiode(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentTypePackage type, bool removable = true, std::string id = "")
+	LightEmittingDiode(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentTypePackage type, bool removable = true, std::string id = "")
 		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable, id)
 	{
 		if (name.length() == 0)
@@ -234,7 +242,7 @@ public:
 		simSymbol = "_app\\\\appled";
 		simName = "led" + to_string(componentsCount) + id;
 	}
-	LedDiode(LedDiode* ledDiode)
+	LightEmittingDiode(LightEmittingDiode* ledDiode)
 		:Component(ledDiode)
 	{
 		componentType = CompoenetType::led;

@@ -1,11 +1,11 @@
 #include "stateSolveLevel.h"
 
 SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
-	:res(res)
+	:State(res)
 {
-	logger = new Logger("Game");
+	logger = new Logger("SolveLevel");
 	
-	GraphicAll::GetInstance().LoadGraphic();
+	GraphicManager::GetInstance().loadTileGraphic();
 
 	view = new View({ 800,450 }, { 1600, 900 });
 	origin = view->getCenter();
@@ -14,6 +14,7 @@ SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 	currentLevel = level;
 	//Load components from task
 	level->load();
+
 	components = level->getComponents();
 	componentsCount = level->getComponentsCount();
 
@@ -34,7 +35,7 @@ SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 	if (loadExistingLevel)
 	{
 		Level::extractRelizedLevel(currentLevel->getId());
-		board = BoardSave::getInstance()->loadBoard(currentLevel->getPathToSave(), currentLevel);
+		board = BoardSave::getInstance().loadBoard(currentLevel->getPathToSave(), currentLevel);
 		if (board == nullptr)
 		{
 			logger->Info("Creating new save!");
@@ -50,7 +51,7 @@ SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 		level->initBoard(board);
 	}
 
-	FloatRect configValue = Config::getInstance().getSectionConfig(Config::SectionConfig::MenuSection);
+	FloatRect configValue = res->getConfig().getSectionConfig(Config::SectionConfig::MenuSection);
 	auto calPos = [&configValue](int i)->float {
 		return configValue.left + ((configValue.width - 20.f) / 3 + 10) * i;
 		};
@@ -81,6 +82,8 @@ SolveLevel::~SolveLevel()
 	delete componentDesc;
 
 	delete logger;
+
+	GraphicManager::GetInstance().unloadGraphics();
 }
 
 void SolveLevel::Update(RenderWindow* window, Time* elapsed)
@@ -101,7 +104,7 @@ void SolveLevel::Update(RenderWindow* window, Time* elapsed)
 	menuButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 	if (menuButton->isButtonPressed())
 	{
-		BoardSave::getInstance()->saveBoard(board, "save.asc");
+		BoardSave::getInstance().saveBoard(board, "save.asc");
 		if(User::getInstance().isLoggedIn())
 			Level::saveRealizedLevel(currentLevel->getId(), 0);
 		nextState = new LevelSelect(res);
@@ -133,19 +136,25 @@ void SolveLevel::Update(RenderWindow* window, Time* elapsed)
 			logger->Info(info);
 		}
 		
-		BoardSave::getInstance()->saveBoard(board, "save.asc");
+		BoardSave::getInstance().saveBoard(board, "save.asc");
 		
 		//if (simulationEngine != nullptr)
 			//delete simulationEngine;
 		if(simulationEngine == nullptr)
 			simulationEngine = new SimulationEngine();
 		simulationEngine->simulate();
-		simulationEngine->getComponentValue("led0id1");
-		if (!currentLevel->checkSimulation(board))
+		//simulationEngine->getComponentValue("led0id1");
+		if (!currentLevel->checkSimulation(board, simulationEngine))
 		{
 			simulationCheckResponse->SetString(L"Z³e po³¹czenie elementów!");
 			showSimulationCheckResponse = true;
 		}
+		else
+		{
+			simulationCheckResponse->SetString(L"Dobrze zrealizowany poziom!");
+			showSimulationCheckResponse = true;
+		}
+
 	}
 
 	const sf::Vector2f moveViewSpeed{50.f,50.f};
@@ -192,8 +201,8 @@ void SolveLevel::Render(RenderTarget* target)
 inline void SolveLevel::initTaskSection(Resources* res)
 {
 	//loadTask
-	const Vector2f sectionPos = Config::getInstance().getSectionConfig(Config::SectionConfig::TaskSection).getPosition();
-	const Vector2f sectionSize = Config::getInstance().getSectionConfig(Config::SectionConfig::TaskSection).getSize();
+	const Vector2f sectionPos = res->getConfig().getSectionConfig(Config::SectionConfig::TaskSection).getPosition();
+	const Vector2f sectionSize = res->getConfig().getSectionConfig(Config::SectionConfig::TaskSection).getSize();
 
 	taskName = new TextBox({ sectionSize.x, 50.f }, sectionPos, res->GetFont(), currentLevel->getName());
 	taskDescription = new TextBox(
@@ -221,7 +230,7 @@ void SolveLevel::renderTaskSection(RenderTarget* target)
 
 inline void SolveLevel::initRouteSection(Resources* res)
 {
-	FloatRect configValue = Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection);
+	FloatRect configValue = res->getConfig().getSectionConfig(Config::SectionConfig::ComponentSection);
 
 	auto calPos = [&configValue](int i)->float {
 		return configValue.top + ((configValue.height - 30.f) / 4 + 10) * i;
@@ -252,7 +261,6 @@ inline void SolveLevel::updateRouteSection(RenderWindow* window, Time* elapsed)
 		mouseMode = MouseMode::Route;
 		updateBoardSection = &SolveLevel::updateBoardSectionRoute;
 		logger->Info("Button pressed");
-		board->printRoutMap();
 	}
 
 	removeComponentButton->Update(mousePos);
@@ -292,17 +300,18 @@ inline void SolveLevel::renderRouteSection(RenderTarget* target)
 
 inline void SolveLevel::initComponentSection(Resources* res)
 {
-	Vector2f sectionPos = Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection).getPosition();
-	Vector2f sectionSize = Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection).getSize();
+	Vector2f sectionPos = res->getConfig().getSectionConfig(Config::SectionConfig::ComponentSection).getPosition();
+	Vector2f sectionSize = res->getConfig().getSectionConfig(Config::SectionConfig::ComponentSection).getSize();
 
 	addingComponents = new Button * [componentsCount];
 	for (int i = 0; i < componentsCount; i++)
 	{
 		addingComponents[i] = new Button({ 150.f, 120.f }, { 200.f,0.f }, res->GetFont(), components[i]->getName());
 	}
+	
 	selectComponent = new SelectBox(
-		Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection).getSize(),
-		Config::getInstance().getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
+		res->getConfig().getSectionConfig(Config::SectionConfig::ComponentSection).getSize(),
+		res->getConfig().getSectionConfig(Config::SectionConfig::ComponentSection).getPosition(),
 		res->GetFont(),
 		"Select Component",
 		Color(46, 207, 73, 50),
@@ -338,8 +347,8 @@ inline void SolveLevel::updateComponentSection(RenderWindow* window, Time* elaps
 			logger->Info("Selected " + to_string(selectedComponentId) + "component");
 			if (dynamic_cast<Resistor*>(components[selectedComponentId]))
 				addComponent = new Resistor(dynamic_cast<Resistor*>(components[selectedComponentId]));
-			else if (dynamic_cast<LedDiode*>(components[selectedComponentId]))
-				addComponent = new LedDiode(dynamic_cast<LedDiode*>(components[selectedComponentId]));
+			else if (dynamic_cast<LightEmittingDiode*>(components[selectedComponentId]))
+				addComponent = new LightEmittingDiode(dynamic_cast<LightEmittingDiode*>(components[selectedComponentId]));
 			else if (dynamic_cast<Microcontroller*>(components[selectedComponentId]))
 				addComponent = new Microcontroller(dynamic_cast<Microcontroller*>(components[selectedComponentId]));
 			else
@@ -358,6 +367,15 @@ inline void SolveLevel::updateComponentSection(RenderWindow* window, Time* elaps
 		}
 		else
 			componentDesc->setRender(false);
+	}
+
+	if (Keyboard::isKeyPressed(Keyboard::Key::N))
+	{
+		selectComponent->setButtonOffset(0);
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::M))
+	{
+		selectComponent->setButtonOffset(1);
 	}
 }
 

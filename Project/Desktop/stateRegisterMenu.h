@@ -26,7 +26,6 @@ public:
 	void Render(RenderTarget* target);
 	void AddLetter(wchar_t s);
 private:
-	Resources* res;
 	Button** buttons;
 	InputBox** loginInputBox;
 	InputBoxPassword** passwordInputBox;

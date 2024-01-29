@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <map>
+#include <string>
 #include "Logger.h"
 using namespace applogger;
 
@@ -11,55 +13,101 @@ using namespace applogger;
 #define IMAGE_TILE_LENGTH 66
 //#define TILE_WIDTH 32
 
-//#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistor.png"
-#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistorMirror.png"
-#define CAPACITOR_GRAPHIC_PATH "Resources\\Images\\simplecapacitor.png"
-//#define DIODE_GRAPHIC_PATH "Resources\\Images\\simplediode.png"
-//#define DIODE_GRAPHIC_PATH "Resources\\Images\\simplediode.png"
-#define DIODE_GRAPHIC_PATH "Resources\\Images\\simpleled.png"
-//#define LED_GRAPHIC_PATH "Resources\\Images\\simpleled.png"
 #define ROUTE_GRAPHIC_PATH "Resources\\Images\\routes.png"
+#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistorMirror.png"
+#define RESISTOR_10k_GRAPHIC_PATH "Resources\\Images\\simpleresistor10k.png"
+#define RESISTOR_200_GRAPHIC_PATH "Resources\\Images\\simpleresistor200.png"
+#define CAPACITOR_GRAPHIC_PATH "Resources\\Images\\simplecapacitor.png"
+#define DIODE_GRAPHIC_PATH "Resources\\Images\\simpleled.png"
 #define GOLDPIN_GRAPHIC_PATH "Resources\\Images\\goldpins.png"
 #define MICROCONTROLLER_DPAK8_GRAPHIC_PATH "Resources\\Images\\uC_DPAK_8pin.png"
 #define DEMONSTRATION_DPAK8_GRAPHIC_PATH "Resources\\Images\\demonstroation.png"
+#define TINY8_GRAPHIC_PATH "Resources\\Images\\tiny_uC.png"
 
 using namespace sf;
 using namespace std;
 
-/*Grafiki do gry*/
-class GraphicAll
+class ComponentGraphics
 {
 public:
-	static GraphicAll& GetInstance()
+	ComponentGraphics()
+		:loaded(false),  path("")
+	{ }
+	ComponentGraphics(std::string path)
+		:loaded(false), path(path)
+	{ }
+
+	bool loadComponent()
 	{
-		/*if (graphicAll == nullptr)
-			graphicAll = new GraphicAll();
-		
-		return graphicAll;*/
-		static GraphicAll graphic;
+		return componentTexture.loadFromFile(path);
+	}
+	const Texture& getTexture()
+	{
+		return componentTexture;
+	}
+	const std::string getPath()
+	{
+		return path;
+	}
+
+private:
+	sf::Texture componentTexture;
+	bool loaded;
+	std::string path;
+};
+
+/*Grafiki do gry*/
+class GraphicManager
+{
+public:
+	static GraphicManager& GetInstance()
+	{
+		static GraphicManager graphic;
 		return graphic;
 	}
-	~GraphicAll()
+	~GraphicManager()
 	{
 		delete logger;
 	}
-	GraphicAll(GraphicAll& other) = delete;
-	void operator=(const GraphicAll&) = delete;
+	GraphicManager(GraphicManager& other) = delete;
+	void operator=(const GraphicManager&) = delete;
 
-	void LoadGraphic()
+	void loadComponentGraphics()
+	{
+		for (auto& comp : componentsGraphics)
+		{
+			if (comp.second.loadComponent())
+				logger->Info(std::string("Loaded component graphic: ") + comp.first + std::string(", size:") + to_string(comp.second.getTexture().getSize().x) + " " + to_string(comp.second.getTexture().getSize().y));
+			else
+				logger->Error(std::string("NOT laoded component graphic: ") + comp.first + std::string(", path: ") + comp.second.getPath());
+		}
+	}
+	void addGraphicToLoad(std::string componentGraphicsId, std::string path)
+	{
+		componentsGraphics[componentGraphicsId] = ComponentGraphics(path);
+	}
+	const Texture& getComponentTexture(std::string componentGraphicsId)
+	{
+		return componentsGraphics[componentGraphicsId].getTexture();
+	}
+
+	void unloadGraphics()
+	{
+		componentsGraphics.clear();
+	}
+
+
+	void loadTileGraphic()
 	{
 		if (!loadTilesGraphics())
 			logger->Error("Can NOT load tile graphics!");
 		else
 			logger->Info("Tiles loaded successfuly!");
 		
-		loadResistorGraphic();
-		loadCapacitorGraphic();
-		loadDiodeGraphic();
 		loadRouteGraphic();
-		loadMicrocontrollerGraphic();
-		loadGoldpinTexture();
 	}
+
+	
 
 	const Texture* getTileTexture()
 	{
@@ -69,170 +117,29 @@ public:
 	{
 		return &(tilesSprite[i]);
 	}
+
+
 	
-	
-	void LoadTestGraphic()
-	{
-		if (!testTexture.loadFromFile("Resources\\Images\\simpleresistor.png"))
-		{
-			logger->Error("Cant load testsmdled.png");
-			isTestGraphicsLoaded = false;
-			return;
-		}
-
-		testSprite.setTexture(testTexture);
-		logger->Info("Loaded simpleresistor.png, size:" + to_string(testTexture.getSize().x) + " " + to_string(testTexture.getSize().y));
-		isTestGraphicsLoaded = true;
-	}
-	const Texture* getTestTexture()
-	{
-		return &testTexture;
-	}
-	sf::Sprite* GetSpriteTest()
-	{
-		return &testSprite;
-	}
-
-
-	void loadResistorGraphic()
-	{
-
-		if (!resistorTexture.loadFromFile(RESISTOR_GRAPHIC_PATH)) {
-			logger->Error("Cant load simpleresistor.png");
-			//isTestGraphicsLoaded = false;
-			return;
-		}
-
-		//resistorSprite.setTexture(resistorTexture);
-		logger->Info("Loaded simpleresistor.png, size:" + to_string(resistorTexture.getSize().x) + " " + to_string(resistorTexture.getSize().y));
-		//isTestGraphicsLoaded = true;
-	}
-
-	const sf::Texture& getResistorTexture()
-	{
-		return resistorTexture;
-	}
-	//sf::Sprite* getResistorSprite()
-	//{
-	//	return &resistorSprite;
-	//}
-
-	void loadCapacitorGraphic()
-	{
-		if (!capacitorTexture.loadFromFile(CAPACITOR_GRAPHIC_PATH))
-		{
-			logger->Error("Cant load simpleresistor.png");
-			//isTestGraphicsLoaded = false;
-			return;
-		}
-
-		//capacitorSprite.setTexture(capacitorTexture);
-		logger->Info("Loaded simpleresistor.png, size:" + to_string(capacitorTexture.getSize().x) + " " + to_string(capacitorTexture.getSize().y));
-		//isTestGraphicsLoaded = true;
-	}
-	const sf::Texture& getCapacitorTexture()
-	{
-		return capacitorTexture;
-	}
-	//sf::Sprite* getCapacitorSprite()
-	//{
-	//	return &capacitorSprite;
-	//}
-
-
-	void loadDiodeGraphic()
-	{
-		if (!diodeTexture.loadFromFile(DIODE_GRAPHIC_PATH))
-		{
-			logger->Error("Cant load simplediode.png");
-			//isTestGraphicsLoaded = false;
-			return;
-		}
-
-		//capacitorSprite.setTexture(capacitorTexture);
-		logger->Info("Loaded simplediode.png, size:" + to_string(diodeTexture.getSize().x) + " " + to_string(diodeTexture.getSize().y));
-
-	}
-	const sf::Texture& getDiodeTexture()
-	{
-		return diodeTexture;
-	}
-
-	void loadMicrocontrollerGraphic()
-	{
-		if (!microcontrollerTexture.loadFromFile(MICROCONTROLLER_DPAK8_GRAPHIC_PATH))
-		{
-			logger->Error("Cant load" MICROCONTROLLER_DPAK8_GRAPHIC_PATH);
-			//isTestGraphicsLoaded = false;
-			return;
-		}
-
-		//capacitorSprite.setTexture(capacitorTexture);
-		logger->Info("Loaded " MICROCONTROLLER_DPAK8_GRAPHIC_PATH ", size:" + to_string(microcontrollerTexture.getSize().x) + " " + to_string(microcontrollerTexture.getSize().y));
-	}
-	const sf::Texture& getMicrocontrollerTexture()
-	{
-		return microcontrollerTexture;
-	}
-
-
-	void loadRouteGraphic()
-	{
-		if (!routeTexture.loadFromFile(ROUTE_GRAPHIC_PATH))
-		{
-			logger->Error("Cant load: " ROUTE_GRAPHIC_PATH);
-			return;
-		}
-
-		routeSprite.setTexture(routeTexture);
-		routeSprite.setTextureRect(sf::IntRect({0,0}, {66,33}));
-		logger->Info("Loaded: " ROUTE_GRAPHIC_PATH ", size:" + to_string(routeTexture.getSize().x) + " " + to_string(routeTexture.getSize().y));
-	}
 	sf::Sprite* getRouteGraphic()
 	{
 		return &routeSprite;
 	}
 
 
-	void loadGoldpinTexture()
-	{
-		if (!goldpinTexture.loadFromFile(GOLDPIN_GRAPHIC_PATH))
-		{
-			logger->Error("Cant load goldpinTexture.png");
-			//isTestGraphicsLoaded = false;
-			return;
-		}
 
-		//capacitorSprite.setTexture(capacitorTexture);
-		logger->Info("Loaded goldpinTexture.png, size:" + to_string(goldpinTexture.getSize().x) + " " + to_string(goldpinTexture.getSize().y));
-
-	}
-	const sf::Texture& getGoldpinTexture()
-	{
-		return goldpinTexture;
-	}
 
 	bool IsGraphicLoaded()
 	{
 		return isTestGraphicsLoaded;
 	}
 private:
-	GraphicAll()
+	GraphicManager()
 	{
 		logger = new Logger("Graphics");
 	}
 
-	static GraphicAll* graphicAll;
+	std::map<std::string, ComponentGraphics> componentsGraphics;
 
-	Texture microcontrollerTexture;
-	Texture resistorTexture;
-	//Sprite resistorSprite;
-	Texture capacitorTexture;
-	//Sprite  capacitorSprite;
-	Texture diodeTexture;
-
-	Texture testTexture;
-	Sprite testSprite;
 	bool isTestGraphicsLoaded;
 
 	//48 x 512
@@ -248,8 +155,21 @@ private:
 			tilesSprite[i].setTexture(tilesTexture);
 			tilesSprite[i].setTextureRect(sf::IntRect(IMAGE_TILE_LENGTH * i, 0, 66, 48));
 		}
+		return true;
 	}
+	void loadRouteGraphic()
+	{
+		if (!routeTexture.loadFromFile(ROUTE_GRAPHIC_PATH))
+		{
+			logger->Error("Cant load: " ROUTE_GRAPHIC_PATH);
+			return;
+		}
 
+		routeSprite.setTexture(routeTexture);
+		routeSprite.setTextureRect(sf::IntRect({ 0,0 }, { 66,33 }));
+		logger->Info("Loaded: " ROUTE_GRAPHIC_PATH ", size:" + to_string(routeTexture.getSize().x) + " " + to_string(routeTexture.getSize().y));
+	}
+	
 	Texture goldpinTexture;
 
 	Texture routeTexture;
@@ -265,13 +185,11 @@ class Config
 public:
 	Config()
 	{
-		logger = new Logger("Config");
 		loadSectionConfig();
 	}
 	~Config() 
 	{
 		delete[] sectionRects;
-		delete logger;
 	}
 	Config(Config& other) = delete;
 	void operator=(const Config&) = delete;
@@ -312,7 +230,7 @@ private:
 	{
 		sectionRects = new FloatRect[static_cast<int>(SectionConfig::Last)];
 
-		sectionRects[static_cast<int>(SectionConfig::BoardSection)] = FloatRect(0, 0, 1200, 800);
+		sectionRects[static_cast<int>(SectionConfig::BoardSection)] = FloatRect(0, 0, 1100, 700);
 		sectionRects[static_cast<int>(SectionConfig::RouteSection)] = FloatRect(0, 700, 200, 200);
 		sectionRects[static_cast<int>(SectionConfig::ComponentSection)] = FloatRect(220, 700, 870, 200);
 		sectionRects[static_cast<int>(SectionConfig::InfoSection)] = FloatRect(1200, 700, 400, 200);
@@ -320,9 +238,7 @@ private:
 		sectionRects[static_cast<int>(SectionConfig::MenuSection)] = FloatRect(1100, 0, 500, 50);
 	}
 
-	Logger* logger;
-
-	Vector2i windowDimension = { 1600, 900 };
+	const Vector2i windowDimension = { 1600, 900 };
 	FloatRect* sectionRects;
 };
 
@@ -372,11 +288,14 @@ public:
 		return font;
 	}
 
-
+	Config& getConfig()
+	{
+		return config;
+	}
 
 private:
 	Logger* logger;
-
+	Config config;
 	
 	Texture demonstrationTexture;
 	Sprite demonstrationSprite;

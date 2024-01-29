@@ -1,15 +1,16 @@
-\documentclass[12pt,a4paper]{article} % albo book
-%,bibliography=totoc
-% \documentclass[12pt,a4paper,bibliography=totoc]{scrartcl}
-\input{szablon2.tex}
+\documentclass[12pt, a4paper]{article} % albo book
+% \usepackage[paper=portrait,pagesize]{typearea}
 
+\input{szablon2.tex}
+\usepackage{titlesec}
+\titlelabel{\thetitle.\quad}
+% \usepackage{babel}
 
 
 \pagenumbering{arabic}
 \begin{document}
 
 \includepdf[pages=-]{images/strona_tytułowa.pdf}
-
 \tableofcontents
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,37 +20,39 @@
 \section{Idea projektu}
 
 \subsection{Wprowadzenie}
-\aka Elektronika, w~ogólnym znaczeniu tego słowa, jest dziedziną nauki i~techniki, która zajmuje się wykorzystaniem zjawisk związanych z~sterowaniem kierunku ruchu elektronów \cite{definicja_elektornika}. W~dzisiejszych czasach wykorzystanie tej dziedziny nauki jest bardzo powszechne, ukierunkowany ruch elektronów występuje w~każdym urządzniu, które wymaga prądu elektrycznego do zasilenia. Przykładami takich urządzeń wykorzystywanych na codzień są: telefony komórkowe, komputery, telewizory, sprzęt RTV, czy sprzęt AGD. Przechodząc niżej elektroniką jest analizowanie oraz przetwarzanie napięć i prądów przez urządzenia.
+\aka Elektronika, w~ogólnym znaczeniu tego słowa, jest dziedziną nauki i~techniki, która zajmuje się wykorzystaniem zjawisk związanych ze sterowaniem kierunku ruchu elektronów \cite{definicja_elektornika}. W~dzisiejszych czasach wykorzystanie tej dziedziny nauki jest bardzo powszechne, ukierunkowany ruch elektronów występuje w~każdym urządzeniu, które wymaga prądu elektrycznego do zasilenia. Przykładami takich urządzeń wykorzystywanych na codzień są: telefony komórkowe, komputery, telewizory, sprzęt RTV, czy AGD. Przechodząc dalej - elektroniką jest analizowanie oraz przetwarzanie napięć i prądów przez urządzenia.
+Mając styczność z~elektroniką na co dzień, zrozumienie działania tych urządzeń może przynieść korzyści w~celu na przykład naprawy czy dodania ulepszenia.
+
 
 \subsection{Cel pracy}
-\aka Celem pracy jest opracowanie oraz zaimplementowanie aplikacji pomagającej w~nauce elektroniki osobom początkującym poprzez praktyczne łączenie komponentów elektronicznych. Układanie elementów oraz ich łączenie na płytce, w~aplikacji odzwierciedla projektowanie płytki drukowanej. 
-\question{zdanie zgubiłem coś o układaniu elemnentów, ze mało miejsca, tu coś więcej trzebaby dać}
+\aka Celem pracy jest opracowanie oraz zaimplementowanie aplikacji pomagającej w~nauce elektroniki osobom początkującym poprzez praktyczne łączenie komponentów elektronicznych. Układanie elementów oraz ich łączenie na płytce, w~aplikacji odzwierciedla projektowanie płytki drukowanej. Aplikacja w~celu zapisania postępu łączy się z bazą danych. Realizowanie poziomów odblokowuje kolejne poziomy.
 
 \subsection{Wymagania funkcjonalne oraz niefunkcjonalne}
 Wymaganiami funkcjonalnymi systemu są:
 \begin{itemize}[nosep]
-	\item możliwość utworzenia nowego konta użytkownika
-	\item możliwość zalogowania się na istniejące konto użytkownika
-	\item wyświetlenie opisu komponentu elektronicznego
-	\item wyświetlenie listy zadań do zrealizowania
-	\item wykonanie symulacji układu elektronicznego
-	\item możliwość wybrania poziomu do realizacji
-	\item możliwość połączenia komponentów w~dowolny sposób
-	\item możliwość położenia komponentu w~dowolnym miejscu na płytce
-	\item synchronizacja z bazą danych
+	\item możliwość utworzenia nowego konta użytkownika,
+	\item możliwość zalogowania się na istniejące konto użytkownika,
+	\item wyświetlenie opisu komponentu elektronicznego,
+	\item wyświetlenie listy zadań do zrealizowania,
+	\item wykonanie symulacji układu elektronicznego,
+	\item możliwość wybrania poziomu do realizacji,
+	\item możliwość połączenia komponentów w~dowolny sposób,
+	\item możliwość położenia komponentu w~dowolnym miejscu na płytce,
+	\item synchronizacja z bazą danych.
 \end{itemize}
 
+\noindent
 Wymaganiami niefunkcjonalnymi systemu są:
 \begin{itemize}[nosep]
-	\item Połączenie z Internetem (baza danych)
+	\item Połączenie z Internetem (baza danych).
 \end{itemize}
 
 \subsection{Przypadki użycia aplikacji}
-Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram przypadków użycia. Natomiast poniżej rys. \ref{rys:diagram-przypadków-użycia} przedstowiony został opis poszczególnych przypadków użycia.
+Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram przypadków użycia. Natomiast poniżej rys. \ref{rys:diagram-przypadków-użycia} przedstawiony został opis poszczególnych przypadków użycia.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=15cm]{images/use_case_diagram.png}
+	\includegraphics[width=15cm]{images/plan-use_case_diagram.png}
 	\caption{Diagram przypadków użycia \\ Źródło: opracowanie własne}
 	\label{rys:diagram-przypadków-użycia} %odwołanie do rysunku: \ref{rys:diagram-przypadków-użycia}
 \end{figure}
@@ -63,9 +66,9 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addcondition{Użytkownik nie jest zalogowany. Widok ekranu początkowego.}
 	\addpath
 	\begin{usecases}
-		\item Użytkownik przechodzi do ekranu tworzenia konta - kliknięcie przycisku "Zarejestruj".
+		\item Użytkownik przechodzi do ekranu tworzenia konta - kliknięcie przycisku ,,Zarejestruj''.
 		\item Użytkownik wprowadza dane do utworzenia konta.
-		\item Użytkownik klika przycisk "Zarejestruj".
+		\item Użytkownik klika przycisk ,,Zarejestruj''.
 		\item Aplikacja sprawdza poprawność danych.
 		\begin{usecases}
 			\item Dane wprowadzone przez użytkownika są poprawne.
@@ -88,11 +91,11 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\noaka
 	\addusecase{Sprawdzenie poprawności danych}
 	\addactor{Użytkownik, Baza danych}
-	\adddesc{Sprawdzenie wprowadoznych danych przez użytkownika}
-	\addcondition{Użytkownik jest nie zalogowany oraz klikną przycisk "Zaloguj" z~widoku logowania lub klikną przycisk "Zarejestruj" z~widoku rejestracji.}
+	\adddesc{Sprawdzenie wprowadzonych danych przez użytkownika.}
+	\addcondition{Użytkownik jest niezalogowany oraz kliknął przycisk ,,Zaloguj'' z~widoku logowania lub kliknął przycisk ,,Zarejestruj'' z~widoku rejestracji.}
 	\addpath
 	\begin{usecases}
-		\item Sprawdzenie czy dane nie zawierają niepoprawnych znaków.
+		\item Sprawdzenie, czy dane nie zawierają niepoprawnych znaków.
 		\item Dane wprowadzone przez użytkownika są poprawne.
 		\begin{usecases}
 			\item Dane wprowadzone przez użytkownika nie są poprawne.
@@ -121,14 +124,14 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addcondition{Użytkownik nie jest zalogowany. Widok ekranu początkowego.}
 	\addpath
 	\begin{usecases}
-		\item Użytkownik przechodzi do ekranu logowania - kliknięcie przycisku "Zaloguj".
+		\item Użytkownik przechodzi do ekranu logowania - kliknięcie przycisku ,,Zaloguj''.
 		\item Użytkownik wprowadza dane do zalogowania.
-		\item Użytkownik klika przycisk "Zaloguj".
+		\item Użytkownik klika przycisk ,,Zaloguj''.
 		\item Aplikacja sprawdza poprawność danych.
 		\begin{usecases}
 			\item Dane wprowadzone przez użytkownika są poprawne.
 			\begin{usecases}
-				\item Użytkonik zostaje zalogowany.
+				\item Użytkownik zostaje zalogowany.
 				\item Wyświetlony zostaje komunikat~z pomyślnym zalogowaniem.
 			\end{usecases}
 			\item Dane wprowadzone przez użytkownika nie są poprawne.
@@ -145,7 +148,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addusecase{Synchronizuj zapis użytkownika}
 	\addactor{Użytkownik, Baza danych}
 	\adddesc{Pobranie zapisu z~bazy danych.}
-	\addcondition{Użytkonik został pomyślnie zalogowany.}
+	\addcondition{Użytkownik został pomyślnie zalogowany.}
 	\addpath
 	\begin{usecases}
 		\item Pobranie pliku z~zapisem z~bazy danych.
@@ -160,7 +163,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addusecase{Synchronizuj zapis użytkownika}
 	\addactor{Użytkownik, Baza danych}
 	\adddesc{Pobranie zapisu z~bazy danych.}
-	\addcondition{Użytkownik klikną przycisk zamknięcia aplikacji.}
+	\addcondition{Użytkownik kliknął przycisk zamknięcia aplikacji.}
 	\addpath
 	\begin{usecases}
 		\item Wysłanie pliku z~zapisem do~bazy danych.
@@ -178,7 +181,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addcondition{Użytkownik znajduje się w~widoku początkowym.}
 	\addpath
 	\begin{usecases}
-		\item Użytkownik klika przycisk "Rozpoczij".
+		\item Użytkownik klika przycisk ,,Rozpocznij''.
 		\begin{usecases}
 			\item Użytkownik zalogowany.
 			\begin{usecases}
@@ -189,11 +192,11 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 		\item Użytkownik klika poziom, który chce zrealizować.
 		\item Aplikacja wyświetla opis poziomu.
 		\begin{usecases}
-			\item Użytkownik klika przycisk "Rozpocznij od początku".
+			\item Użytkownik klika przycisk ,,Rozpocznij od początku''.
 			\begin{usecases}
 				\item Aplikacja wczytuje domyślne ustawienia poziomu.
 			\end{usecases}
-			\item Użytkownik klika przycisk "Wczytaj".
+			\item Użytkownik klika przycisk ,,Wczytaj''.
 			\begin{usecases}
 				\item Aplikacja wczytuje poziom z pliku zapisu.
 			\end{usecases}
@@ -208,7 +211,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addusecase{Wczytaj poziom}
 	\addactor{Użytkownik}
 	\adddesc{Wczytanie poziomu z pliku.}
-	\addcondition{Użytkownik zalogowany, zapis z bazy danych został zsynchronizowany oraz użytkownik podczas wybierania poziomu kliknął przycisk "Wczytaj".}
+	\addcondition{Użytkownik zalogowany, zapis z bazy danych został zsynchronizowany oraz użytkownik podczas wybierania poziomu kliknął przycisk ,,Wczytaj''.}
 	\addpath
 	\begin{usecases}
 		\item Wyekstrahowanie danych z poziomem (pliku schematu) z~pliku zapisu bazodanowego.
@@ -229,16 +232,16 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 \hfill \break
 \begin{usecase}
 	\noaka
-	\addusecase{Realizcja poziomu}
+	\addusecase{Realizacja poziomu}
 	\addactor{Użytkownik}
 	\adddesc{Użytkownik realizuje poziom}
 	\addcondition{Użytkownik wczytał bądź rozpoczął od nowa poziom.}
 	\addpath
 	\begin{usecases}
-		\item Aplikacja wyświelta przyciski, które pozwalają sprawdzić poziom, wyświetlić pomoc oraz powrócić do wyboru poziomu.
-		\item Aplikacja wyświelta opis poziomu oraz cele do zrealizowania.
-		\item Aplikacja wyświelta przyciski, które pozwalają na dodawanie nowych komponentów.
-		\item Aplikacja wyświetla przyciski odpowidzlane za dodawanie/usuwanie ścieżki, ukrywanie oraz usuwanie komponentów. 
+		\item Aplikacja wyświetla przyciski, które pozwalają sprawdzić poziom, wyświetlić pomoc oraz powrócić do wyboru poziomu.
+		\item Aplikacja wyświetla opis poziomu oraz cele do zrealizowania.
+		\item Aplikacja wyświetla przyciski, które pozwalają na dodawanie nowych komponentów.
+		\item Aplikacja wyświetla przyciski odpowiedzialne za dodawanie/usuwanie ścieżki, ukrywanie oraz usuwanie komponentów. 
 		\item Aplikacja wyświetla wczytaną płytkę.
 	\end{usecases}
 \end{usecase}
@@ -252,7 +255,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addcondition{Użytkownik wczytał bądź rozpoczął od nowa poziom. }
 	\addpath
 	\begin{usecases}
-		\item Użytkownik klika przycisk "Połącz".
+		\item Użytkownik klika przycisk ,,Połącz''.
 		\item Użytkownik trzyma lewy przycisk myszy.
 		\item Użytkownik przesuwa kursor w miejscu dodania ścieżki.
 		\item Ścieżka może zostać dodana.
@@ -271,7 +274,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addcondition{Użytkownik wczytał bądź rozpoczął od nowa poziom. }
 	\addpath
 	\begin{usecases}
-		\item Użytkownik klika przycisk "Połącz".
+		\item Użytkownik klika przycisk ,,Połącz''.
 		\item Użytkownik trzyma prawy przycisk myszy.
 		\item Użytkownik przesuwa kursor w miejscu usunięcia ścieżki.
 		\item Ścieżka może zostać usunięta.
@@ -311,7 +314,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addcondition{Użytkownik wczytał bądź rozpoczął od nowa poziom. }
 	\addpath
 	\begin{usecases}
-		\item Użytkownik klika przycisk "Usuń"
+		\item Użytkownik klika przycisk ,,Usuń''.
 		\item Użytkownik klika komponent na płytce, który chce usunąć.	
 		\item Komponent może zostać usunięty.
 		\begin{usecases}
@@ -326,10 +329,10 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addusecase{Zapis poziomu}
 	\addactor{Użytkownik}
 	\adddesc{Plik schematu zostaje zapisany w~pliku z zapisem bazodanowym.}
-	\addcondition{Użytkownik zalogowany oraz wczytał bądź rozpoczął od nowa poziom. }
+	\addcondition{Użytkownik zalogowany, wczytał bądź rozpoczął od nowa poziom. }
 	\addpath
 	\begin{usecases}
-		\item Użytkownik klika przycisk "Powrót".
+		\item Użytkownik klika przycisk ,,Powrót''.
 		\item Aplikacja tworzy plik schematu.
 		\item Aplikacja dodaje plik schematu do pliku bazodanowego.
 	\end{usecases}
@@ -340,12 +343,12 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\noaka
 	\addusecase{Sprawdzenie wymagań zaliczenia poziomu}
 	\addactor{Użytkownik}
-	\adddesc{Aplikacja sprawdza czy położone komponenty spełniają wymagania poziomu.}
+	\adddesc{Aplikacja sprawdza, czy położone komponenty spełniają wymagania poziomu.}
 	\addcondition{Użytkownik wczytał bądź rozpoczął od nowa poziom.}
 	\addpath
 	\begin{usecases}
-		\item Użytkownik klika przycisk "Sprawdź".
-		\item Aplikacja sprawdza czy spełnione zostały założenia poziomu.
+		\item Użytkownik klika przycisk ,,Sprawdź''.
+		\item Aplikacja sprawdza, czy spełnione zostały założenia poziomu.
 		\item Założenia poziomu zostały spełnione.
 		\begin{usecases}
 			\item Założenia poziomu nie zostały spełnione.
@@ -354,7 +357,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 				\item Przerwanie procesu sprawdzania poziomu.
 			\end{usecases}
 		\end{usecases}
-		\item Aplikacja sprawdza czy zostały spełnione warunki symulacji
+		\item Aplikacja sprawdza, czy zostały spełnione warunki symulacji.
 		\item Założenia symulacji zostały spełnione.
 		\begin{usecases}
 			\item Założenia symulacji nie zostały spełnione.
@@ -363,7 +366,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 				\item Przerwanie procesu sprawdzania poziomu.
 			\end{usecases}
 		\end{usecases}
-		\item Aplikacja ustawia flagę, że poziom zostal zrealizowny.
+		\item Aplikacja ustawia flagę, że poziom został zrealizowany.
 		\item Wyświetlenie komunikatu o pomyślnym zrealizowaniu poziomu.
 	\end{usecases}
 \end{usecase}
@@ -374,14 +377,14 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 	\addusecase{Sprawdzenie wyników symulacji}
 	\addactor{Użytkownik}
 	\adddesc{Aplikacja wykonuje symulację oraz sprawdza wynik symulacji.}
-	\addcondition{Użytkownik wczytał bądź rozpoczął od nowa poziom, klikną przycisk "Sprawdź" oraz założenia poziomu zostały spełnione. }
+	\addcondition{Użytkownik wczytał bądź rozpoczął od nowa poziom, kliknął przycisk ,,Sprawdź'' oraz założenia poziomu zostały spełnione. }
 	\addpath
 	\begin{usecases}
 		\item Aplikacja tworzy plik schematu.
 		\item Aplikacja żąda wykonania symulacji.
 		\item Symulacja została wykonana pomyślnie.
 		\begin{usecases}
-			\item Symulacja została zakończona nie powodzeniem.
+			\item Symulacja została zakończona niepowodzeniem.
 			\begin{usecases}
 				\item Aplikacja zwraca komunikat z błędem.
 			\end{usecases}
@@ -394,7 +397,7 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 				\item Aplikacja zwraca komunikat z błędem.
 			\end{usecases}
 		\end{usecases}
-		\item Aplikacja zwraca komunikat z~spełnieniem warunków symulacji.
+		\item Aplikacja zwraca komunikat ze spełnieniem warunków symulacji.
 	\end{usecases}
 \end{usecase}
 
@@ -404,9 +407,9 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 \clearpage
 \section{Idea działania aplikacji}
 \subsection{Wprowadzenie}
-\aka Działanie aplikacji polega na realizowaniu kolejnych poziomów, poprzez układanie elementów elektronicznych na płytce. Płytka jak i~elementy elektroniczne zostały przedstawione w~rzucie izometrycznym wykorzystując grafikę rastrową w stylu \textit{pixel art}. Każdy poziom zawiera opis działania układu oraz opis połączenia komponentów elektronicznych. Użytkownik ma możliwość zarejestrowania oraz zalogowania się do aplikacji w~celu zapisania postępu  w~"chmurze".
+\aka Działanie aplikacji polega na realizowaniu kolejnych poziomów, poprzez układanie elementów elektronicznych na płytce. Płytka, jak i~elementy elektroniczne, zostały przedstawione w~rzucie izometrycznym, wykorzystując grafikę rastrową w stylu \textit{pixel art}. Każdy poziom zawiera opis działania układu oraz opis połączenia komponentów elektronicznych. Użytkownik ma możliwość zarejestrowania oraz zalogowania się do aplikacji w~celu zapisania postępu  w~,,chmurze''.
 
-\noindent\aka Dodatkowym elementem aplikacji jest możliwość wczytania pliku schematu płytki wraz z~ułożonymi komponentami do programu symulującego \textbf{LTspice}, aby użytkownik miał możliwość dokładniejszej analizy. 
+\noindent\aka Dodatkowym elementem aplikacji jest możliwość wczytania pliku schematu płytki wraz z~ułożonymi komponentami do programu symulującego LTspice \cite{programltspice}, aby użytkownik miał możliwość dokładniejszej analizy. 
 
 \begin{figure}[h]
 	\centering
@@ -416,28 +419,28 @@ Na rys. \ref{rys:diagram-przypadków-użycia}  przedstawiony został diagram prz
 \end{figure}
 
 
-\noindent\aka Procesor wykonuje instrukcje w~sposób sekwencyjny, więc do zachowania ciągłości renderowania obrazu wymagane jest, by aplikacja zawierała nieskończoną pętlę, w~której jest zawarte sprawdzanie zdarzeń, aktualizowanie aplikacji oraz rysowanie okna \cite{gameprogrammingpatterns}. Pierwszym etapem pętli jest przetwarzanie zdarzeń, czyli np. sprawdzenie i~wykonanie odpowiednich instrukcji np. czy użytkownik wcisnął przycisk zamknięcia okna, czy aplikacja utraciła fokus. Warunek sprawdzania fokusu okna pozwala na nie wykorzystywanie zasobów sprzętowych, w~przypadku gdy okno jest nie aktywne, bądź jest zminimalizowane. W~następnym etapie następuje aktualizacja aplikacji, czyli przetworzenie wszytkich instrukcji logicznych. Ostatnim etapem jest czekanie, aby aplikacja nie wykonywała się za szybko. W~tej aplikacji zostało przyjęte, że maksymalna liczba klatek na sekundę wynosi 60, więc pętla się wykonuje 60 razy na sekundę. Aplikacja nie wykonuje się szybciej, ponieważ zwiększenie generowania maksymalnej liczby klatek dałoby niezauważalne różnice, a znacznie zwiększyłoby wykorzystanie sprzętu.  Schemat blokowy głównej pętli został przedstawiony na rys. \ref{rys:main_loop}. 
+\noindent\aka Procesor wykonuje instrukcje w~sposób sekwencyjny, więc do zachowania ciągłości renderowania obrazu wymagane jest, by aplikacja zawierała nieskończoną pętlę, w~której jest zawarte sprawdzanie zdarzeń, aktualizowanie aplikacji oraz rysowanie okna \cite{gameprogrammingpatterns}. Pierwszym etapem pętli jest przetwarzanie zdarzeń, czyli np. sprawdzenie i~wykonanie odpowiednich instrukcji np. czy użytkownik wcisnął przycisk zamknięcia okna, czy aplikacja utraciła fokus. Warunek sprawdzania fokusu okna pozwala na niewykorzystywanie zasobów sprzętowych, w~przypadku gdy okno jest nieaktywne, bądź jest zminimalizowane. W~następnym etapie następuje aktualizacja aplikacji, czyli przetworzenie wszystkich instrukcji logicznych. Ostatnim etapem jest czekanie, aby aplikacja nie wykonywała się za szybko. W~tej aplikacji zostało przyjęte, że maksymalna liczba klatek na sekundę wynosi sześćdziesiąt, więc pętla wykonuje się sześćdziesiąt razy na sekundę. Aplikacja nie wykonuje się szybciej, ponieważ zwiększenie generowania maksymalnej liczby klatek dałoby niezauważalne różnice, a znacznie zwiększyłoby wykorzystanie sprzętu.  Schemat blokowy głównej pętli został przedstawiony na rys. \ref{rys:main_loop}. 
 
 
 
 
 \subsection{Widoki aplikacji}
-\aka Aplikacja składa się z~widoków, gdzie w każdym widoku są możliwe do wykonania inne czynności przez użytkownika. Przechodzenie między różnymi widokami odbywa się poprzez kliknięcie odpowiednie kliknięcie przycisku z adekwatną nazwą do danego widoku. W~każdym widoku poza widokiem "Wyjście" oraz "Widok początkowy" jest przycisk, który pozwala na powrót do poprzedniego widoku. Możliwe widoki zostały przedstawione na rys. \ref{rys:diagram_maszyny_stanów}.
+\aka Aplikacja składa się z~widoków, gdzie w każdym widoku są możliwe do wykonania inne czynności przez użytkownika. Przechodzenie między różnymi widokami odbywa się poprzez kliknięcie odpowiedniego przycisku z adekwatną nazwą do danego widoku. W~każdym widoku poza widokami ,,Wyjście'' oraz ,,Widok początkowy'' jest przycisk, który pozwala na powrót do poprzedniego widoku. Możliwe widoki zostały przedstawione na rys. \ref{rys:diagram_maszyny_stanów}.
 
 % Widoki zostały zrealizowane jako maszyna stanów, która zmienia swoj stan zależnie od swoje stanu wewnętrznego.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=15cm]{images/maszyna_stanów_aplikacji.png}
-	\caption{Diagram maszyny stanów obiektu klasy \textit{Game} \\ Źródło: opracowanie własne}
+	\caption{Diagram widoków (maszyny stanów) aplikacji \\ Źródło: opracowanie własne}
 	\label{rys:diagram_maszyny_stanów}
 \end{figure}
 
-\subsection{Logowanie i rejestracja użytkownika nwm jak nazwać}
-\aka Użytkownik zanim będzie mógł się zalogować musi utworzyć konto, aby mógł to zrobić musi przejść do widoku rejestracji, a~następnie wprowadzić login, e-mail i dwukrotnie hasło oraz nacisnąć przycisk rejestracji. Po kliknięciu przycisku następuje sprawdzenie poprawności wprowadoznych danych, czy dane zawierają puste znaki, czy dane zawierają znaki niedozwolone. Gdy dane są nie poprawne to zostaje zwrócony komunikat z~błędnymi danymi. W~przeciwnym wypadku aplikacja wysyła zapytanie do bazy danych w celu sprawdzenia czy istnieje konto z~takim loginem w~bazie danych. Gdy nie istnieje to zostaje dodany nowy użytkownik do bazy danych, a~następnie tworzony jest plik bazodanowy i wysyłany do bazy danych.
-Diagram czynności przedstawiający proces tworzenia nowego konta przedstawiony jest na rys. \ref{rys:diagram_czynnosci_rejestracja}
+\subsection{Logowanie i rejestracja użytkownika}
+\aka Użytkownik, zanim będzie mógł się zalogować, musi utworzyć konto, aby mógł to zrobić, musi przejść do widoku rejestracji, a~następnie wprowadzić login, e-mail i dwukrotnie hasło oraz nacisnąć przycisk rejestracji. Po kliknięciu przycisku następuje sprawdzenie poprawności wprowadzonych danych, czy dane zawierają puste znaki, czy dane zawierają znaki niedozwolone. Gdy dane są niepoprawne, to zostaje zwrócony komunikat z~błędnymi danymi. W~przeciwnym wypadku aplikacja wysyła zapytanie do bazy danych w celu sprawdzenia, czy istnieje konto z~takim loginem w~bazie danych. Gdy nie istnieje, to zostaje dodany nowy użytkownik do bazy danych, a~następnie tworzony jest bazodanowy plik zapisu postępu i wysyłany do bazy danych.
+Diagram czynności przedstawiający proces tworzenia nowego konta przedstawiony jest na rys. \ref{rys:diagram_czynnosci_rejestracja}.
 
-\aka Użytkownik ma możliwość zalogowania, aby było to możliwe uzytkownik musi przejść do widoku logowania, a~następnie wprowadzić login i hasło oraz nacisnąć przycisk logowania. Po kliknięciu przycisku aplikacja najpierw sprawdza poprawność wprowadoznych danych, tak jak w~przypadku rejestracji. Następnie aplikacja wysyła zapytanie do bazy danych, w~celu sprawdzenia czy taki użytkownik istnieje. Gdy login nie zostaje odnaleziony w~bazie danych aplikacja wyświetla stosowny komunkat, w~przeciwnym wypadku sprawdzane jest hasło w~badzie danych. Wyświetlany jest komunikat z błędem w przypadku błędnego hasła. Jeśli dane są poprawne to użytkownik zostaje zalogowany. Diagram czynności przedstawiający proces logowania jest przedstawiony na rys. \ref{rys:diagram_czynnosci_logowanie}.
+\aka Użytkownik ma możliwość zalogowania, aby było to możliwe, użytkownik musi przejść do widoku logowania, a~następnie wprowadzić login i hasło oraz nacisnąć przycisk logowania. Po kliknięciu przycisku aplikacja najpierw sprawdza poprawność wprowadzonych danych tak jak w~przypadku rejestracji. Następnie aplikacja wysyła zapytanie do bazy danych, w~celu sprawdzenia, czy taki użytkownik istnieje. Gdy login nie zostaje odnaleziony w~bazie danych, aplikacja wyświetla stosowny komunikat, w~przeciwnym wypadku sprawdzane jest hasło w~bazie danych. Wyświetlany jest komunikat z błędem w przypadku błędnego hasła. Jeśli dane są poprawne, to użytkownik zostaje zalogowany. Diagram czynności przedstawiający proces logowania jest przedstawiony na rys. \ref{rys:diagram_czynnosci_logowanie}.
 
 
 \begin{figure}
@@ -457,7 +460,7 @@ Diagram czynności przedstawiający proces tworzenia nowego konta przedstawiony 
 \end{figure}
 
 \subsection{Realizacja poziomu}
-\aka Aby możliwa była realizajca poziomu użytkownik musi przejść do widoku wybierania poziomu. Jeśli użytkownik jest zalogowany to wczytywane są informacje z~pliku bazodanowego o~zapisanych poziomach. Pozwalają one określić, które z~poziomów zostały zrealizowane. Rys. \ref{rys:diagram_czynnosc_wybor_poziomu} przedstawia diagram czynności podczas przejścia do widoku wybierania poziomu. Następnie użytkownik wybiera poziom do realizacji po kliknięciu na poziom, wyświetlany jest opis poziomu. Jeśli użytkownik jest zalogowany to ma możliwość wczytania wcześniej zapisanego poziomu bądź rozpoczęcia go od początku. W~przypadku jak użytkownik nie jest zalogowany to ma możliwość tylko rozpoczęcia poziomu od początku. Na rys. \ref{rys:diagram_czynnosci_wczytaj_poziom} przedstawiony został diagram czynności, który pokazuje, 
+\aka Użytkownik musi przejść do widoku wybierania poziomu, aby możliwa była realizacja poziomu. Jeśli użytkownik jest zalogowany, to wczytywane są informacje z~pliku bazodanowego o~zapisanych poziomach. Pozwalają one określić, które z~poziomów zostały zrealizowane. Rys. \ref{rys:diagram_czynnosc_wybor_poziomu} przedstawia diagram czynności podczas przejścia do widoku wybierania poziomu. Następnie użytkownik wybiera poziom do realizacji po kliknięciu poziomu, wyświetlany jest opis poziomu. Jeśli użytkownik jest zalogowany, to ma możliwość wczytania wcześniej zapisanego poziomu bądź rozpoczęcia go od początku. W~przypadku jak użytkownik nie jest zalogowany, to ma możliwość tylko rozpoczęcia poziomu od początku. Rys. \ref{rys:diagram_czynnosci_wczytaj_poziom} przedstawia diagram czynności, który pokazuje wczytywanie poziomu.
 
 \begin{figure}[h]
 	\centering
@@ -475,7 +478,7 @@ Diagram czynności przedstawiający proces tworzenia nowego konta przedstawiony 
 	\end{minipage}
 \end{figure}
 
-\aka Użytkownik podczas realizacji poziomu dodaje elementy elektroniczne na płytkę, łączy komponenty ścieżkami. Rys. \ref{rys:diagram_czynnosci_realizacja_poziomu} zawiera diagram czynności pokazujący możliwe czynności do wykonania podczas realizowania poziomu oraz jakie warunki muszą zostać zpełnione, by możliwe było dodanie, usunięcie komponentu czy ścieżki.
+\aka Użytkownik podczas realizacji poziomu dodaje elementy elektroniczne na płytkę, łączy komponenty ścieżkami. Rys. \ref{rys:diagram_czynnosci_realizacja_poziomu} zawiera diagram czynności pokazujący możliwe czynności do wykonania podczas realizowania poziomu oraz jakie warunki muszą zostać spełnione, by możliwe było dodanie, usunięcie komponentu czy ścieżki.
 
 \begin{figure}[h]
 	\centering
@@ -484,7 +487,7 @@ Diagram czynności przedstawiający proces tworzenia nowego konta przedstawiony 
 	\label{rys:diagram_czynnosci_realizacja_poziomu}
 \end{figure}
 
-\aka Po klinkięciu przez użytkownika przycisku sprawdzającego następuje sprawdzenie poziomu. Pierwsze sprawdzenie polega na weryfikacji czy umieszczone elementy zgadzają się z założeniem zadania. Następnym sprawdzeniem jest sprawdzenie wyników symulacji, aby móc je wykonać aplikacja tworzy plik schematu, następnie wykonuje symulację na podstawie tego pliku. Diagram czynności pokazujący sprawdzanie poziomy jest na rys. \ref{rys:diagram_czynnosci_sprawdzenie_poziomu}.
+\aka Po kliknięciu przez użytkownika przycisku sprawdzającego następuje sprawdzenie poziomu. Pierwsze sprawdzenie polega na weryfikacji czy umieszczone elementy zgadzają się z założeniem zadania. Następnym sprawdzeniem jest sprawdzenie wyników symulacji, aby móc je wykonać aplikacja tworzy plik schematu, następnie wykonuje symulację na podstawie tego pliku. Diagram czynności pokazujący sprawdzanie poziomy jest na rys. \ref{rys:diagram_czynnosci_sprawdzenie_poziomu}.
 
 \begin{figure}[h]
 	\centering
@@ -501,30 +504,62 @@ Diagram czynności przedstawiający proces tworzenia nowego konta przedstawiony 
 \section{Projekt aplikacji}
 \subsection{Przechodzenie między widokami}
 
-\question{w jaki sposób powinienem odwoływać się do nazw klas/obiektów, kursywą?}
+% \question{w jaki sposób powinienem odwoływać się do nazw klas/obiektów, kursywą?}
 
 
-\aka Wykorzystany został czynnościowy wzorzec projektowy stan, który pozwala na to, że obiekt może zmieniać swoje zachowanie w~zależności od swojego stanu wewnętrznego. Dzięki zastosowaniu tego wzorca projektowego możliwe jest przechodzenie pomiędzy widokami aplikacji (rys. \ref{rys:diagram_maszyny_stanów}). Rys. \ref{rys:diagram_klas_stanów} przedstawia diagram klas, w~którym wykorzystany został ten wzorzec. Klasa \textit{AppEngine} jest główną klasą, która zawiera metody niezbędne do wykonywania pętli głównej (rys. \ref{rys:main_loop}). W~metodach \textit{Update(), Render()} wykonywane są odpowiednie metody z klasy \textit{State}. Klasy dziedziczące po klasie \textit{State} zmieniają odziedziczone pole \textit{nextState}, które pozwala na zmianę zachowania aplikacji bez zmiany klasy w obiekcie klasy \textit{AppEngine}.
+\aka Wykorzystany został czynnościowy wzorzec projektowy - stan, który pozwala na to, że obiekt może zmieniać swoje zachowanie w~zależności od swojego stanu wewnętrznego. Dzięki zastosowaniu tego wzorca projektowego możliwe jest przechodzenie pomiędzy widokami aplikacji (rys. \ref{rys:diagram_maszyny_stanów}). Rys. \ref{rys:diagram_klas_stanów} przedstawia diagram klas, w~którym wykorzystany został ten wzorzec. Klasa \textit{AppEngine} jest główną klasą, która zawiera metody niezbędne do wykonywania pętli głównej (rys. \ref{rys:main_loop}). W~metodach \textit{Update(), Render()} wykonywane są odpowiednie metody z klasy \textit{State}. Klasy dziedziczące po klasie \textit{State} zmieniają odziedziczone pole \textit{nextState}, które pozwala na zmianę zachowania aplikacji bez zmiany klasy w obiekcie klasy \textit{AppEngine}.
 
-\aka Główną klasą odpowiedzialną za 
+\aka Klasą odpowiedzialną za wczytywanie podstawowych zasobów, niezbędnych do działania aplikacji jest klasa \textit{Resources}. Podstawowymi zasobami są czcionka oraz grafiki wyświetlane w~widokach, nie są to grafiki komponentów elektronicznych. Natomiast klasa \textit{Logger} wykorzystywana jest do wypisywania logów w konsoli, które mogą pomóc w~sprawdzeniu przez użytkownika czy wszystko działa poprawnie.
+
+\begin{landscape}
+	\begin{figure}
+		\centering
+		\includegraphics[width=17cm]{images/diagramy_klas/plan-diagram_klas_maszyna_stanów.png}
+		\caption{\mycaption{Uproszczony diagram klas przedstawiający klasy poszczególnych widoków, klasę zawierającą podstawową grafikę oraz klasę odpowiedzialną za wypisywanie logów. Prostokątami z~przerywaną linią oznaczono wykorzystanie zewnętrznych klas}}
+		\label{rys:diagram_klas_stanów}
+	\end{figure}
+	\end{landscape}
+
+
+
+
+\subsection{Ładowanie poziomu}
+\aka Po wybraniu poziomu następuje załadowanie niezbędnych grafik do realizacji danego poziomu. Na rys. \ref{rys:diagram_klas_grafika} widoczna jest klasa \textit{GraphicsManager} odpowiedzialna za wczytywanie grafik poziomu. Wykorzystany został wzorzec singleton, ponieważ potrzebny jest tylko jeden obiekt tej klasy, do którego dostęp jest potrzebny z funkcji \textit{callback} w~klasie \textit{Level}.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=17cm]{images/diagramy_klas/plan-diagram_klas_maszyna_stanów.png}
-	\caption{\mycaption{Uproszczony diagram klas przedstawiający klasy poszczególnych widoków oraz klasy zawierające grafikę}}
-	\label{rys:diagram_klas_stanów}
+	\includegraphics[width=15cm]{images/diagramy_klas/plan-diagram_klas_grafika.png}
+	\caption{\mycaption{Diagram klas przedstawiający klasę zarządzającą wczytywaniem grafik do konkretnego poziomu. Prostokątami z~przerywaną linią oznaczono wykorzystanie zewnętrznych klas}}
+	\label{rys:diagram_klas_grafika}
 \end{figure}
 
 
 
 \subsection{Realizowanie poziomu}
 
-\aka Po wybraniu przez użytkownika poziomu, aby możliwe było zrealizowanie poziomu użytkownik musi w~ułożyć elementy elektroniczne oraz w~odpowiedni sposób je połączyć. Dodawanie elementu na płytkę zostało przedstawione na rys.~\ref{rys:sequence_add_component}. 
-Natomiast dodwanie połączeń zostało przedstawione na rys.~\ref{rys:route}. Po naciśnięciu odpowiedniego przycisku aplikacja podczas trzymania wciśniętego lewego klawisza myszy oraz przesuwania po płytce będzie łączyła sąsiadujęce pola. 
+\aka Po wybraniu przez użytkownika poziomu, aby możliwe było zrealizowanie poziomu, użytkownik musi ułożyć elementy elektroniczne oraz w~odpowiedni sposób je połączyć. Dodawanie elementu na płytkę zostało przedstawione na rys.~\ref{rys:sequence_add_component}. 
+Natomiast dodawanie połączeń zostało przedstawione na rys.~\ref{rys:route}. Po naciśnięciu odpowiedniego przycisku aplikacja podczas trzymania wciśniętego lewego klawisza myszy oraz przesuwania po płytce będzie łączyła sąsiadujące pola. Diagram klas przedstawiony został na rys. \ref{rys:diagram_klas_realizowanie_poziomu}.
 
-\aka Płytka na, której układane są komponenty elektroniczne składa się z~różnej ilości kafelek \question{czy dobrze odmieniłem?}, w~zaleźności od poziomu. Wielkość kafelka na ekranie, uwzględniając tylko obszar z~góry wynosi 64 pixele szerokości oraz 32 pixele wysokości.
-Do określenia, na który kafelek użytkownik wskazuje należy odczytać pozycję kursora od okna, następnie przeliczyć, uwzględniając przesunięcie płytki, na który kafelek w rzucie izometrycznym wskazuje. Kafelki (obiekty klasy \textit{Tile}) przechowywane są w~dynamicznie tworzonej tablicy jednowymiarowej tablicy.
+\begin{landscape}
+\begin{figure}
+	\centering
+	\includegraphics[width=20cm]{images/diagramy_klas/plan-diagram_klas_wykonywanie_poziomu.png}
+	\caption{\mycaption{Diagram klas przedstawiający szczegółowo związki między klasami dla widoku rozwiązywania poziomu}}
+	\label{rys:diagram_klas_realizowanie_poziomu}
+\end{figure}
+\end{landscape}
 
+\aka Płytka, na której układane są komponenty elektroniczne, składa się z~różnej ilości kafelek, w~zależności od poziomu. Wielkość kafelka na ekranie, uwzględniając tylko obszar z~góry, wynosi sześćdziesiąt cztery piksele szerokości oraz trzydzieści dwa piksele wysokości.
+Do określenia, na który kafelek użytkownik wskazuje, należy odczytać pozycję kursora od okna, następnie przeliczyć, uwzględniając przesunięcie płytki, na który kafelek w rzucie izometrycznym wskazuje. Kafelki (obiekty klasy \textit{Tile}) przechowywane są w~dynamicznie tworzonej tablicy jednowymiarowej tablicy.
+
+\aka Gdy użytkownik ułoży komponenty na planszy, a~następnie wciśnie przycisk sprawdzający zadanie, to aplikacja utworzy plik ze schematem. Następnie aplikacja wykona symulację, wykorzystując zewnętrzny, darmowy program LTspice oraz wygenerowany plik.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/plan-diagram_sekwencji_add_route.png}
+	\caption{Diagram sekwencji pokazujący, gdy użytkownik chce dodać ścieżkę \\ Źródło: opracowanie własne}
+	\label{rys:route}
+\end{figure}
 
 \begin{figure}[h]
 	\centering
@@ -533,20 +568,31 @@ Do określenia, na który kafelek użytkownik wskazuje należy odczytać pozycj�
 	\label{rys:sequence_add_component}
 \end{figure}
 
-% \subsection{Symulacja}
-\aka Gdy użytkownik ułoży komponenty na planszy, a~następnie wciśnie przycisk sprawdzający zadanie, to aplikacja utworzy plik z~schematem. Następnie aplikacja wykona symulację wykorzystując zewnętrzny, darmowy program \textbf{LTspice} oraz wygenerowany plik.
-Rys. \ref{rys:diagrma_sekwencji_symulacji} przedstawia diagram sekwencji zawierający interakcję między obiektami, gdy aplikacja będzie sprawdzała poziom.
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=15cm]{images/no_image.png}
-	\caption{Diagram sekwencji, pokazujący interakcję podczas symulacji \\ Źródło: opracowanie własne}
-	\label{rys:diagrma_sekwencji_symulacji}
-\end{figure} 
+
+% \subsection{Symulacja}
+
+% Rys. \ref{rys:diagrma_sekwencji_symulacji} przedstawia diagram sekwencji zawierający interakcję między obiektami, gdy aplikacja będzie sprawdzała poziom.
+
+% \begin{figure}[h]
+% 	\centering
+% 	\includegraphics[width=15cm]{images/no_image.png}
+% 	\caption{Diagram sekwencji, pokazujący interakcję podczas symulacji \\ Źródło: opracowanie własne}
+% 	\label{rys:diagrma_sekwencji_symulacji}
+% \end{figure} 
 
 
 \subsection{Baza danych}
-\aka Gdy zalogowany użytkownik wyjdzie z~poziomu, to apliakcja zapisze wygenerowany plik z~schematem w~pliku z~bazodanowym plikiem użytkownika. Struktura zapisanego pliku została przedstowiona na rys. \ref{rys:bazodanowy_plik_zapisu}. Pierwszy segment pliku składa się z~60~bajtów zawierających dodatkowy identyfikator użytkownika oraz 4~bajtów zawierających liczbę zapisanych schematów w pliku. Kolejnymi segmentami są zapisane schematy wraz z ich identyfikacją. Pierwsze 8~bajtów segmentu z~schematem odpowiada identyfikatorowi poziomu, kolejny bajt zawiera flagi dotyczące zapisanego poziomu np. czy poziom został ukończony. Następne 8 bajtów odpowiada liczbie bajtów, które zawierają zapis schematu. Ostatnia część segmentu zawiera bajty z schematem. Zaletą wykorzystania jednego pliku jest zminimalizowanie liczby zapytań do bazy danych. Pierwsze zapytanie następuje podczas logowania użytkownika (założone tutaj zostało, że użytkownik wcześniej utworzył konto), pobrania z~bazy danych pliku z~zapisami oraz podczas wysłania zaaktualizowanego pliku z~zapisami.
+\aka Dostęp do danych użytkownika potrzebny jest w różnych widokach, dlatego wykorzystany został wzorzec projektowy singleton, co zostało przedstawione na rys. \ref{rys:diagram_klas_baza_danych}. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/diagramy_klas/plan-diagram_klas_baza_danych.png}
+	\caption{\mycaption{Diagram klas pokazujący klasy odpowiedzialne za połączenie z~bazą danych}}
+	\label{rys:diagram_klas_baza_danych}
+\end{figure} 
+
+\aka Gdy zalogowany użytkownik wyjdzie z~poziomu, to aplikacja zapisze wygenerowany plik ze~schematem w~pliku z~bazodanowym plikiem użytkownika. Struktura zapisanego pliku została przedstawiona na rys. \ref{rys:bazodanowy_plik_zapisu}. Pierwszy segment pliku składa się z~sześćdziesięciu bajtów zawierających dodatkowy identyfikator użytkownika oraz czterech bajtów zawierających liczbę zapisanych schematów~w pliku. Kolejnymi segmentami są zapisane schematy wraz z ich identyfikacją. Pierwsze osiem bajtów segmentu ze~schematem odpowiada identyfikatorowi poziomu, kolejny bajt zawiera flagi dotyczące zapisanego poziomu np. czy poziom został ukończony. Następne osiem bajtów odpowiada liczbie bajtów, które zawierają zapis schematu. Ostatnia część segmentu zawiera bajty ze schematem. Zaletą wykorzystania jednego pliku jest zminimalizowanie liczby zapytań do bazy danych. Pierwsze zapytanie następuje podczas logowania użytkownika (założone tutaj zostało, że użytkownik wcześniej utworzył konto), pobrania z~bazy danych pliku z~zapisami oraz podczas wysłania zaktualizowanego pliku z~zapisami.
 
 \begin{figure}[h]
 	\centering
@@ -555,11 +601,11 @@ Rys. \ref{rys:diagrma_sekwencji_symulacji} przedstawia diagram sekwencji zawiera
 	\label{rys:bazodanowy_plik_zapisu}
 \end{figure} 
 
-\aka Struktura bazy danych jest przedstawiona na rys. \ref{rys:struktura_bazy_danych}. Główną tabelą jest tabela \textit{Users}, w~której zawarte są dane użytkowników niezbędne do zalogowania. Natomiast w~tabeli \textit{Saves} zawarte zostały zapisy użytkowników. Tabelę zostały połączone relacją jeden do jednego, ponieważ jeden użytkownik może mieć tylko jeden zapis postępu wszsytkich poziomów. Powodem, dla którego tabele zostały tak podzielone jest rozdzielenie zapytań podczas logowania i tworzenia konta od zapytań synchronizujących pliki zapisu. W~tym przypadku, gdzie plik zapisu nie jest duży takie rozwiązanie jest wystarczające. Natomiast w~przypadku większych plików zapisanych w~bazie danych czas odpowiedzi byłby znacznie dłuższy. Dobrym rozwiązaniem byłoby przechowywanie plików zapisu w~innej części serwera, a~w~bazie tylko odniesienie do miejsca, w~którym jest plik zapisu.
+\aka Struktura bazy danych jest przedstawiona na rys. \ref{rys:struktura_bazy_danych}. Główną tabelą jest tabela \textit{Users}, w~której zawarte są dane użytkowników niezbędne do zalogowania. Natomiast w~tabeli \textit{Saves} zawarte zostały zapisy użytkowników. Tabele zostały połączone relacją jeden do jednego, ponieważ jeden użytkownik może mieć tylko jeden zapis postępu wszystkich poziomów. Powodem, dla którego tabele zostały tak podzielone, jest rozdzielenie zapytań podczas logowania i tworzenia konta od zapytań synchronizujących pliki zapisu. W~tym przypadku, gdzie plik zapisu nie jest duży, takie rozwiązanie jest wystarczające. Natomiast w~przypadku większych plików zapisanych w~bazie danych czas odpowiedzi byłby znacznie dłuższy. Dobrym rozwiązaniem byłoby przechowywanie plików zapisu w~innej części serwera, a~w~bazie tylko odniesienie do miejsca, w~którym jest plik zapisu.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=12cm]{images/no_image.png}
+	\includegraphics[width=12cm]{images/db_structure.png}
 	\caption{\mycaption{Struktura bazy danych}}
 	\label{rys:struktura_bazy_danych}
 \end{figure} 
@@ -574,17 +620,14 @@ Rys. \ref{rys:diagrma_sekwencji_symulacji} przedstawia diagram sekwencji zawiera
 \aka Główna część aplikacji została zaimplementowana w~języku C++, wykorzystując standard ISO C++ 14. 
 %Powodem ?
 % Aplikacja do poprawnego działania, w celu wykonania symulacji, wykorzystuje zewnętrzny program LTspice. Wykorzystanie zewnętrznego 
-Do komunikacji z~zewnętrznym programem wykorzystany został język Python w~wersji 3.12 osadzony w~głównej części aplikacji. Takie rozwiązanie pozwala na bezpośredni dostęp do zasobów wykonywanego kodu w~języku Python przez aplikajcę w~C++. 
-Aplikacja została zaimplementowana z~myślą o~systemie operacyjnym Windows, natomiast wykorzystane biblioteki pozwalają na przeniesie na inne systemy operacyjne dystrybucji Linux czy macOS. %?????
-\question{not sure}
-
-Wykorzystaną bazą danych jest MySQL.
+Do komunikacji z~zewnętrznym programem wykorzystany został język Python w~wersji 3.12 osadzony w~głównej części aplikacji. Takie rozwiązanie pozwala na bezpośredni dostęp do zasobów wykonywanego kodu w~języku Python przez aplikację w~C++. 
+Aplikacja została zaimplementowana z~myślą o~systemie operacyjnym Windows, natomiast wykorzystane biblioteki pozwalają na przeniesie na inne systemy operacyjne dystrybucji Linux czy macOS. Wykorzystaną bazą danych jest MySQL.
 
 
 \subsection{Środowisko oraz narzędzia programistyczne}
-\aka Wykorzystanym środowiskiem programistycznym było Visual Studio 2022. Zostały wykorzystane moduły: \textit{Graphics, System, Window} biblioteki SFML \textit{(Simple and Fast Multimedia Library)} opartej o~OpenGL. Wykorzystanie tych modułów pozwala na proste i~wydajne rysowanie okna na ekranie oraz przekazywanie własnych parametrów do strumienia przetwarzania potoku grafiki. Zastosowana została również standardowa biblioteka STL. 
+\aka Wykorzystanym środowiskiem programistycznym było Visual Studio 2022. Zostały wykorzystane moduły: \textit{Graphics, System, Window} biblioteki SFML \textit{(Simple and Fast Multimedia Library)} opartej o~OpenGL. Wykorzystanie tych modułów pozwala na proste i~wydajne rysowanie okna na ekranie oraz przekazywanie własnych parametrów do strumienia przetwarzania potoku grafiki. Zastosowana została również standardowa biblioteka STL \cite{sfml}. 
 
-\aka Aplikacja w~celu przekazania i~odebrania danych z~symulacji wykorzystuje bibliotekę Python. Natomiast w~zagnieżdżonej części Python wykorzystuje moduł PyLTSpice do realizacji symulacji oraz moduł ltspice do odczytania obliczonych wartości symulacji.
+\aka Aplikacja w~celu przekazania i~odebrania danych z~symulacji wykorzystuje bibliotekę Python. Natomiast w~zagnieżdżonej części Python wykorzystuje moduł PyLTSpice, który pozwala na sterowanie symulacją \cite{pyltspice} oraz moduł ltspice do odczytania obliczonych wartości symulacji \cite{rawltspice}.
 
 \aka Do wykonywania zapytań z~bazą danych wykorzystana została biblioteka mysqlx. Baza danych była uruchamiana w~środowisku kontenerowym Docker, do inicjalizacji tabel oraz relacji wykorzystany został język SQL. 
 
@@ -600,10 +643,29 @@ Wykorzystaną bazą danych jest MySQL.
 
 \subsection{Implementacja poziomu}
 
-\aka Każdy poziom zawiera funkcję, w~której znajduje się tworzenie obieku klasy Level zawierającego identyfikator, nazwę, opis. Zawiera dodanie funkcji tworzenia komponentów oraz funkcji sprawdzających, czy dany poziom jest zrealizowany poprawnie. Implementacja pierwszego poziomu została przedstawiona w~fragmencie kodu \ref{lst:add_level}.
+\aka Każdy poziom zawiera funkcję, w~której znajduje się tworzenie obiektu klasy \textit{Level} zawierającego identyfikator, nazwę, opis. Funkcja zawiera dodanie funkcji tworzenia komponentów oraz funkcji sprawdzających, czy dany poziom jest zrealizowany poprawnie. Funkcja tworzenia komponentów jest wykonywana podczas wczytywania poziomu, natomiast funkcja sprawdzająca podczas sprawdzania poziomu. Implementacja takiej funkcji przedstawiona została we fragmencie kodu \ref{lst:add_level}.
 
 \lstinputlisting[language=C++, caption={Funkcja zawierająca stworzenie pojedyńczego poziomu \\ Źródło: opracowanie własne}, label={lst:add_level}]{code/add_level.cpp}
 
+\aka Podczas dodawania nowych elementów na płytkę istotne jest, aby ustawić odpowiednią kolejność rysowania elementów elektronicznych. Zostało to zrealizowane poprzez posortowanie wektora komponentów po dodaniu nowego elementu. Fragment kodu \ref{lst:board_add_component} przedstawia dodawanie nowego elementu na płytkę.
+
+\newpage
+\lstinputlisting[language=C++, caption={\mycaption{Metoda dodająca nowy element na płytkę}}, label={lst:board_add_component}]{code/board_add_component.cpp}
+
+\subsection{Symulacja}
+\aka Symulowanie danych odbywa się w~klasie \textit{SimulationEngine}. Przed rozpoczęciem symulacji wymagane jest zainicjalizowanie interpretera Python oraz wczytanie odpowiednich bibliotek, przedstawione to zostało na fragmencie kodu \ref{lst:sim_init}. Proces symulacji odbywa się w innej metodzie, której kod przedstawiony został na fragmencie kodu \ref{lst:sim_sim}. Natomiast odczytywanie wyników z~symulacji przedstawione zostało na fragmencie kodu \ref{lst:sim_get_value}.
+
+\lstinputlisting[language=C++, caption={\mycaption{Konstruktor klasy \textit{SimulationEngine} zawierający inicjalizację interpretera Python oraz import odpowiednich bibliotek}}, label={lst:sim_init}]{code/sim/sim_init.cpp}
+
+\newpage
+\lstinputlisting[language=C++, caption={\mycaption{Metoda odpowiedzialna za wykonanie symulacji}}, label={lst:sim_sim}]{code/sim/sim_sim.cpp}
+
+\newpage
+\lstinputlisting[language=C++, caption={\mycaption{Metoda odpowiedzialna za zwrócenie wartości dla odpowiedniego komponentu~w danym czasie}}, label={lst:sim_get_value}]{code/sim/sim_get_val.cpp}
+
+
+% \subsection{Interfejst użytkownika}
+% \aka Elementy interfejsu użytkownika są wykorzystywane przez widoki aplikacji, natomiast nie zostały uwzględnione w przypadku diagramów klas z~powodu dodania 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% URUCHOMIENIE APLIKACJI %%%%%%%%%%%%%%%
@@ -611,33 +673,84 @@ Wykorzystaną bazą danych jest MySQL.
 \clearpage
 \section{Uruchomienie aplikacji}
 \subsection{Wymagania dotyczące uruchamiana aplikacji}
-Uruchomienie aplikacji wymaga dynamicznie linkownych bibliotek dostarczanych wraz z~każdą biblioteką. Dodatkowym wymaganiem jest zainstalowana aplikacja LTspice~w domyślnej lokalizacji oraz zainstalowany interpreter języka Python w~wersji 3.12.
+Uruchomienie aplikacji wymaga dynamicznie linkowanych bibliotek dostarczanych wraz z~każdą biblioteką. Dodatkowym wymaganiem jest zainstalowana aplikacja LTspice~w domyślnej lokalizacji wraz ze stworzonymi przez autora pracy definicjami schematami komponentów elektronicznych oraz zainstalowany interpreter języka Python w~wersji 3.12 z~modułami PyLTSpice i ltspice.
 
 \subsection{Widoki aplikacji}
 
-Na rys. \ref{rys:start_menu} przedstawiony został widok po uruchomieniu aplikacji. Za wyjście z~aplikacji odpowiada przycisk \textit{Wyście} natomiast pozostałe odpowiadają za przejście do odpowiadających widoków. Widok tworzenia konta został przedstawiony na rys. \ref{rys:register_menu}, a~widok logowania użytkownika na rys. \ref{rys:login_menu}. W~przypadku obu widoków, walidacja wprowadzonych danych następuje po wciśnięciu przycisku oraz stosowny komunikat jest wyświetlony.
-
-W~przypadku kliknięcia przycisku \textit{Rozpocznij} w~widoku początkowym, niezależnie od zalogowania użytkownika następuje przejście do widoku wyboru zadania, widok przedstawiony na rys. \ref{rys:select_level}.
+Rys. \ref{rys:start_menu} przedstawia widok po uruchomieniu aplikacji. Za wyjście z~aplikacji odpowiada przycisk ,,Wyście'', natomiast pozostałe odpowiadają za przejście do odpowiadających widoków. Widok tworzenia konta został przedstawiony na rys. \ref{rys:register_menu}, wraz z poprawnym utworzeniem konta. Widok logowania użytkownika znajduje się na rys. \ref{rys:login_menu}. W~przypadku obu widoków walidacja wprowadzonych danych następuje po wciśnięciu przycisku oraz stosowny komunikat jest wyświetlony. W~przypadku, gdy poprawne dane zostaną wprowadzone, widok startowy zmieni się, przedstawia to rys. \ref{rys:start_menu_logged}.
+W~przypadku kliknięcia przycisku ,,Rozpocznij'', w~widoku początkowym, niezależnie od zalogowania użytkownika, następuje przejście do widoku wyboru zadania, widok przedstawiony na rys. \ref{rys:select_level}.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=15cm]{images/start_menu.png}
+	\includegraphics[width=15cm]{images/uruchomienie/app_start_menu.png}
 	\caption{Widok aplikacji po uruchomieniu \\ Źródło: opracowanie własne}
 	\label{rys:start_menu}
 \end{figure} 
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=15cm]{images/register_menu.png}
+	\includegraphics[width=15cm]{images/uruchomienie/app_register_menu.png}
 	\caption{Widok aplikacji po przejściu do widoku rejestracji \\ Źródło: opracowanie własne}
 	\label{rys:register_menu}
 \end{figure} 
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=15cm]{images/login_menu.png}
+	\includegraphics[width=15cm]{images/uruchomienie/app_login_menu.png}
 	\caption{Widok aplikacji po przejściu do widoku logowania po podaniu błędnych danych logowania  \\ Źródło: opracowanie własne}
 	\label{rys:login_menu}
+\end{figure} 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/uruchomienie/app_start_menu_logged.png}
+	\caption{Widok aplikacji po poprawnym zalogowaniu się użytkownika \\ Źródło: opracowanie własne}
+	\label{rys:start_menu_logged}
+\end{figure} 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/uruchomienie/app_select_level.png}
+	\caption{Widok aplikacji po przejściu do widoku wyboru poziomu oraz wybraniu poziomu \\ Źródło: opracowanie własne}
+	\label{rys:select_level}
+\end{figure} 
+
+
+\aka Na rysunku \ref{rys:app_poziom_poczotek_res} przedstawiony został pierwszy poziom do wykonania, w którym użytkownik najechał kursorem myszy na element elektroniczny. Opisy elementów elektronicznych oraz pojęć wykorzystanych w~aplikacji zostały zaczerpnięte z książki \cite{ele}.  Rys. \ref{rys:app_poziom_poczotek_dobrze} przedstawia dobrze wykonany poziom, natomiast rys. \ref{rys:app_poziom_poczotek_log} przedstawia log aplikacji. Rys. \ref{rys:app_poziom_uc_zle_ulozeni} przedstawia źle ułożony poziom ,,Zasilanie mikrokontrolera'' z~błędnym ułożeniem elementów elektronicznych - brakuje stabilizatora napięcia. Natomiast rys. \ref{rys:app_poziom_uc_ukryte} pokazuje aktualany poziom po wciśnięciu przycisku ,,Ukryj'', który ukrywa elementy elektroniczne, tak aby były widoczne ścieżki i pady.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/app_poziom_poczotek_res.png}
+	\caption{\mycaption{Widok rozwiązywania poziomu, gdy użytkownik najechał kursorem myszy na element elektroniczny}}
+	\label{rys:app_poziom_poczotek_res}
+\end{figure} 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/app_poziom_poczotek_dobrze.png}
+	\caption{\mycaption{Widok rozwiązywania poziomu, gdy użytkownik dobrze ułożył elementy oraz wcisnął przycisk ,,Sprawdź''}}
+	\label{rys:app_poziom_poczotek_dobrze}
+\end{figure} 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/app_poziom_poczotek_log.png}
+	\caption{\mycaption{Przedstawia widok logu rozwiązanego dobrze początkowego poziomu przedstawionego na rys. \ref{rys:app_poziom_poczotek_dobrze}}}
+	\label{rys:app_poziom_poczotek_log}
+\end{figure} 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/app_poziom_uc_zle_ulozeni.png}
+	\caption{\mycaption{Widok rozwiązywania poziomu ,,Zasilanie mikrokontrolera'', gdy użytkownik źle ułożył elementy}}
+	\label{rys:app_poziom_uc_zle_ulozeni}
+\end{figure} 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/app_poziom_uc_ukryte.png}
+	\caption{\mycaption{Widok rozwiązywania poziomu ,,Zasilanie mikrokontrolera'', gdy użytkownik ukrył ułożone elementy}}
+	\label{rys:app_poziom_uc_ukryte}
 \end{figure} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -646,25 +759,35 @@ W~przypadku kliknięcia przycisku \textit{Rozpocznij} w~widoku początkowym, nie
 \clearpage
 \section{Testowanie aplikacji}
 \subsection{Testowanie poziomu}
+\aka Testowanie poziomów wykonane zostało poprzez wykonanie testów, jak i~ręczne rozwiązywanie poziomów. Fragment kodu \ref{lst:test_sim} przedstawia funkcję testującą, która odpowiedzialna była za przetestowanie początkowego poziomu. Wynik testu oraz testu symulacji przedstawia rys. \ref{rys:test_sim}.
 
+\lstinputlisting[language=C++, caption={\mycaption{Funkcja testująca początkowy poziom}}, label={lst:test_sim}]{code/test_level.cpp}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=12cm]{images/test_level.png}
+	\caption{Wynik wykonanych testów poziomu i symulacji\\ Źródło: opracowanie własne}
+	\label{rys:test_sim}
+\end{figure} 
 
 \subsection{Testownie komunikacji z bazą danych}
-\aka Do przetestowania podstawowej komunikacji z~bazą danych utworzone zostały odpowiednie testy. Przetestowane zostało dodawanie nowego użytkownika do bazy danych, usuwanie użytkownika, sprawdzanie czy użytkownik istnieje w~bazie, sprawdzanie hasła użytkownika oraz pobieranie pliku zapisu z~bazy danych. Fragment kodu \ref{lst:test_db} zawiera funkcję testująca dodawanie nowego użytkownika do bazy. Rezultat testów sprawdzających komunikcaję z~bazą danych widoczny jest na rys. \ref{rys:test_db}.
+\aka Do przetestowania podstawowej komunikacji z~bazą danych utworzone zostały odpowiednie testy. Przetestowane zostało dodawanie nowego użytkownika do bazy danych, usuwanie użytkownika, sprawdzanie, czy użytkownik istnieje w~bazie, sprawdzanie hasła użytkownika oraz pobieranie pliku zapisu z~bazy danych. Fragment kodu \ref{lst:test_db} zawiera funkcję testującą dodawanie nowego użytkownika do bazy. Rezultat testów sprawdzających komunikację z~bazą danych widoczny jest na rys. \ref{rys:test_db}.
 
-\lstinputlisting[language=C++, caption={Fragment funkcji testującej zapis, synchronizację z~bazą danych oraz odczyt pliku z~schematem \\ Źródło: opracowanie własne}, label={lst:test_db}]{code/test_db.cpp}
+\lstinputlisting[language=C++, caption={Fragment funkcji testującej zapis, synchronizację z~bazą danych oraz odczyt pliku ze~schematem \\ Źródło: opracowanie własne}, label={lst:test_db}]{code/test_db.cpp}
 
+
+
+\aka Fragment kodu \ref{lst:test_sync_file} testuje utworzenie obiektu Board, dodanie komponentu oraz zapisanie pliku schematu. Następnie plik schematu zostaje dodany do pliku bazodanowego oraz wysyła do bazy danych. Następnie pobiera plik z~bazy danych, wyekstrahuje plik ze~schematem oraz wczytuje plik do nowo utworzonego obiektu Board. Porównuje zawartości obiektów przed wysłaniem oraz po synchronizacji.
+Wynik testu jest widoczny na rys. \ref{rys:test_sync_file}.
+
+\newpage
+\lstinputlisting[language=C++, caption={Fragment funkcji testującej zapis, synchronizację z~bazą danych oraz odczyt pliku ze~schematem \\ Źródło: opracowanie własne}, label={lst:test_sync_file}]{code/test_sync_file.cpp}
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=12cm]{images/test_db.png}
 	\caption{Wynik wykonanych testów operacji na bazie danych\\ Źródło: opracowanie własne}
 	\label{rys:test_db}
 \end{figure} 
-
-\aka Fragment kodu \ref{lst:test_sync_file} testuje utworzenie obiektu Board, dodanie komponentu oraz zapisanie pliku schematu. Następnie plik schematu zostaje dodany do pliku bazodanowego oraz wysła do bazy danych. Następnie pobiera plik z~bazy danych, wyekstrahuje plik z~schematem oraz wczytuje plik z~schematem do nowo utworzonego obiektu Board. Porównuje zawartości obiektów przed wysłaniem oraz po synchronizacji.
-Wynik testu jest widoczny na rys. \ref{rys:test_sync_file}.
-
-\lstinputlisting[language=C++, caption={Fragment funkcji testującej zapis, synchronizację z~bazą danych oraz odczyt pliku z~schematem \\ Źródło: opracowanie własne}, label={lst:test_sync_file}]{code/test_sync_file.cpp}
-
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=12cm]{images/test_sync_file.png}
@@ -672,10 +795,10 @@ Wynik testu jest widoczny na rys. \ref{rys:test_sync_file}.
 	\label{rys:test_sync_file}
 \end{figure} 
 
-\question{Czy dla różnych testów mieć różne zrzuty z wynikami testów czy jedne zbiorczy zrzut z wszsytkimi testami?}
-
 \subsection{Podsumowanie}
-\aka Wykonane testy 
+\aka Wykonane testy oraz przedstawione zrzuty ekranu pokazują, że stworzona aplikacja spełnia założone wymagania określone na rys. \ref{rys:diagram-przypadków-użycia}. Użytkownik, który nie znał się na elektronice, dzięki tej aplikacji, będzie w~stanie rozpoznawać elementy elektroniczne umieszczane na płytkach drukowanych w~urządzeniach elektronicznych. Taki użytkownik będzie umieć samodzielnie utworzyć schemat oraz zaprojektować płytkę drukowaną.
+
+%\question{że będzie w stanie zrobić własną i będzie wiedział jak działa}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%% LITERATURA %%%%%%%%%%%%%%%%%%%%%
@@ -698,9 +821,32 @@ Wynik testu jest widoczny na rys. \ref{rys:test_sync_file}.
 % Leslie Lamport (1994) \emph{\LaTeX: a document preparation system}, Addison
 % Wesley, Massachusetts, 2nd ed.
 \bibitem{definicja_elektornika}
-Słownik Języka Polskiego PWN https://sjp.pwn.pl/slowniki/elektronika.html
+Słownik Języka Polskiego PWN\\ https://sjp.pwn.pl/slowniki/elektronika.html
+\bibitem{programltspice}
+Dokumentacja programu LTspice,
+\\https://www.analog.com/en/design-center/design-tools-and-calculators/ltspice-simulator.html,
+[dostęp: 20.01.2024].
 \bibitem{gameprogrammingpatterns}
-Game Programming Patterns, Robert Nystrom, https://gameprogrammingpatterns.com/game-loop.html
+Robert Nystrom, Game Programming Patterns,\\ https://gameprogrammingpatterns.com/game-loop.html,
+[dostęp: 20.01.2024].
+\bibitem{sfml}
+Dokumentacja SFML,
+\\https://www.sfml-dev.org/documentation/2.5.1/,
+[dostęp: 20.01.2024].
+\bibitem{pyltspice}
+Dokumentacja modułu PyLTSpice,
+\\https://pypi.org/project/PyLTSpice/,
+[dostęp: 20.01.2024].
+\bibitem{rawltspice}
+Dokumentacja modułu ltspice,
+\\https://pypi.org/project/ltspice/,
+[dostęp: 20.01.2024].
+
+\bibitem{ele}
+Andrzej Dobrowolski, Zbigniew Jachna, Ewelina Majda, Mariusz Wierzbowski, Elektronika - ależ to bardzo proste!,
+BTC, Legionowo 2013.
+
+
 \end{thebibliography}
 
 \end{document}

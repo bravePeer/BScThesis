@@ -3,6 +3,7 @@
 #include <functional>
 #include "component.h"
 #include "board.h"
+#include "SimulationEngine.h"
 
 class Level
 {
@@ -24,18 +25,18 @@ public:
 	void setPrevLevels(Level** levels, int levelsCount);
 	void setPrevLevelsIds(std::vector<std::string> prevLevelsIds);
 
-
+	void setComponentsGraphicsToLoad(std::function<void()> componentsGraphicsToLoad);
 	void setGenerateComponents(std::function<Component**(int*)> genComponents);
 	Component** getComponents();
 	int getComponentsCount();
 
 	//Add simulation
-	void setCheckSimulation(std::function<bool(Board*)> checkSimulation);
+	void setCheckSimulation(std::function<bool(Board*, SimulationEngine*)> checkSimulation);
 	//getConditions
 
 	void setCheckBoard(std::function<bool(Board*)> checkBoardFun);
 	bool checkBoard(Board* board);
-	bool checkSimulation(Board* board);
+	bool checkSimulation(Board* board, SimulationEngine* sim);
 
 	//Loads components to memory
 	void load();
@@ -66,13 +67,14 @@ private:
 	int prevLevelsCount;
 	std::vector<std::string> prevLevelsIds;
 
+	std::function<void()> componentsGraphicsToLoad;
 	std::function<Component** (int*)> genComponents;
 	std::function<bool(Board*)> initBoardFun;
 
 	Component** components;
 	int componentCount;
 
-	std::function<bool(Board*)> checkSimulationFun;
+	std::function<bool(Board*, SimulationEngine*)> checkSimulationFun;
 	std::function<bool(Board*)> checkBoardFun;
 
 	Vector3i boardDimnesion;

@@ -1,9 +1,6 @@
-TEST_CLASS(TestSaveSynchronization)
-{
-	TEST_METHOD(TestFileSaving)
-	{
-		// Login user
-		...
+TEST_CLASS(TestSaveSynchronization) {
+	TEST_METHOD(TestFileSaving) {
+		// Login user [...]
 		Board* board = new Board(20, 20, 1);
 		BoardSave::getInstance()->saveBoard(board, "save.asc");
 
@@ -21,23 +18,18 @@ TEST_CLASS(TestSaveSynchronization)
 		BoardSave::getInstance()->saveBoard(board, "save.asc");
 		Level::saveRealizedLevel(level->getId(), 0);
 		User::getInstance().syncSavesFile();
-
 		User::getInstance().getSavesFile();
 		Level::extractRelizedLevel(level->getId());
-		
 		Board* newBoard = BoardSave::getInstance()->loadBoard("save.asc", level);
 
-		for (int i = 0; i < 20; i++)
-		{
-			for (int j = 0; j < 20; j++)
-			{
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
 				Component* component = board->getComponentOnBoard({ i,j });
 				Component* newComponent = newBoard->getComponentOnBoard({ i,j });
 				if ((component != nullptr) && (newComponent != nullptr))
 					Assert::IsTrue(board->getComponentOnBoard({ i,j })->getId() == board->getComponentOnBoard({ i,j })->getId());
 			}
 		}
-		// Clean and remove user
-		...
+		// Clean and remove user [...]
 	}
 };

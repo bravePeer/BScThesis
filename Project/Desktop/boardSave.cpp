@@ -1,6 +1,6 @@
 #include "boardSave.h"
 
-BoardSave* BoardSave::boardSave = nullptr;
+//BoardSave* BoardSave::boardSave = nullptr;
 
 
 BoardSave::BoardSave()
@@ -13,11 +13,13 @@ BoardSave::~BoardSave()
 	delete logger;
 }
 
-BoardSave* BoardSave::getInstance()
+BoardSave& BoardSave::getInstance()
 {
-	if (boardSave == nullptr)
+	/*if (boardSave == nullptr)
 		boardSave = new BoardSave();
-	return boardSave;
+	return boardSave;*/
+	static BoardSave instance;
+	return instance;
 }
 
 void BoardSave::saveBoard(Board* board, const std::string& path)
@@ -60,7 +62,7 @@ void BoardSave::saveBoard(Board* board, const std::string& path)
 	//Add components
 	for (Component* a : board->components)
 	{
-		cout << "id: " << a->getId() << " sym:" << a->getSimSymbol() << endl;
+		//cout << "id: " << a->getId() << " sym:" << a->getSimSymbol() << endl;
 		if (a->getSimSymbol() == "goldpin")
 			continue;
 		Vector2i boardPos = a->getBoardPosition();
@@ -157,8 +159,8 @@ Board* BoardSave::loadBoard(const std::string& path, Level* level)
 	tmp[0].y = 0;
 	Vector2i pinPos = { 0, 0 };
 
-	Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
-	Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+	Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicManager::GetInstance().getComponentTexture("goldpin"), Component::ComponentTypePackage::THT, false);
+	Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicManager::GetInstance().getComponentTexture("goldpin"), Component::ComponentTypePackage::THT, false);
 	gnd->rotate();
 	delete[] tmp;
 
@@ -202,7 +204,7 @@ Board* BoardSave::loadBoard(const std::string& path, Level* level)
 			file >> value; //value
 
 			//if(simName == "_app\\appres")
-			cout << simName << endl;
+			//cout << simName << endl;
 			std::string id = simName.substr(simName.find("id"));
 			for (int i = 0; i < level->getComponentsCount(); i++)
 			{
@@ -211,8 +213,8 @@ Board* BoardSave::loadBoard(const std::string& path, Level* level)
 					Component* addComponent;
 					if (dynamic_cast<Resistor*>(levelComponents[i]))
 						addComponent = new Resistor(dynamic_cast<Resistor*>(levelComponents[i]));
-					else if (dynamic_cast<LedDiode*>(levelComponents[i]))
-						addComponent = new LedDiode(dynamic_cast<LedDiode*>(levelComponents[i]));
+					else if (dynamic_cast<LightEmittingDiode*>(levelComponents[i]))
+						addComponent = new LightEmittingDiode(dynamic_cast<LightEmittingDiode*>(levelComponents[i]));
 					else
 						addComponent = new Component(levelComponents[i]);
 

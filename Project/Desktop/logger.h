@@ -40,16 +40,6 @@ namespace applogger
 		}
 
 
-		void LoggerInConsole(string s)
-		{
-			cout << s << endl;
-		}
-
-		void LoggerInFile(string s)
-		{
-			file << s << endl;
-		}
-
 
 		void Info(string info)
 		{
@@ -66,6 +56,16 @@ namespace applogger
 	private:
 		string who; // np engine, ai, state
 		static fstream file;
+
+		void LoggerInConsole(string s)
+		{
+			cout << s << endl;
+		}
+
+		void LoggerInFile(string s)
+		{
+			file << s << endl;
+		}
 	};
 }
 

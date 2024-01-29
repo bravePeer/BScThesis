@@ -1,7 +1,7 @@
 #include "stateRegisterMenu.h"
 
 RegisterMenu::RegisterMenu(Resources* res)
-	:res(res)
+	:State(res)
 {
 	buttons = new Button * [ButtonId::Count];
 	buttons[ButtonId::Register] = new Button({ 200,50 }, { 200,460 }, res->GetFont(), L"Zarejestruj", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255));

@@ -119,9 +119,6 @@
     <ClInclude Include="graphics.h">
       <Filter>Pliki nagłówkowe\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="resources.h">
-      <Filter>Pliki nagłówkowe\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="stateSolveLevel.h">
       <Filter>Pliki nagłówkowe\GameStates</Filter>
     </ClInclude>

@@ -41,8 +41,8 @@ Level::Level(sf::String id, sf::String name, sf::String desc, bool realized)
 		tmp[0].y = 0;
 		Vector2i pinPos = { 0, 0 };
 
-		Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
-		Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicAll::GetInstance().getGoldpinTexture(), Component::ComponentTypePackage::THT, false);
+		Component* vcc = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicManager::GetInstance().getComponentTexture("goldpin"), Component::ComponentTypePackage::THT, false);
+		Component* gnd = new Goldpin(L"Z³¹cze goldpin", L"", { 1,1 }, 1, tmp, GraphicManager::GetInstance().getComponentTexture("goldpin"), Component::ComponentTypePackage::THT, false);
 		gnd->rotate();
 		delete[] tmp;
 
@@ -113,6 +113,11 @@ void Level::setPrevLevelsIds(std::vector<std::string> prevLevelsIds)
 	this->prevLevelsIds = prevLevelsIds;
 }
 
+void Level::setComponentsGraphicsToLoad(std::function<void()> componentsGraphicsToLoad)
+{
+	this->componentsGraphicsToLoad = componentsGraphicsToLoad;
+}
+
 void Level::setGenerateComponents(std::function<Component** (int*)> genComponents)
 {
 	this->genComponents = genComponents;
@@ -128,7 +133,7 @@ int Level::getComponentsCount()
 	return componentCount;
 }
 
-void Level::setCheckSimulation(std::function<bool(Board*)> checkSimulation)
+void Level::setCheckSimulation(std::function<bool(Board*, SimulationEngine*)> checkSimulation)
 {
 	this->checkSimulationFun = checkSimulation;
 }
@@ -143,13 +148,15 @@ bool Level::checkBoard(Board* board)
 	return checkBoardFun(board);
 }
 
-bool Level::checkSimulation(Board* board)
+bool Level::checkSimulation(Board* board, SimulationEngine* sim)
 {
-	return checkSimulationFun(board);
+	return checkSimulationFun(board, sim);
 }
 
 void Level::load()
 {
+	componentsGraphicsToLoad();
+	GraphicManager::GetInstance().loadComponentGraphics();
 	components = genComponents(&componentCount);
 }
 
@@ -169,7 +176,7 @@ void Level::loadRealizedLevels(map<string, Level*>& lev)
 	if (!file.good())
 		throw std::string("Error with save file");
 
-	unsigned int pos = 0;
+	uint64_t pos = 0;
 
 	char data[64];
 
@@ -196,7 +203,7 @@ void Level::loadRealizedLevels(map<string, Level*>& lev)
 	for(uint64_t i = 0; i < savedSavesCount.data; i++)
 	{
 		file.read(saveId.da, 8);
-		unsigned int t = file.gcount();
+		std::streamsize t = file.gcount();
 		if (t != 8)
 			throw  std::string("Bad save file! At pos: ") + to_string(pos);
 		pos += 8;

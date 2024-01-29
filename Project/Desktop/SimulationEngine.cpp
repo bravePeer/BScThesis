@@ -2,11 +2,14 @@
 
 SimulationEngine::SimulationEngine()
 {
-	board = nullptr;
+	logger = new applogger::Logger("Simulation");
+	//board = nullptr;
 	Py_Initialize();
 	
-
 	PyObject* moduleMainString = PyUnicode_FromString("__main__");
+	if (moduleMainString == NULL)
+		throw std::string("SimulationEngine error");
+
 	moduleMain = PyImport_Import(moduleMainString);
 	Py_DECREF(moduleMainString);
 
@@ -14,36 +17,33 @@ SimulationEngine::SimulationEngine()
 	PyRun_SimpleString("import ltspice");
 	PyRun_SimpleString("from PyLTSpice import SimCommander");
 
-	PyRun_SimpleString(
-		"def mul(a, b):                                 \n"\
-		"   return a * b                                \n"\
-	);
-
 	PyRun_SimpleString(R"END(
 def getSimVal(componentName):
-	print(componentName)
 	return l.get_data('I(' + componentName  + ')', time=0)
 	)END");
 
+	logger->Info("Python initialized");
 }
 
 SimulationEngine::~SimulationEngine()
 {
 	Py_Finalize(); // 4
+	delete logger;
 }
 
-void SimulationEngine::convertBoard()
-{
-
-}
 
 void SimulationEngine::simulate()
 {
 	PyObject* moduleMainString = PyUnicode_FromString("__main__");
+	if (moduleMainString == NULL)
+	{
+		logger->Error("Cant load main module!");
+		throw std::string("Simulation error");
+	}
+
 	moduleMain = PyImport_Import(moduleMainString);
-
+	logger->Info("Simulation log:");
 	PyRun_SimpleString(R"END(
-
 LTC = SimCommander("save/save.asc")
 idx = len(LTC.netlist) - 1
 
@@ -58,52 +58,28 @@ l.parse()
 
 float SimulationEngine::getComponentValue(std::string name, float time)
 {
-	/*PyObject* func = PyObject_GetAttrString(this->moduleMain, "mul");
-	PyObject* args = PyTuple_Pack(2, PyFloat_FromDouble(3.0), PyFloat_FromDouble(4.0));
-
-	PyObject* result = PyObject_CallObject(func, args);
-	double resultd = PyFloat_AsDouble(result);
-	return resultd;*/
-
 	PyObject* func = PyObject_GetAttrString(this->moduleMain, "getSimVal");
+	if (func == NULL)
+	{
+		logger->Error("Cant get simulated value!");
+		throw std::string("Simulation error");
+	}
+
 	PyObject* args = PyTuple_Pack(1, PyUnicode_FromString(name.c_str()));
+	if (func == NULL)
+	{
+		logger->Error("Cant get simulated value!");
+		throw std::string("Simulation error");
+	}
 
 	PyObject* result = PyObject_CallObject(func, args);
-	double resultd = PyFloat_AsDouble(result);
+	if (result == NULL)
+	{
+		logger->Error("Cant get simulated value!");
+		throw std::string("Simulation error");
+	}
 
-	cout << resultd;
-	return resultd;
+	//double resultd = PyFloat_AsDouble(result);
 
-//    
-//
-//
-//
-//	cout << name.c_str() << endl;
-//	PyObject* pArgs = PyTuple_Pack(1, PyBytes_FromString(name.c_str()));
-//
-//	if (PyRun_SimpleString(pythonCode) != 0) {
-//		PyErr_Print();
-//		Py_DECREF(pArgs);
-//		Py_Finalize();
-//		return 1;
-//	}
-//
-//	// Wywo³anie funkcji za pomoc¹ PyObject_CallMethod
-//	PyObject* pValue = PyObject_CallObject(PyObject_GetAttrString(moduleMain, "getSimVal"), pArgs);
-//
-//	if (pValue != NULL) {
-//		// Pobranie wyniku i wypisanie go
-//		double result = PyFloat_AsDouble(pValue);
-//		printf("Wynik z Pythona: %.2f\n", result);
-//		Py_DECREF(pValue);
-//		return result;
-//
-//	}
-//	else {
-//		PyErr_Print();
-//	}
-//
-//	Py_DECREF(pArgs);
-//	throw "awd";
-//	return 0.0f;
+	return static_cast<float>(PyFloat_AsDouble(result));
 }
