@@ -16,12 +16,12 @@ class StartMenu : public State
 {
 public:
 	StartMenu() = delete;
-	StartMenu(Resources* _res, bool loged = false);
+	StartMenu(Resources* res, bool logged = false);
 	~StartMenu();
 
 	//Który przycisk wciœniêty
 	//short GetButtonPressed();
-	//State* IsStateChanged();
+	//State* GetNextState();
 
 
 	void Update(RenderWindow* window, Time* elapsed);
@@ -37,7 +37,6 @@ private:
 	void renderNotLogged(RenderTarget* window);
 
 	Button** buttons;
-	Resources* res;
 
 	enum ButtonId
 	{

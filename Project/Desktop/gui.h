@@ -19,7 +19,7 @@ public:
 		font = nullptr;
 		flag = false;
 	}
-	Button(Vector2f _size, Vector2f _pos, Font* _font = nullptr, String _text = L"", Color _idle = Color(255, 0, 0, 255), Color _hover = Color(249, 0, 110, 255), Color _active = Color(150, 0, 0, 255), Texture* _texture = nullptr)
+	Button(Vector2f _size, Vector2f _pos, Font* _font = nullptr, String _text = L"", Color _idle = Color(79, 199, 79, 255), Color _hover = Color(38, 173, 38, 255), Color _active = Color(31, 146, 31, 255), Texture* _texture = nullptr)
 		:font(_font), idleColor(_idle), hoverColor(_hover), activeColor(_active)
 	{
 		shape.setSize(_size);
@@ -398,7 +398,7 @@ public:
 	{
 		font = nullptr;
 	}
-	TextBox(Vector2f _size, Vector2f _pos, Font* _font, String _text, Color _idle = Color(255, 0, 0, 255), Color _hover = Color(249, 0, 110, 255), Color _active = Color(150, 0, 0, 255), unsigned int _characterSize = 20, Texture* _texture = nullptr)
+	TextBox(Vector2f _size, Vector2f _pos, Font* _font, String _text, Color _idle = Color(79, 199, 79, 255), Color _hover = Color(249, 0, 110, 255), Color _active = Color(150, 0, 0, 255), unsigned int _characterSize = 20, Texture* _texture = nullptr)
 		:font(_font), idleColor(_idle), hoverColor(_hover), activeColor(_active), texture(_texture)
 	{
 		shape.setSize(_size);
@@ -494,7 +494,6 @@ public:
 		text.setFillColor(Color::White);
 		SetTextPosition();
 
-
 		int sumLengthButton = 0;
 		if (maxAmountButtons == 0)
 		{
@@ -519,12 +518,17 @@ public:
 		}
 
 		selected = -1;
+		hovered = -1;
 	}
 	~SelectBox() { }
 
 	short GetSelected()
 	{
 		return selected;
+	}
+	short GetHovered()
+	{
+		return hovered;
 	}
 	void ResetSelection()
 	{
@@ -534,6 +538,7 @@ public:
 
 	void Update(RenderWindow* window)
 	{
+		hovered = -1;
 		for (unsigned short i = 0; i < maxAmountButtons; i++)
 		{
 			if (i == selected)
@@ -541,13 +546,18 @@ public:
 				continue;
 			}
 
-			buttons[i]->Update(static_cast<Vector2f>(Mouse::getPosition(*window)));
+			buttons[i+offset]->Update(static_cast<Vector2f>(Mouse::getPosition(*window)));
 
 
-
-			if (buttons[i]->GetButtonState() == PRESSED)
+			if (buttons[i+offset]->GetButtonState() == PRESSED)
 			{
 				selected = i;
+			}
+
+			
+			if (buttons[i+offset]->GetButtonState() == HOVER)
+			{
+				hovered = i;
 			}
 		}
 	}
@@ -556,10 +566,15 @@ public:
 	{
 		target->draw(shape);
 
+		
 		for (short i = 0; i < maxAmountButtons; i++)
 		{
-			buttons[i]->Render(target);
+			buttons[i + offset]->Render(target);
 		}
+	}
+	void setButtonOffset(short offset)
+	{
+		this->offset = offset;
 	}
 
 private:
@@ -582,8 +597,91 @@ private:
 	Button** buttons;
 	unsigned short amountButtons;
 	short selected;
-
+	short hovered;
+	short offset = 0;
 	//Max number of buttons inside selectbox rect
 	unsigned short maxAmountButtons;
 	float spaceBetweenButtons;
+};
+
+class PopupBox 
+{
+public:
+	PopupBox() {}
+	//	Button(Vector2f _pos, Font* _font = nullptr, String _text = L"", Color _idle = Color(255, 0, 0, 255), Color _hover = Color(249, 0, 110, 255), Color _active = Color(150, 0, 0, 255), Texture* _texture = nullptr)
+	PopupBox(Font* _font = nullptr, sf::String _str = L"")
+	{
+		text.setFont(*_font);
+		text.setCharacterSize(20);
+		text.setString(_str);
+		text.setFillColor(sf::Color::White);
+
+		size_t linesCount = _str.find("\n", 0);
+		
+		//Vector2i windowDim = res->getConfig().getWindowDimension();
+
+		const Vector2f buttonDim = { 50.f, 50.f };
+
+		Vector2f popupBoxSize = [_str, buttonDim]()->Vector2f {
+			int tmp = 0;
+			int maxCount = 0;
+			int coutOfNewLine = 1;
+			for (int i = 0; i < _str.getSize(); i++)
+			{
+				if (_str[i] != L'\n')
+					tmp++;
+				else
+				{
+					coutOfNewLine++;
+					tmp = 0;
+					maxCount = maxCount > tmp ? maxCount : tmp;
+				}
+			}
+			return { 20.f * maxCount,  coutOfNewLine * 20.f + buttonDim.y};
+			}();
+
+		Vector2f popupBoxPos = {
+			0,0
+		};
+		
+		shape.setSize(popupBoxSize);
+		shape.setPosition(popupBoxPos);
+		shape.setFillColor(sf::Color::Blue);
+		//text.setPosition();
+
+		button = new Button(buttonDim + popupBoxPos, { (popupBoxSize.x - buttonDim.x) / 2,popupBoxSize.y - popupBoxSize.y }, _font, L"Ok");
+	}
+	~PopupBox() 
+	{
+		delete button;/**/ //Wyciek pamiêci gdzieœ mam i siê wszystko psuje :C
+	}
+
+	bool ShouldBeDestroyed()
+	{
+		return shouldBeDestroyed;
+	}
+
+	void Update(const Vector2f mousePos)
+	{
+		button->Update(mousePos);
+		if (button->isButtonPressed())
+			shouldBeDestroyed = true;
+	}
+	
+	void Render(RenderTarget* target)
+	{
+		if (shouldBeDestroyed)
+			return;
+		target->draw(shape);
+		target->draw(text);
+		button->Render(target);
+	}
+
+private:
+
+	sf::RectangleShape shape;
+	sf::Text text;
+	Button* button = nullptr;
+
+	bool shouldBeDestroyed = false;
 };

@@ -11,7 +11,7 @@ class BoardSave
 public:
 	~BoardSave();
 
-	static BoardSave* getInstance();
+	static BoardSave& getInstance();
 
 	void saveBoard(Board* board, const std::string& path);
 
@@ -20,7 +20,7 @@ public:
 
 private:
 	BoardSave();
-	static BoardSave* boardSave;
+	//static BoardSave* boardSave;
 	
 	Logger* logger;
 };

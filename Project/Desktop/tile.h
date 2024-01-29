@@ -46,10 +46,10 @@ public:
 		tileShape.setFillColor(defaultColor);
 		//tileShape.setOutlineThickness(2.f);
 
-		/*tileShape.setTexture(GraphicAll::GetInstance()->getTileTexture());
+		/*tileShape.setTexture(GraphicAll::GetInstance().getTileTexture());
 		tileShape.setTextureRect(IntRect(0,0,64,48));*/
-		tileSprite = GraphicAll::GetInstance()->getTileSprite(0);
-		tileRoute = GraphicAll::GetInstance()->getRouteGraphic();
+		tileSprite = GraphicManager::GetInstance().getTileSprite(0);
+		tileRoute = GraphicManager::GetInstance().getRouteGraphic();
 
 		route = 0;
 	}
@@ -194,7 +194,7 @@ public:
 			break;
 		}
 
-		//tileSprite = GraphicAll::GetInstance()->getTileSprite(tileState);
+		//tileSprite = GraphicAll::GetInstance().getTileSprite(tileState);
 		tileSprite->setPosition(tileShape.getPosition());
 		target->draw(*tileSprite);
 		target->draw(tileShape);
@@ -208,7 +208,7 @@ public:
 	void setState(TileState tileState)
 	{
 		this->tileState = tileState;
-		tileSprite = GraphicAll::GetInstance()->getTileSprite(tileState);
+		tileSprite = GraphicManager::GetInstance().getTileSprite(tileState);
 	}
 	void setRoute(char route)
 	{

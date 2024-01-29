@@ -1,4 +1,4 @@
 #include "logger.h"
 
-bool Logger::loggerInConsole = true;
-fstream Logger::file;
+bool applogger::Logger::loggerInConsole = true;
+std::fstream applogger::Logger::file;

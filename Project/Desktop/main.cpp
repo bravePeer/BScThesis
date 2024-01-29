@@ -1,14 +1,15 @@
 #include <iostream>
-#include "gameEngine.h"
+#include "appEngine.h"
 #include <Windows.h>
 //#include "world.h"
 #include "Logger.h"
 #include <SFML/Window.hpp>
 //using namespace std;
+using namespace applogger;
 
 int main()
 {
-	Game game;
+	AppEngine app;
 	Logger logger("main");
 	//Logger::InitializeFileLogging();
 
@@ -17,22 +18,22 @@ int main()
 	sf::Time currentTime;
 	float fps;
 
-	while (game.IsRunning())
+	while (app.IsRunning())
 	{
-		game.PollEvents();
+		app.PollEvents();
 
-		if (!game.HasFocus())
+		if (!app.HasFocus())
 			continue;
 
 		//update
-		game.Update();
+		app.Update();
 
 		//rysowanie
-		game.Render();
+		app.Render();
 
 		currentTime = clock.getElapsedTime();
 		fps = 1.0f / (currentTime.asSeconds() - previousTime.asSeconds());
-		game.getWindow()->setTitle(L"Praca Inzynierska fps: " + to_wstring(static_cast<int>(fps)));
+		app.getWindow()->setTitle(L"Praca Inzynierska fps: " + to_wstring(static_cast<int>(fps)));
 		previousTime = currentTime;
 	}
 

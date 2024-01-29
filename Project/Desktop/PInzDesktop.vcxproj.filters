@@ -45,7 +45,7 @@
     <ClCompile Include="logger.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="gameEngine.cpp">
+    <ClCompile Include="appEngine.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="level.cpp">
@@ -78,12 +78,18 @@
     <ClCompile Include="component.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
+    <ClCompile Include="stateSolveLevel.cpp">
       <Filter>Pliki źródłowe\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="board.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="boardSave.cpp">
+      <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="gameEngine.h">
+    <ClInclude Include="appEngine.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="logger.h">
@@ -107,19 +113,13 @@
     <ClInclude Include="level.h">
       <Filter>Pliki nagłówkowe\Levels</Filter>
     </ClInclude>
-    <ClInclude Include="task.h">
-      <Filter>Pliki nagłówkowe\Levels</Filter>
-    </ClInclude>
     <ClInclude Include="gui.h">
       <Filter>Pliki nagłówkowe\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="graphics.h">
       <Filter>Pliki nagłówkowe\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="resources.h">
-      <Filter>Pliki nagłówkowe\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
+    <ClInclude Include="stateSolveLevel.h">
       <Filter>Pliki nagłówkowe\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="stateLevelSelect.h">
@@ -139,6 +139,21 @@
     </ClInclude>
     <ClInclude Include="levelsToLoad.h">
       <Filter>Pliki nagłówkowe\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="boardSave.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="databaseConnector.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="tile.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="user.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="componentDesc.h">
+      <Filter>Pliki nagłówkowe\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

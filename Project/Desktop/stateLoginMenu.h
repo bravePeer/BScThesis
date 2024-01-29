@@ -24,10 +24,21 @@ public:
 	void Render(RenderTarget* target);
 	void AddLetter(wchar_t s);
 private:
-	Resources* res;
 	Button** buttons;
 	InputBox* loginInputBox;
 	InputBoxPassword* passwordInputBox;
+
+	TextBox** textBoxes;
+
+	bool showLoginInfo;
+	TextBox* loginInfo;
+
+	enum TextBoxId
+	{
+		LoginT,
+		PasswordT,
+		CountT
+	};
 
 	enum ButtonId
 	{

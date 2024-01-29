@@ -1,0 +1,145 @@
+- logger: Logger* 
+- view: View*
+- origin: Vector2f 
+- oldOrigin: Vector2f 
+- mouseMode: MouseMode
+- lastTileHover: Vector2i
+- rotated: bool
+
+//Methods:
+
++ SolveLevel(Resources*, Level*, bool):
++ AddLetter(wchar_t s): void 
++ Update(RenderWindow*, Time*): void 
++ Render(RenderTarget*): void 
+- initTaskSection(Resources*): void 
+- destroyTaskSection(): void 
+- updateTaskSection(): void
+- renderTaskSection(RenderTarget*): void
+- initRouteSection(Resources*): void 
+- destroyRouteSection(): void 
+- updateRouteSection(RenderWindow*, Time*): void 
+- renderRouteSection(RenderTarget*): void 
+- initComponentSection(Resources*): void 
+- destroyComponentSection(): void 
+- updateComponentSection(RenderWindow*, Time*): void 
+- renderComponentSection(RenderTarget*) void 
+- initBoardSection(): void 
+- destroyBoardSection(): void 
+- (SolveLevel::* updateBoardSection)(RenderWindow*, Time*): void
+- updateBoardSectionIdle(RenderWindow*, Time*): void
+- updateBoardSectionRoute(RenderWindow*, Time*): void
+- updateBoardSectionPlaceComponent(RenderWindow*, Time*): void
+- updateBoardSectionRemoveComponent(RenderWindow*, Time*): void
+- renderBoardSection(RenderTarget*): void 
+- initInfoNearMouse(Resources*): void 
+- destroyInfoNearMouse(): void 
+- updateInfoNearMouse(RenderWindow*, Time*): void 
+- renderInfoNearMouse(RenderTarget*): void 
+
+	enum MouseMode {
+		Idle,
+		Route,
+		Place,
+		Remove
+	}:
+
+//------------------------------
+//Board
+//------------------------------
+
+- logger: Logger* 
+- length: int 
+- width: int 
+- layers: int 
+- origin: Vector2f
+- boardTiles: Tile* 
+- components: vector<Component*> 
+- isComponentOnBoard: Component**
+- ghostComponent: Component* 
+- viewOrigin: Vector2f
+- hideComponents: bool
+
+public:
++ Board():
++ Board(int, int, int):
++ ~Board():
++ Update(RenderWindow*, Time*): void
++ Render(RenderTarget*): void
++ getHoverTilePos(Vector2i&): Vector2i
++ getTile(Vector2i): Tile& 
++ getBoardDimension(): const Vector2i
++ getViewOrigin(): Vector2f& 
++ moveViewOrigin(Vector2f): void
++ tileNighbourDirection(Vector2i, Vector2i): char
++ addRoute(Vector2i, Vector2i): void
++ setRoute(Vector2i, Vector2i): void
++ removeRoute(Vector2i, Vector2i): void
++ canPlaceComponent(Component*, Vector2i&): bool
++ placeComponent(Component*, Vector2i&): void
++ placeComponentForce(Component*, Vector2i&): void
++ removeComponent(Vector2i): void
++ getComponentOnBoard(Vector2i): Component*
++ getComponentsCount(): map<Component::CompoenetType, int>
++ getComponentsCountById(): map<std::string, int> 
++ setHideComponent(bool): void
++ isHideComponent(): bool
+
+
+//------------------------------
+//Component
+//------------------------------
+
+public:
+	enum class ComponentTypePackage {
+		SMD, THT
+	}:
+	enum class CompoenetType {
+		compoenet, goldpin, resistor, led, capacitor, microcontroller
+	}:
++ Component()
++ Component(wstring, wstring, Vector2i, int, Vector2i*,const Texture&, ComponentTypePackage, bool, std::string, std::string)
++ Component(Component* component)
++ ~Component()
++ Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin): virtual void
++ Render(RenderTarget* target): virtual void
++ incrementId(): virtual void
++ rotate(): void
++ getRotation(): int 
++ getTileSize(): Vector2i& 
++ setPosition(Vector2f&): void
++ getBoardPosition(): Vector2i& 
++ setBoardPosition(Vector2i&): void
++ getName(): const wstring&
++ getPadsCount(): const int 
++ getPadsPos(): Vector2i* 
++ getComponentType(): CompoenetType 
++ isRemovable(): bool
++ getComponentTypePackage() : ComponentTypePackage
++ getSimSymbol(): std::string&
++ getSimName(): std::string&
++ getId(): std::string&
++ setSimValue(std::string value): void
++ getSimValue(): std::string&
+	
+# getComponentLength(): unsigned int
+	
+//Pola
+# tileSize: Vector2i
+# padsCount: int 
+# padsPos: Vector2i*
+# boardPosition: Vector2i
+# globalPosition: Vector2f
+# sprite: Sprite 
+# spriteSize: Vector2i
+# rotation: int 
+# removable: bool
+# componentTypePackage: ComponentTypePackage
+# name: wstring 
+# description: wstring 
+# simSymbol: std::string 
+# simName: std::string 
+# simValue: std::string 
+# id: std::string 
+# componentType: CompoenetType
+}:

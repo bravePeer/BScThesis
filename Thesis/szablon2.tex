@@ -1,0 +1,99 @@
+\usepackage{polski}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage[center]{caption}
+\usepackage{pdfpages}
+\usepackage{enumitem}
+\setmainfont{Times New Roman}
+\usepackage[polish]{babel}
+\addto\captionspolish{\renewcommand{\refname}{Bibliografia}}
+\usepackage{lscape}
+% \usepackage{rotating}
+\linespread{1.5}
+
+\renewcommand{\figurename}{Rys.}
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{subfig}
+% \usepackage{minipa}
+\usepackage{geometry}
+\newgeometry{tmargin=2cm, bmargin=2cm, lmargin=2cm, rmargin=2cm}
+\newcommand{\noaka}{\hspace{-6mm}}
+
+%old
+% \newcommand{\aka}{\hspace{1cm}}
+\newcommand{\aka}{\noindent\hspace{1cm}}
+
+\newcommand{\citate}[1]{$^{[\ref{#1}]}$}
+
+\newcounter{questionsCount}
+\setcounter{questionsCount}{1}
+\newcommand{\question}[1]{\textcolor{red}{\mbox{Pytanie}~\arabic{questionsCount}:~#1 \addtocounter{questionsCount}{1}}}
+
+\pagenumbering{gobble}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\renewcommand{\lstlistingname}{Fragment kodu}
+
+%New colors defined below
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+%Code listing style named "mystyle"
+\lstdefinestyle{mystyle}{
+  backgroundcolor=\color{backcolour}, commentstyle=\color{codegreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2
+}
+\lstset{style=mystyle,texcl=true}
+
+
+
+\newcommand{\mycaption}[1]{#1 \\ Źródło: opracowanie własne}
+
+%use cases
+\newenvironment{usecase}{}{}
+\newcommand{\addusecase}[1]{\textbf{Przypadek użycia:} #1\\}
+\newcommand{\addactor}[1]{\textbf{Aktor:} #1\\}
+\newcommand{\adddesc}[1]{\textbf{Opis:} #1\\}
+\newcommand{\addcondition}[1]{\textbf{Warunki wstępne:} #1\\}
+
+\newcommand{\addpath}{\textbf{Przepływ zdarzeń:}}
+
+\newlist{usecases}{enumerate}{3}
+\setlist[usecases, 1]{
+  label=\arabic{usecasesi}.,
+  itemsep=0pt,
+  parsep=0pt,
+  nosep
+}
+
+\setlist[usecases, 2]{
+  label=\arabic{usecasesi}.\alph{usecasesii}.,
+  itemsep=0pt,
+  parsep=0pt,
+  nosep
+}
+
+\setlist[usecases, 3]{
+  label=\arabic{usecasesi}.\alph{usecasesii}.\arabic{usecasesiii}.,
+  itemsep=0pt,
+  parsep=0pt,
+  nosep
+}

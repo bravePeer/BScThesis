@@ -4,6 +4,7 @@
 #include <Python.h>
 #include <numpy/arrayobject.h>
 
+
 //Wykonuje symulacje 
 //Wykorzystuj¹c kod pythonowy?
 class SimulationEngine 
@@ -12,12 +13,13 @@ public:
 	SimulationEngine();
 	~SimulationEngine();
 
-	void setBoard();
-	void convertBoard();
 	void simulate();
 
+	float getComponentValue(std::string name, float time = 0);
 	//getComponentValue(componentName, time?)
 
 private:
-	Board* board;
+	PyObject* moduleMain;
+	applogger::Logger* logger;
+	//Board* board;
 };

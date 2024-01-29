@@ -123,25 +123,25 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STATIC_CONCPP;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\barte\AppData\Local\Programs\Python\Python312\include;C:\Users\barte\AppData\Local\Programs\Python\Python312\Lib\site-packages\numpy\core\include;D:\Visual Studio\_AddLibs\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Visual Studio\_AddLibs\mysql-connector-c++-8.2.0-winx64\mysql-connector-c++-8.2.0-winx64\include;C:\Users\barte\AppData\Local\Programs\Python\Python312\include;C:\Users\barte\AppData\Local\Programs\Python\Python312\Lib\site-packages\numpy\core\include;D:\Visual Studio\_AddLibs\SFML-2.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\barte\AppData\Local\Programs\Python\Python312\libs;C:\Users\barte\AppData\Local\Programs\Python\Python312\Lib\site-packages\numpy\core\lib;D:\Visual Studio\_AddLibs\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>python312.lib;python3.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main-d.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;npymath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Visual Studio\_AddLibs\mysql-connector-c++-8.2.0-winx64\mysql-connector-c++-8.2.0-winx64\lib64\vs14;C:\Users\barte\AppData\Local\Programs\Python\Python312\libs;C:\Users\barte\AppData\Local\Programs\Python\Python312\Lib\site-packages\numpy\core\lib;D:\Visual Studio\_AddLibs\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;mysqlcppconn8.lib;mysqlcppconn8-static.lib;python312.lib;python3.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main-d.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;npymath.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="board.cpp" />
     <ClCompile Include="boardSave.cpp" />
     <ClCompile Include="component.cpp" />
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="gameEngine.cpp" />
+    <ClCompile Include="stateSolveLevel.cpp" />
+    <ClCompile Include="appEngine.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="levelsToLoad.cpp" />
@@ -158,14 +158,15 @@
     <ClInclude Include="board.h" />
     <ClInclude Include="boardSave.h" />
     <ClInclude Include="component.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="gameEngine.h" />
+    <ClInclude Include="componentDesc.h" />
+    <ClInclude Include="databaseConnector.h" />
+    <ClInclude Include="stateSolveLevel.h" />
+    <ClInclude Include="appEngine.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="levelsToLoad.h" />
     <ClInclude Include="logger.h" />
-    <ClInclude Include="resources.h" />
     <ClInclude Include="simulationEngine.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="stateCloseMenu.h" />
@@ -173,8 +174,8 @@
     <ClInclude Include="stateLoginMenu.h" />
     <ClInclude Include="stateRegisterMenu.h" />
     <ClInclude Include="stateStartMenu.h" />
-    <ClInclude Include="task.h" />
     <ClInclude Include="tile.h" />
+    <ClInclude Include="user.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>
   <ItemGroup>

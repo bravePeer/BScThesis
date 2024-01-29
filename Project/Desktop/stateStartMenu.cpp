@@ -1,20 +1,29 @@
 #include "stateStartMenu.h"
 
 //------StartMenu---------
-StartMenu::StartMenu(Resources* res, bool loged)
-	:res(res)
+StartMenu::StartMenu(Resources* res, bool logged)
+	:State(res)
 {
 
 	buttons = new Button * [ButtonId::Count];
-	buttons[ButtonId::Start] = new Button({ 200,50 }, { 200,240 }, res->GetFont(), L"Rozpocznij", Color(255, 0, 0, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	buttons[ButtonId::Login] = new Button({ 200,50 }, { 200,360 }, res->GetFont(), L"Zaloguj", Color(255, 0, 0, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	buttons[ButtonId::Logout] = new Button({ 200,50 }, { 200,300 }, res->GetFont(), L"Wyloguj", Color(255, 0, 0, 255), Color(249, 110, 0, 255), Color(150, 0, 0, 255));
-	buttons[ButtonId::Register] = new Button({ 200,50 }, { 200,300 }, res->GetFont(), L"Zarejestruj", Color(255, 0, 0, 255), Color(249, 110, 0, 255), Color(150, 0, 0, 255));
-	buttons[ButtonId::Exit] = new Button({ 200,50 }, { 200,420 }, res->GetFont(), L"Wyjœcie", Color(255, 0, 0, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	buttons[ButtonId::Start] = new Button({ 200,50 }, { 200,240 }, res->GetFont(), L"Rozpocznij");
+	buttons[ButtonId::Login] = new Button({ 200,50 }, { 200,360 }, res->GetFont(), L"Zaloguj");
+	buttons[ButtonId::Logout] = new Button({ 200,50 }, { 200,300 }, res->GetFont(), L"Wyloguj");
+	buttons[ButtonId::Register] = new Button({ 200,50 }, { 200,300 }, res->GetFont(), L"Zarejestruj");
+	buttons[ButtonId::Exit] = new Button({ 200,50 }, { 200,420 }, res->GetFont(), L"Wyjœcie");
 
 	//if logged sombody
-	updateF = &StartMenu::updateNotLogged;
-	renderF = &StartMenu::renderNotLogged;
+	if (logged)
+	{
+		updateF = &StartMenu::updateLogged;
+		renderF = &StartMenu::renderLogged;
+		User::getInstance().getSavesFile();
+	}
+	else
+	{
+		updateF = &StartMenu::updateNotLogged;
+		renderF = &StartMenu::renderNotLogged;
+	}
 }
 StartMenu::~StartMenu()
 {
@@ -32,6 +41,7 @@ void StartMenu::Update(RenderWindow* window, Time* elapsed)
 
 void StartMenu::Render(RenderTarget* target)
 {
+	target->draw(res->GetDemonstrationSprite());
 	(this->*renderF)(target);
 }
 
@@ -41,15 +51,15 @@ void StartMenu::updateLogged(RenderWindow* window, Time* elapsed)
 
 	buttons[ButtonId::Start]->Update(mousePos);
 	if (buttons[ButtonId::Start]->isButtonPressed())
-		;
+		nextState = new LevelSelect(res);
 
 	buttons[ButtonId::Logout]->Update(mousePos);
 	if (buttons[ButtonId::Logout]->isButtonPressed())
 	{
-		//TODO Logout stufff
+		User::getInstance().logout();
 
-		updateF = &StartMenu::updateNotLogged;//to nie tu bedzie
-		renderF = &StartMenu::renderNotLogged;//to nie tu bedzie
+		updateF = &StartMenu::updateNotLogged;//to nie tu bedzie (new) czemu?
+		renderF = &StartMenu::renderNotLogged;//to nie tu bedzie (new) czemu?
 	}
 
 

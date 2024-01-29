@@ -1,0 +1,16 @@
+﻿C:\Programs\Visual Studio\Visual Studio 2022\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: Katalog pośredni (x64\Release\) zawiera pliki udostępnione z innego projektu (DatabaseUnitTest.vcxproj). Może to spowodować niepoprawne zachowanie podczas oczyszczania i ponownej kompilacji.
+  pch.cpp
+D:\___Studia___\_PracaInzynierska_\BScThesis\Project\Desktop\level.cpp(387,18): warning C4244: "inicjowanie": konwersja z "std::streamsize" do "unsigned int", możliwa utrata danych
+  (kompilowanie pliku źródłowego „pch.cpp”)
+  
+D:\___Studia___\_PracaInzynierska_\BScThesis\Project\Desktop\level.cpp(408,18): warning C4244: "+=": konwersja z "uint64_t" do "unsigned int", możliwa utrata danych
+  (kompilowanie pliku źródłowego „pch.cpp”)
+  
+  UnitTests.cpp
+     Trwa tworzenie biblioteki D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\UnitTest.lib i obiektu D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\UnitTest.exp
+  Trwa generowanie kodu
+  8 of 1903 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    14 functions had inline decision re-evaluated but remain unchanged
+  Zakończono generowanie kodu
+  DatabaseUnitTest.vcxproj -> D:\___Studia___\_PracaInzynierska_\BScThesis\Project\DatabaseUnitTest\x64\Release\UnitTest.dll

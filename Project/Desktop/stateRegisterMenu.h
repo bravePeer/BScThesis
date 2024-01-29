@@ -12,6 +12,8 @@
 #include "stateRegisterMenu.h"
 #include "stateStartMenu.h"
 
+#include "user.h"
+
 
 class RegisterMenu : public State
 {
@@ -24,10 +26,23 @@ public:
 	void Render(RenderTarget* target);
 	void AddLetter(wchar_t s);
 private:
-	Resources* res;
 	Button** buttons;
 	InputBox** loginInputBox;
 	InputBoxPassword** passwordInputBox;
+
+	TextBox** textBoxes;
+
+	bool showRegisterInfo;
+	TextBox* registerInfo;
+
+	enum TextBoxId
+	{
+		LoginT,
+		EmailT,
+		PasswordT,
+		RePasswordT,
+		CountT
+	};
 
 	enum ButtonId
 	{
