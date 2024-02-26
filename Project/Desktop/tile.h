@@ -232,22 +232,22 @@ public:
 		switch (tileState)
 		{
 		case Tile::EMPTY:
-			return sf::String("Empty");
+			return sf::String(L"Pusty");
 			break;
 		case Tile::SMD_PAD:
-			return sf::String("SMD pad");
+			return sf::String(L"SMD pad");
 			break;
 		case Tile::THT_PAD:
-			return sf::String("THT pad");
+			return sf::String(L"THT pad");
 			break;
 		case Tile::ROUTED:
-			return sf::String("Routed");
+			return sf::String(L"Ścieżka");
 			break;
 		case Tile::VIA:
-			return sf::String("Via");
+			return sf::String(L"Via");
 			break;
 		case Tile::CONNECTED:
-			return sf::String("Conntected");
+			return sf::String(L"Połączony");
 			break;
 		default:
 			return sf::String("-");

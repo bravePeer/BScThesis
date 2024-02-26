@@ -12,7 +12,7 @@
 class Board
 {
 	friend class BoardSave;
-	Logger* logger;
+	applogger::Logger* logger;
 
 	int length;
 	int width;

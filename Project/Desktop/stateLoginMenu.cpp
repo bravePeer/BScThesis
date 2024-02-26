@@ -7,11 +7,11 @@ LoginMenu::LoginMenu(Resources* res)
 	:State(res)
 {
 	buttons = new Button * [ButtonId::Count];
-	buttons[ButtonId::Login] = new Button({ 200,50 }, { 200,450 }, res->GetFont(), L"Zaloguj", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255) );
-	buttons[ButtonId::Back] = new Button({ 200,50 }, { 200,510 }, res->GetFont(), L"Powrót", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	buttons[ButtonId::Login] = new Button({ 200,50 }, { 200,450 }, res->GetFont(), L"Zaloguj", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
+	buttons[ButtonId::Back] = new Button({ 200,50 }, { 200,510 }, res->GetFont(), L"Powrót", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
 
-	loginInputBox = new InputBox({ 200,50 }, { 200, 230 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	passwordInputBox = new InputBoxPassword({ 200,50 }, { 200, 290 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	loginInputBox = new InputBox({ 200,50 }, { 200, 230 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
+	passwordInputBox = new InputBoxPassword({ 200,50 }, { 200, 290 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
 
 	textBoxes = new TextBox*[TextBoxId::CountT];
 	textBoxes[TextBoxId::LoginT] = new TextBox({ 80,50 }, { 100,230 }, res->GetFont(), L"Loign:", Color(79, 199, 79, 255), Color(249, 0, 110, 255), Color(150, 0, 0, 255));
@@ -71,7 +71,7 @@ void LoginMenu::Update(RenderWindow* window, Time* elapsed)
 			loginInputBox->GetTypedString(),
 			passwordInputBox->GetTypedString()))
 		{
-			nextState = new StartMenu(res, User::getInstance().isLoggedIn());
+			nextState = new StartMenu(res);
 		}
 		else
 		{

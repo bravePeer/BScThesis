@@ -16,7 +16,7 @@ class StartMenu : public State
 {
 public:
 	StartMenu() = delete;
-	StartMenu(Resources* res, bool logged = false);
+	StartMenu(Resources* res);
 	~StartMenu();
 
 	//Który przycisk wciœniêty

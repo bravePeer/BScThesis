@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include "Logger.h"
-using namespace applogger;
+#include "graphicPaths.h"
 
 //Dimension on screen
 #define TILE_LENGTH 64
@@ -13,16 +13,7 @@ using namespace applogger;
 #define IMAGE_TILE_LENGTH 66
 //#define TILE_WIDTH 32
 
-#define ROUTE_GRAPHIC_PATH "Resources\\Images\\routes.png"
-#define RESISTOR_GRAPHIC_PATH "Resources\\Images\\simpleresistorMirror.png"
-#define RESISTOR_10k_GRAPHIC_PATH "Resources\\Images\\simpleresistor10k.png"
-#define RESISTOR_200_GRAPHIC_PATH "Resources\\Images\\simpleresistor200.png"
-#define CAPACITOR_GRAPHIC_PATH "Resources\\Images\\simplecapacitor.png"
-#define DIODE_GRAPHIC_PATH "Resources\\Images\\simpleled.png"
-#define GOLDPIN_GRAPHIC_PATH "Resources\\Images\\goldpins.png"
-#define MICROCONTROLLER_DPAK8_GRAPHIC_PATH "Resources\\Images\\uC_DPAK_8pin.png"
-#define DEMONSTRATION_DPAK8_GRAPHIC_PATH "Resources\\Images\\demonstroation.png"
-#define TINY8_GRAPHIC_PATH "Resources\\Images\\tiny_uC.png"
+
 
 using namespace sf;
 using namespace std;
@@ -94,8 +85,8 @@ public:
 	void unloadGraphics()
 	{
 		componentsGraphics.clear();
+		componentsDescTextures.clear();
 	}
-
 
 	void loadTileGraphic()
 	{
@@ -107,7 +98,42 @@ public:
 		loadRouteGraphic();
 	}
 
-	
+	sf::Texture& loadComponentDescription(std::string path)
+	{
+		std::map<std::string, sf::Texture>::iterator it = componentsDescTextures.find(path);
+		if (it == componentsDescTextures.end())
+		{
+			sf::Texture tex;
+			if (!tex.loadFromFile(path))
+				logger->Error("Can't load component description");
+			
+			componentsDescTextures[path] = tex;
+			it = componentsDescTextures.find(path);
+			
+		}
+		logger->Info("Successfully loaded component description: " + path);
+
+		return it->second;
+	}
+
+	sf::Texture& loadHelp()
+	{
+		help.loadFromFile(HELP_PATH);
+		return help;
+	}
+
+	void loadLevelSchematic(std::string path)
+	{
+		if (!levelSchematicTexture.loadFromFile(path))
+			logger->Error("Can't load level schematic file!");
+
+		levelSchematicSprite.setTexture(levelSchematicTexture);
+		levelSchematicSprite.setPosition({ 10.f,10.f });
+	}
+	sf::Sprite& getLevelSchematic()
+	{
+		return levelSchematicSprite;
+	}
 
 	const Texture* getTileTexture()
 	{
@@ -117,16 +143,11 @@ public:
 	{
 		return &(tilesSprite[i]);
 	}
-
-
 	
 	sf::Sprite* getRouteGraphic()
 	{
 		return &routeSprite;
 	}
-
-
-
 
 	bool IsGraphicLoaded()
 	{
@@ -135,10 +156,11 @@ public:
 private:
 	GraphicManager()
 	{
-		logger = new Logger("Graphics");
+		logger = new applogger::Logger("Graphics");
 	}
 
 	std::map<std::string, ComponentGraphics> componentsGraphics;
+	std::map<std::string, sf::Texture> componentsDescTextures;
 
 	bool isTestGraphicsLoaded;
 
@@ -176,6 +198,13 @@ private:
 	Sprite routeSprite;
 
 	applogger::Logger* logger;
+
+	//Level
+	Texture levelSchematicTexture;
+	Sprite levelSchematicSprite;
+
+	//Help
+	Texture help;
 };
 
 
@@ -250,7 +279,7 @@ class Resources
 public:
 	Resources()
 	{
-		logger = new Logger("ResourceManager");
+		logger = new applogger::Logger("ResourceManager");
 	}
 	~Resources()
 	{
@@ -278,11 +307,11 @@ public:
 		return demonstrationSprite;
 	}
 
-
 	Font* GetFont()
 	{
 		return &font;
 	}
+
 	Font& getFont()
 	{
 		return font;
@@ -294,7 +323,7 @@ public:
 	}
 
 private:
-	Logger* logger;
+	applogger::Logger* logger;
 	Config config;
 	
 	Texture demonstrationTexture;

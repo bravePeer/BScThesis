@@ -4,16 +4,16 @@ RegisterMenu::RegisterMenu(Resources* res)
 	:State(res)
 {
 	buttons = new Button * [ButtonId::Count];
-	buttons[ButtonId::Register] = new Button({ 200,50 }, { 200,460 }, res->GetFont(), L"Zarejestruj", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	buttons[ButtonId::Back] = new Button({ 200,50 }, { 200,520 }, res->GetFont(), L"Powrót", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	buttons[ButtonId::Register] = new Button({ 200,50 }, { 200,460 }, res->GetFont(), L"Zarejestruj", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
+	buttons[ButtonId::Back] = new Button({ 200,50 }, { 200,520 }, res->GetFont(), L"Powrót", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
 
 	loginInputBox = new InputBox * [InputBoxId::CountI];
-	loginInputBox[InputBoxId::Login] = new InputBox({ 200,50 }, { 200, 110 }, res->GetFont(), L"...", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	loginInputBox[InputBoxId::Email] = new InputBox({ 200,50 }, { 200, 170 }, res->GetFont(), L"...", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	loginInputBox[InputBoxId::Login] = new InputBox({ 200,50 }, { 200, 110 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
+	loginInputBox[InputBoxId::Email] = new InputBox({ 200,50 }, { 200, 170 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
 
 	passwordInputBox = new InputBoxPassword * [PasswordInputBoxId::CountP];
-	passwordInputBox[PasswordInputBoxId::First] = new InputBoxPassword({ 200,50 }, { 200, 230 }, res->GetFont(), L"...", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255));
-	passwordInputBox[PasswordInputBoxId::Second] = new InputBoxPassword({ 200,50 }, { 200, 290 }, res->GetFont(), L"...", Color(79, 199, 79, 255),  Color(249, 0, 110, 255), Color(150, 0, 0, 255));
+	passwordInputBox[PasswordInputBoxId::First] = new InputBoxPassword({ 200,50 }, { 200, 230 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
+	passwordInputBox[PasswordInputBoxId::Second] = new InputBoxPassword({ 200,50 }, { 200, 290 }, res->GetFont(), L"...", Color(79, 199, 79, 255), Color(38, 173, 38, 255), Color(31, 146, 31, 255));
 
 	textBoxes = new TextBox * [TextBoxId::CountT];
 	textBoxes[TextBoxId::LoginT] = new TextBox({ 80,50 }, { 100,110 }, res->GetFont(), L"Loign:", sf::Color(255, 0, 0, 0));

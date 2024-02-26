@@ -19,7 +19,10 @@ SimulationEngine::SimulationEngine()
 
 	PyRun_SimpleString(R"END(
 def getSimVal(componentName):
-	return l.get_data('I(' + componentName  + ')', time=0)
+	data = l.get_data('I(' + componentName  + ')', time=0)
+	if data is None:
+		return 0
+	return data
 	)END");
 
 	logger->Info("Python initialized");

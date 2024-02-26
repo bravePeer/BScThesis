@@ -37,7 +37,7 @@ public:
 	
 	void Render(RenderTarget* target);
 private:
-	Logger* logger;
+	applogger::Logger* logger;
 
 	View* view;
 	Vector2f origin;
@@ -48,6 +48,14 @@ private:
 	Button* helpButton;
 	Button* checkButton;
 	PopupBox* popupBox;
+
+	Button* showLevelSchematicButton;
+	bool showLevelSchematic;
+	Sprite levelSchematic;
+
+	Sprite tmpSprite;
+	Sprite helpBox;
+	bool showHelp = false;
 
 	//-----------------------------------------
 	// Task section
@@ -117,6 +125,9 @@ private:
 	Vector2i lastTileHover;
 	bool rotated = false;
 
+	Button* moveAddComponentsRight = nullptr;
+	Button* moveAddComponentsLeft = nullptr;
+
 	//-----------------------------------------
 	// Board section
 	//-----------------------------------------
@@ -152,7 +163,7 @@ private:
 	inline void updateInfoNearMouse(RenderWindow* window, Time* elapsed);
 	
 	inline void renderInfoNearMouse(RenderTarget* target);
-
+	bool shouldRenderInfoNearMouse = false;
 
 	TextBox* mouseInfoBox;
 

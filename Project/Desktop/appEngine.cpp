@@ -9,7 +9,7 @@ AppEngine::AppEngine()
 	const Vector2i &windowSize = res.getConfig().getWindowDimension();
 	window = new RenderWindow(VideoMode(windowSize.x, windowSize.y, 64), "Praca Inzynierska", Style::Titlebar | Style::Close);
 	window->setVerticalSyncEnabled(true);
-	window->setFramerateLimit(60);
+	window->setFramerateLimit(30);
 
 	//Settings::windowSize = window->getSize();
 
@@ -100,7 +100,7 @@ void AppEngine::PollEvents()
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::F1))
 			{
-				User::getInstance().loginExistingUser("test1", "test1");
+				User::getInstance().loginExistingUser("user1", "password");
 				User::getInstance().getSavesFile();
 			}
 

@@ -8,6 +8,7 @@
 #include "../Desktop/levelsToLoad.cpp"
 #include "../Desktop/level.cpp"
 #include "../Desktop/component.cpp"
+#include "../Desktop/SHA256.cpp"
 
 #include "../Desktop/SimulationEngine.cpp"
 

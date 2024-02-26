@@ -26,14 +26,16 @@ public:
 		shape.setPosition(_pos);
 		shape.setFillColor(idleColor);
 		shape.setTexture(_texture);
+		shape.setOutlineColor(sf::Color::Black);
+		shape.setOutlineThickness(1.f);
 
 		text.setFont(*font);
 		text.setCharacterSize(20);
 		text.setString(_text);
 		text.setFillColor(Color::White);
 		text.setPosition(
-			shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - text.getGlobalBounds().width / 2.f,
-			shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - text.getGlobalBounds().height / 2.f);
+			shape.getPosition().x + (shape.getSize().x / 2.f) - text.getGlobalBounds().width / 2.f,
+			shape.getPosition().y + (shape.getSize().y / 2.f) - text.getGlobalBounds().height / 2.f);
 
 		offset = { 0,0 };
 
@@ -494,7 +496,6 @@ public:
 		text.setFillColor(Color::White);
 		SetTextPosition();
 
-		int sumLengthButton = 0;
 		if (maxAmountButtons == 0)
 		{
 			for (int i = 0; i < amountButtons; i++)
@@ -508,6 +509,8 @@ public:
 		}
 
 		spaceBetweenButtons = (_size.x - sumLengthButton) / (maxAmountButtons + 1);
+		//cout <<"space"<< spaceBetweenButtons << endl;
+		//cout << "sum" << sumLengthButton << endl;
 		
 		float offset = _pos.x + spaceBetweenButtons;
 		//Ustawienie pozycji przyciskow wzglêdem selectBoxa
@@ -546,18 +549,18 @@ public:
 				continue;
 			}
 
-			buttons[i+offset]->Update(static_cast<Vector2f>(Mouse::getPosition(*window)));
+			buttons[i + offset]->Update(static_cast<Vector2f>(Mouse::getPosition(*window)));
 
 
 			if (buttons[i+offset]->GetButtonState() == PRESSED)
 			{
-				selected = i;
+				selected = i + offset;
 			}
 
 			
 			if (buttons[i+offset]->GetButtonState() == HOVER)
 			{
-				hovered = i;
+				hovered = i + offset;
 			}
 		}
 	}
@@ -574,9 +577,35 @@ public:
 	}
 	void setButtonOffset(short offset)
 	{
+		sf::Vector2f _size = shape.getSize();
+		sf::Vector2f _pos = shape.getPosition();
 		this->offset = offset;
-	}
+		
 
+		spaceBetweenButtons = (_size.x - sumLengthButton) / (maxAmountButtons + 1);
+		//cout << "space" << spaceBetweenButtons << endl;
+		//cout << "sum" << sumLengthButton << endl;
+
+		float offsetf = _pos.x + spaceBetweenButtons;
+		//Ustawienie pozycji przyciskow wzglêdem selectBoxa
+		for (short i = 0; i < maxAmountButtons; i++)
+		{
+			buttons[i + offset]->SetPosition({ offsetf, _pos.y + (_size.y - buttons[i + offset]->getSize().y) / 2 });
+			offsetf += spaceBetweenButtons + buttons[i + offset]->getSize().x;
+		}
+	}
+	void setNextOffset()
+	{
+		if (offset < amountButtons - maxAmountButtons)
+			offset++;
+		setButtonOffset(offset);
+	}
+	void setPrevOffset()
+	{
+		if(offset > 0)
+			offset--;
+		setButtonOffset(offset);
+	}
 private:
 	void SetTextPosition()
 	{
@@ -599,6 +628,8 @@ private:
 	short selected;
 	short hovered;
 	short offset = 0;
+	int sumLengthButton = 0;
+
 	//Max number of buttons inside selectbox rect
 	unsigned short maxAmountButtons;
 	float spaceBetweenButtons;

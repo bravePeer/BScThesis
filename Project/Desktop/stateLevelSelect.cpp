@@ -8,24 +8,20 @@ LevelSelect::LevelSelect(Resources* res)
 	//Load all levels
 	
 
-	backButton = new Button({ 200,50 }, { 5,5 }, res->GetFont(), L"Powrót");
+	backButton = new Button({ 200,50 }, { 5.f,res->getConfig().getWindowDimension().y - 55.f }, res->GetFont(), L"Powrót");
 
 	loadSaveButton = new Button({});
 	startNewSaveButton = new Button();
 
-
-
 	//Generating levels
-	levelsMap.insert(std::pair<std::string, Level*>("WEL0", emptyLevel(L"EL0", L"Opór po³¹czenie\nszeregowe")));
-	levelsMap.insert(std::pair<std::string, Level*>("WEL1", emptyLevel(L"EL1", L"Pojemnoœæ po³¹czenie\nszeregowe")));
-	levelsMap.insert(std::pair<std::string, Level*>("WEL6", emptyLevel(L"EL2", L"Pojemnoœæ po³¹czenie\nrównoleg³e")));
-	levelsMap.insert(std::pair<std::string, Level*>("WEL2", emptyLevel(L"EL3", L"Tranzystor\nbipolarny")));
-	levelsMap.insert(std::pair<std::string, Level*>("WEL3", emptyLevel(L"EL4", L"Tranzystor\nMOSFET")));
-	levelsMap.insert(std::pair<std::string, Level*>("WEL4", emptyLevel(L"EL5", L"Indukcyjnoœæ")));
-	levelsMap.insert(std::pair<std::string, Level*>("WEL5", emptyLevel(L"EL6", L"Obwód RLC")));
+	//levelsMap.insert(std::pair<std::string, Level*>("WEL0", emptyLevel(L"WEL0", L"Opór po³¹czenie\nszeregowe")));
+	//levelsMap.insert(std::pair<std::string, Level*>("WEL2", emptyLevel(L"WEL3", L"Tranzystor\nbipolarny")));
+	//levelsMap.insert(std::pair<std::string, Level*>("WEL3", emptyLevel(L"WEL4", L"Tranzystor\nMOSFET")));
+	//levelsMap.insert(std::pair<std::string, Level*>("WEL4", emptyLevel(L"WEL5", L"Indukcyjnoœæ")));
+	//levelsMap.insert(std::pair<std::string, Level*>("WEL5", emptyLevel(L"WEL6", L"Obwód RLC")));
 
 	//TODO IMPORTANT dodaj coœ jeszcze
-	levelsMap.insert(std::pair<std::string, Level*>("ZEL0", emptyLevel(L"Ea0", L"Stabilizator napiêcia", 
+	/*levelsMap.insert(std::pair<std::string, Level*>("ZEL0", emptyLevel(L"ZEL0", L"Stabilizator napiêcia", 
 LR"(
 W tym poziomie dowiesz siê co to stabilizator napiêcia!
 
@@ -44,16 +40,36 @@ w stanie stabilizator napiêcia dostarczyæ.
 
 
 
-)")));
-	levelsMap.insert(std::pair<std::string, Level*>("ZEL1", loadMicrocontrollerLevel()));
+)")));*/
+	//levelsMap.insert(std::pair<std::string, Level*>("ZEL1", loadMicrocontrollerLevel()));
 
 	
 	//levelsMap.insert(std::pair<std::string, Level*>("TEST", loadLevelTest()));
 	levelsMap.insert(std::pair<std::string, Level*>("ASTART", loadLevelSTART()));
-	levelsMap.insert(std::pair<std::string, Level*>("RES0", loadLevelRES0()));
+	levelsMap.insert(std::pair<std::string, Level*>("BOHM", loadLevelRES0()));
+	levelsMap.insert(std::pair<std::string, Level*>("KIR1", loadLevelKirchhoff()));
+	levelsMap.insert(std::pair<std::string, Level*>("KIR2", loadLevelKirchhoff2()));
+	//levelsMap.insert(std::pair<std::string, Level*>("ALED", loadLevelLED()));
 	levelsMap.insert(std::pair<std::string, Level*>("RES1", loadLevelRES1()));
-	levelsMap.insert(std::pair<std::string, Level*>("CAP0", loadLevelCAP0()));
+	levelsMap.insert(std::pair<std::string, Level*>("RES2", loadLevelRES2()));
+	levelsMap.insert(std::pair<std::string, Level*>("RES3", loadLevelRES3()));
+
 	levelsMap.insert(std::pair<std::string, Level*>("LED0", loadLevelLED0()));
+	
+	levelsMap.insert(std::pair<std::string, Level*>("CAP0", loadLevelCAP0()));
+	levelsMap.insert(std::pair<std::string, Level*>("CAP1", loadLevelCAP1()));
+	levelsMap.insert(std::pair<std::string, Level*>("CAP2", loadLevelCAP2()));
+	levelsMap.insert(std::pair<std::string, Level*>("CAP3", loadLevelCAP3()));
+
+	levelsMap.insert(std::pair<std::string, Level*>("IND0", loadLevelIND0()));
+
+	levelsMap.insert(std::pair<std::string, Level*>("VOLTREG", loadLevelVOLREG()));
+	levelsMap.insert(std::pair<std::string, Level*>("BITRAN0", loadLevelBITRAN0()));
+	levelsMap.insert(std::pair<std::string, Level*>("MOSFET0", loadLevelMOSFET0()));
+	levelsMap.insert(std::pair<std::string, Level*>("UC", loadLevelUC()));
+
+	//levelsMap.insert(std::pair<std::string, Level*>("CAP0", loadLevelCAP0()));
+	//levelsMap.insert(std::pair<std::string, Level*>("LED0", loadLevelLED0()));
 
 
 
@@ -74,7 +90,7 @@ w stanie stabilizator napiêcia dostarczyæ.
 	//levelButtonsMap.insert(std::pair<std::string, Button*>("START", new Bu));
 
 	Vector2f buttonSize = { 220.,80. };
-	int maxVerticalButtons = 5;
+	int maxVerticalButtons = 6;
 	Vector2f buttonGap = { 40., 20. };
 	Vector2f buttonsStart = { 10., 100. };
 
@@ -83,38 +99,36 @@ w stanie stabilizator napiêcia dostarczyæ.
 		float x = buttonsStart.x + static_cast<int>(i / maxVerticalButtons) * (buttonSize.x + buttonGap.x);
 		float y = buttonsStart.y + static_cast<int>(i % maxVerticalButtons) * (buttonSize.y + buttonGap.y);
 		return Vector2f(x, y);
-		};
+	};
 
 	int i = 0;
 	for(auto &level : levelsMap)
 	{
-		levelButtonsMap.insert(std::pair<std::string, Button*>(level.first, new Button(buttonSize, calcButtonPos(i), res->GetFont(), level.second->getName())));
+		if(levelsMap[level.first]->canRealize(levelsMap))
+			levelButtonsMap.insert(std::pair<std::string, Button*>(level.first, new Button(buttonSize, calcButtonPos(i), res->GetFont(), level.second->getName())));
+		else
+			levelButtonsMap.insert(std::pair<std::string, Button*>(level.first, new Button(buttonSize, calcButtonPos(i), res->GetFont(), level.second->getName(), sf::Color(87, 122, 96), sf::Color(79, 102, 85))));
+
 		i++;
 	}
-
-	//Generate gui
-	//levelButtons = new Button * [levelsCount];
-	//levelButtons[0] = new Button({ 200,70 }, { 10,100 }, res->GetFont(), levels[0]->getName());
-	//levelButtons[1] = new Button({ 200,70 }, { 250,100 }, res->GetFont(), levels[1]->getName());
-	//levelButtons[2] = new Button({ 200,70 }, { 400,100 }, res->GetFont(), levels[1]->getName());
 
 
 	const Vector2i& windowSize = res->getConfig().getWindowDimension();
 	levelInfoState = LevelInfoState::Hidden;
 	levelInfoBox = new RectangleShape({ 7.f * windowSize.x / 16.f,8.f * windowSize.y / 9.f });
 	levelInfoBox->setFillColor(sf::Color(90, 170, 90, 100));
-	levelInfoBox->setPosition(windowSize.x - 7.f * windowSize.x / 16.f - 50.f, 50.f);
+	levelInfoBox->setPosition(windowSize.x - 7.f * windowSize.x / 16.f - 50.f, 80.f);
 
 	int buttonOffset = 5;
 	loadSaveButton = new Button(
 		{ 2 * (levelInfoBox->getSize().x - (buttonOffset * 3)) / 5, 50 },
-		{ levelInfoBox->getPosition().x + buttonOffset, levelInfoBox->getSize().y - buttonOffset },
+		{ levelInfoBox->getPosition().x + buttonOffset, levelInfoBox->getSize().y + levelInfoBox->getPosition().y - buttonOffset - 50 },
 		res->GetFont(),
 		L"Wczytaj zapis"
 	);
 	startNewSaveButton = new Button(
 		{ 3 * (levelInfoBox->getSize().x - (buttonOffset * 3)) / 5, 50 },
-		{ levelInfoBox->getPosition().x + loadSaveButton->getSize().x + 2 * buttonOffset, levelInfoBox->getSize().y - buttonOffset },
+		{ levelInfoBox->getPosition().x + loadSaveButton->getSize().x + 2 * buttonOffset, levelInfoBox->getSize().y + levelInfoBox->getPosition().y - buttonOffset - 50 },
 		res->GetFont(),
 		L"Rozpocznij od nowa"
 	);
@@ -130,6 +144,8 @@ w stanie stabilizator napiêcia dostarczyæ.
 		res->GetFont(),
 		L"Title"
 	);
+
+	//Level::logRealizedLevels(levelsMap);
 }
 
 LevelSelect::~LevelSelect()
@@ -178,7 +194,11 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 
 	backButton->Update(mousePos);
 	if (backButton->isButtonPressed())
+	{
+		if(User::getInstance().isLoggedIn())
+			User::getInstance().syncSavesFile();
 		nextState = new StartMenu(res);
+	}
 
 	if (levelInfoState == LevelInfoState::Active)
 	{
@@ -206,18 +226,38 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 		levelButton.second->Update(mousePos);
 		try
 		{
-			if (!levelsMap[levelButton.first]->canRealize(levelsMap))
-				continue;
-
 			if (levelButton.second->GetButtonState() == ButtonStates::HOVER)
 			{
 				levelInfoState = LevelInfoState::Showed;
 				levelTitle->SetString(levelsMap[levelButton.first]->getName());
-				levelDesc->SetString(levelsMap[levelButton.first]->getDesc());
+				
+				if (levelsMap[levelButton.first]->canRealize(levelsMap))
+				{
+					levelDesc->SetString(levelsMap[levelButton.first]->getShortDesc());
+					hideStartNewButton = false;
+
+					if (levelsMap[levelButton.first]->isRealized())
+						hideLoadButton = false;
+				}
+				else
+				{
+					hideLoadButton = true;
+					hideStartNewButton = true;
+					sf::String str = L"Zrealizuj poprzednie poziomy, by móc ten poziom wykonaæ!\n\n\nWymagane poziomy:\n\n";
+					auto& prevLevIds = levelsMap[levelButton.first]->getPrevLevelsIds();
+					for (auto& prevLevId : prevLevIds)
+					{
+						str += levelsMap.find(prevLevId)->second->getName() + L"\n";
+					}
+					levelDesc->SetString(str);
+				}
+				
 				break;
 			}
 			else if (levelButton.second->GetButtonState() == ButtonStates::PRESSED)
 			{
+				if (!levelsMap[levelButton.first]->canRealize(levelsMap))
+					continue;
 				levelInfoState = LevelInfoState::Active;
 				startLevel = levelsMap[levelButton.first];
 				/*levelTitle->SetString(levels[i]->getName());
@@ -265,6 +305,19 @@ void LevelSelect::Update(sf::RenderWindow* window, sf::Time* elapsed)
 
 void LevelSelect::Render(sf::RenderTarget* target)
 {
+	if (User::getInstance().isLoggedIn())
+	{
+		drawUserProgress(target);
+		drawUserLogin(target);
+	}
+	else
+	{
+		sf::String str = L"Zaloguj siê aby móc zapisaæ postêp!";
+		sf::Text text(str, res->getFont(), 20);
+		text.setPosition({ 10,10 });
+
+		target->draw(text);
+	}
 	//for (int i = 0; i < levelsCount; i++)
 	//	levelButtons[i]->Render(target);
 
@@ -278,9 +331,56 @@ void LevelSelect::Render(sf::RenderTarget* target)
 	if (levelInfoState >= LevelInfoState::Showed)//|| levelInfoState == LevelInfoState::Showed
 	{
 		target->draw(*levelInfoBox);
-		loadSaveButton->Render(target);
-		startNewSaveButton->Render(target);
+		if(!hideLoadButton)
+			loadSaveButton->Render(target);
+		if (!hideStartNewButton)
+			startNewSaveButton->Render(target);
 		levelTitle->Render(target);
 		levelDesc->Render(target);
 	}
+
+
 }
+
+void LevelSelect::drawUserProgress(sf::RenderTarget* target)
+{
+	constexpr float progressBarWidth = 800.f;
+	constexpr float progressBarHeight = 20.f;
+	//constexpr float progressBarPosX = 300.f;
+	constexpr float progressBarPosY = 40.f;
+
+	sf::RectangleShape progressBar(sf::Vector2f(progressBarWidth, progressBarHeight));
+	progressBar.setPosition(Vector2f((res->getConfig().getWindowDimension().x - progressBarWidth ) / 2.f, progressBarPosY));
+	progressBar.setFillColor(sf::Color(13, 50, 13, 255));
+	progressBar.setOutlineThickness(0.6f);
+	progressBar.setOutlineColor(sf::Color::Black);
+
+	int realizedLevels = Level::getRealizedLevelsCount(levelsMap);
+	float progressWidth = (realizedLevels / static_cast<float>(levelsMap.size())) * progressBarWidth;
+	
+	sf::RectangleShape progress(sf::Vector2f(progressWidth, progressBarHeight));
+	progress.setPosition(Vector2f(progressBar.getPosition().x, progressBarPosY));
+	progress.setFillColor(Color(79, 199, 79, 255));
+
+	sf::String str = L"Twój postêp: " + to_wstring(realizedLevels) + L" / " + to_wstring(levelsMap.size());
+	sf::Text text(str, res->getFont(), 15);
+	
+	text.setPosition(sf::Vector2f(
+		(progressBarWidth - (19.f * text.getCharacterSize()) / 2) / 2 + progressBar.getPosition().x,
+		progressBarPosY
+	));
+
+	target->draw(progressBar);
+	target->draw(progress);
+	target->draw(text);
+}
+
+void LevelSelect::drawUserLogin(sf::RenderTarget* target)
+{
+	sf::String str = L"Witaj " + User::getInstance().getUserName() + L"!";
+	sf::Text text(str, res->getFont(), 20);
+	text.setPosition({ 10,10 });
+	
+	target->draw(text);
+}
+

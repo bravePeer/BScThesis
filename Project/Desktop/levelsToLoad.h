@@ -2,8 +2,8 @@
 #include "level.h"
 #include <functional>
 #include "simpdata.h"
+#include "componentDesc.h"
 
-//Level* loadExampleLevel()
 //{
 //	Level* level = new Level(L"Identyfikator", L"Nazwa", "Opis", true);
 //
@@ -63,29 +63,46 @@
 //
 //	return level;
 //}
+//Level* loadLevelExampleOfImplemetation();
 
-Level* loadLevelExampleOfImplemetation();
+Level* loadExampleLevel();
 
-Level* loadLevel0();
+//Level* loadLevel0();
+//Level* loadLevelEmpty2();
+//Level* loadLevelTest();
+
 
 Level* loadLevelSTART();
-Level* loadLevelTest();
-
-Level* loadMicrocontrollerLevel();
 
 Level* loadLevelRES0();
 Level* loadLevelRES1();
 Level* loadLevelRES2();
+Level* loadLevelRES3();
+
+Level* loadLevelLED0();
+
+
+Level* loadLevelKirchhoff();
+Level* loadLevelKirchhoff2();
 
 Level* loadLevelCAP0();
 Level* loadLevelCAP1();
 Level* loadLevelCAP2();
+Level* loadLevelCAP3();
 
 Level* loadLevelIND0();
+Level* loadLevelVOLREG();
+Level* loadLevelBITRAN0();
+Level* loadLevelMOSFET0();
 
-Level* loadLevelTRANB0();
-Level* loadLevelTRANM0();
+Level* loadLevelUC();
+
+
+Level* loadLevelLED();
+
+
+Level* loadLevelCAP0();
+
 
 Level* loadLevelLED0();
 
-Level* emptyLevel(sf::String id, sf::String name, sf::String desc = "");

@@ -21,10 +21,12 @@ Level::Level()
 	initBoardFun = [](Board* board)->bool {
 		return false;
 		};
+
+	schematicPath = "";
 }
 
-Level::Level(sf::String id, sf::String name, sf::String desc, bool realized)
-	:id(id), name(name), desc(desc), realized(realized), nextLevelsCount(0), prevLevelsCount(0)
+Level::Level(std::string id, sf::String name, sf::String desc, bool realized, sf::String shortDesc)
+	:id(id), name(name), desc(desc), shortDesc(shortDesc), realized(realized), nextLevelsCount(0), prevLevelsCount(0)
 {
 	nextLevels = nullptr;
 	prevLevels = nullptr;
@@ -55,6 +57,11 @@ Level::Level(sf::String id, sf::String name, sf::String desc, bool realized)
 
 		return true;
 		};
+
+	initComponentsDescFun = [](Component** c, const int& d) {
+		return std::map<int, ComponentDesc>();
+		};
+	schematicPath = "";
 }
 
 Level::~Level()
@@ -63,7 +70,7 @@ Level::~Level()
 	//delete[] prevLevels;
 }
 
-sf::String& Level::getId()
+std::string Level::getId()
 {
 	return id;
 }
@@ -76,6 +83,11 @@ sf::String& Level::getName()
 sf::String& Level::getDesc()
 {
 	return desc;
+}
+
+sf::String& Level::getShortDesc()
+{
+	return shortDesc;
 }
 
 const bool Level::isRealized() const
@@ -111,6 +123,11 @@ void Level::setPrevLevels(Level** levels, int levelsCount)
 void Level::setPrevLevelsIds(std::vector<std::string> prevLevelsIds)
 {
 	this->prevLevelsIds = prevLevelsIds;
+}
+
+std::vector<std::string>& Level::getPrevLevelsIds()
+{
+	return this->prevLevelsIds;
 }
 
 void Level::setComponentsGraphicsToLoad(std::function<void()> componentsGraphicsToLoad)
@@ -158,6 +175,15 @@ void Level::load()
 	componentsGraphicsToLoad();
 	GraphicManager::GetInstance().loadComponentGraphics();
 	components = genComponents(&componentCount);
+	cout << componentsDesc.size();
+
+	initComponentsDesc();
+	cout << componentsDesc.size();
+
+	//for (auto& a : componentsDesc)
+	//{
+	//	GraphicManager::GetInstance().loadComponentDescription(a.second.getPath());
+	//}
 }
 
 void Level::setPathToSave(std::string path)
@@ -431,6 +457,23 @@ void Level::extractRelizedLevel(std::string levelId)
 	file.close();
 }
 
+int Level::getRealizedLevelsCount(std::map<string, Level*>& levelsMap)
+{
+	int realizedLevels = 0;
+	for (auto& level : levelsMap)
+		realizedLevels += level.second->isRealized();
+	return realizedLevels;
+}
+
+void Level::logRealizedLevels(std::map<string, Level*>& lev)
+{
+	cout << "Leves:" << endl;
+	for (auto& level : lev)
+	{
+		cout << level.first << " " << level.second->getId() << " " << level.second->isRealized() << endl;
+	}
+}
+
 void Level::setBoardDimension(sf::Vector3i boardDimension)
 {
 	this->boardDimnesion = boardDimension;
@@ -441,6 +484,21 @@ Vector3i Level::getBoardDimension()
 	return this->boardDimnesion;
 }
 
+
+void Level::setInitComponentsDesc(std::function<std::map<int, ComponentDesc>(Component** components, const int& componentCount)> initComponentsDescFun)
+{
+	this->initComponentsDescFun = initComponentsDescFun;
+}
+
+void Level::initComponentsDesc()
+{
+	componentsDesc = initComponentsDescFun(components, componentCount);
+}
+
+std::map<int, ComponentDesc>& Level::getComponentsDesc()
+{
+	return componentsDesc;
+}
 
 void Level::setInitBoardFun(std::function<bool(Board*)> initBoardFun)
 {

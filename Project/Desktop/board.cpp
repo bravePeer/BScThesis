@@ -2,7 +2,7 @@
 
 Board::Board()
 {
-	logger = new Logger("Board");
+	logger = new applogger::Logger("Board");
 	length = 0;
 	width = 0;
 	layers = 0;
@@ -12,7 +12,7 @@ Board::Board()
 Board::Board(int length, int width, int layers)
 	:length(length), width(width), layers(layers)
 {
-	logger = new Logger("Board");
+	logger = new applogger::Logger("Board");
 	origin = { 0,0 };
 
 	boardTiles = new Tile[length * width];
@@ -162,7 +162,7 @@ void Board::addRoute(Vector2i pos0, Vector2i pos1)
 
 void Board::setRoute(Vector2i pos0, Vector2i pos1)
 {
-	boardTiles[(pos0.x / 16) + (pos0.y/16) * length].setRoute(tileNighbourDirection(pos0, pos1));
+	boardTiles[(pos0.x / 16) + (pos0.y / 16) * length].setRoute(tileNighbourDirection(pos0, pos1));
 }
 
 void Board::removeRoute(Vector2i pos0, Vector2i pos1)
@@ -208,7 +208,7 @@ void Board::placeComponent(Component* component, Vector2i& pos)
 	for (int i = 0; i < component->getPadsCount(); i++)
 	{
 		Vector2i buf = component->getBoardPosition() + padsPos[i];
-
+		//cout << buf.x <<"---"<< buf.y << endl;
 		if (component->getComponentTypePackage() == Component::ComponentTypePackage::SMD)
 			boardTiles[buf.x + buf.y * length].setState(Tile::TileState::SMD_PAD);
 		else if (component->getComponentTypePackage() == Component::ComponentTypePackage::THT)
@@ -221,7 +221,7 @@ void Board::placeComponent(Component* component, Vector2i& pos)
 	logger->Info("Added " + component->getId() + " pos:" + to_string(pos.x) + " " + to_string(pos.y));
 
 	sort(components.begin(), components.end(), [](Component* i, Component* j) {
-		return (i->getGlobalPos().y > j->getGlobalPos().y);
+		return (i->getGlobalPos().y < j->getGlobalPos().y);
 		});
 }
 

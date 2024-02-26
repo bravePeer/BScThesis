@@ -9,7 +9,7 @@ public:
 		SMD, THT
 	};
 	enum class CompoenetType {
-		compoenet, goldpin, resistor, led, capacitor, microcontroller
+		compoenet, goldpin, resistor, led, capacitor, microcontroller, amperemeter, voltmeter
 	};
 	Component()
 	{
@@ -27,7 +27,7 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, getComponentLength(), texture.getSize().y));
 
-		this->globalPosition = { 0,0 };
+		this->globalPosition = { 1,2 };
 		this->padsPos = new Vector2i[padsCount];
 		for (int i = 0; i < padsCount; i++)
 		{
@@ -51,7 +51,20 @@ public:
 	}
 	~Component()
 	{
-		delete[] padsPos;
+		try
+		{
+			//delete[] padsPos;
+
+		}
+		catch (const std::exception&)
+		{
+			cout << "Error: delete padPos! " << endl;
+		}
+	}
+
+	virtual Component* clone() const
+	{
+		return new Component(*this);
 	}
 
 	//, Vector2f& origin
@@ -61,7 +74,7 @@ public:
 		
 		if (rotation % 2 == 1)
 		{
-			globalPosition.x -=  getComponentLength()-IMAGE_TILE_LENGTH;
+			globalPosition.x -=  getComponentLength() - IMAGE_TILE_LENGTH;
 		}
 
 		int m = max(tileSize.x, tileSize.y);
@@ -183,7 +196,10 @@ protected:
 		int m = max(tileSize.x, tileSize.y);
 		if (m == 1)
 			return IMAGE_TILE_LENGTH;
-		return (m % 2 == 0) ? (m - 1) * IMAGE_TILE_LENGTH + IMAGE_TILE_LENGTH / 2 : (m - 1) * IMAGE_TILE_LENGTH;
+
+		//return (m % 2 == 0) ? (m - 1) * IMAGE_TILE_LENGTH + IMAGE_TILE_LENGTH / 2 : (m - 1) * IMAGE_TILE_LENGTH;
+			return ((tileSize.x % 2 == 1) || (tileSize.y % 2 == 1)) ? (m)*IMAGE_TILE_LENGTH - IMAGE_TILE_LENGTH / 2 : (m)*IMAGE_TILE_LENGTH;
+
 	}
 
 	Vector2i tileSize; //dimension in tiles
@@ -219,6 +235,11 @@ public:
 		simSymbol = "goldpin";
 		componentType = CompoenetType::goldpin;
 	}
+
+	virtual Goldpin* clone() const override
+	{
+		return new Goldpin(*this);
+	}
 private:
 };
 
@@ -249,6 +270,12 @@ public:
 		simSymbol = "_app\\\\appled";
 		simName = "led" + to_string(componentsCount) + id;
 		componentsCount++;
+	}
+
+	virtual LightEmittingDiode* clone() const override
+	{
+		componentsCount++;
+		return new LightEmittingDiode(*this);
 	}
 
 	static void resetComponentCounter()
@@ -284,7 +311,19 @@ public:
 		simName = "res" + to_string(componentsCount) + this->id;
 		componentsCount++;
 	}
-	
+	Resistor(const Resistor& a)
+		:Component(a)
+	{
+		componentType = CompoenetType::resistor;
+		simSymbol = "_app\\\\appres";
+		simName = "res" + to_string(componentsCount) + this->id;
+		componentsCount++;
+	}
+	virtual Resistor* clone() const override
+	{
+		return new Resistor(*this);
+	}
+
 	static void resetComponentCounter()
 	{
 		componentsCount = 0;
@@ -316,6 +355,12 @@ public:
 		simName = "res" + to_string(componentsCount) + this->id;
 		componentsCount++;
 	}
+	virtual Capacitor* clone() const override
+	{
+		componentsCount++; 
+		return new Capacitor(*this);
+	}
+	
 	static void resetComponentCounter()
 	{
 		componentsCount = 0;
@@ -347,6 +392,12 @@ public:
 		simName = "res" + to_string(componentsCount) + this->id;
 		componentsCount++;
 	}
+	virtual Microcontroller* clone() const override
+	{
+		componentsCount++; 
+		return new Microcontroller(*this);
+	}
+
 	static void resetComponentCounter()
 	{
 		componentsCount = 0;
@@ -355,7 +406,86 @@ public:
 	//It shouldnt be like that
 	void Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin)
 	{
-		globalPosition = ScreenPos({ boardPosition.x+1, boardPosition.y +4}, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin;// -Vector2f(spriteSize.y - TILE_WIDTH, 0.f);
+		//globalPosition = ScreenPos({ boardPosition.x+1, boardPosition.y + 4}, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin;// -Vector2f(spriteSize.y - TILE_WIDTH, 0.f);
+
+		//if (rotation % 2 == 1)
+		//{
+		//	globalPosition.x -= getComponentLength() - IMAGE_TILE_LENGTH;
+		//}
+
+		//int m = max(tileSize.x, tileSize.y);
+		//globalPosition.y -= sprite.getTexture()->getSize().y - (TILE_WIDTH + TILE_WIDTH / 2);
+		if(tileSize.x % 2 == 1)
+			globalPosition = ScreenPos({ boardPosition.x , boardPosition.y + tileSize.y }, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin - Vector2f(spriteSize.y - TILE_WIDTH, 0.f);// dla stabilizatora dzia³a
+		else
+			globalPosition = ScreenPos({ boardPosition.x , boardPosition.y + tileSize.y }, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin - Vector2f(spriteSize.y - TILE_WIDTH , -TILE_WIDTH / 2.f);// dla stabilizatora dzia³a
+
+		if (rotation % 2 == 1)
+		{
+			globalPosition.x -= getComponentLength() - IMAGE_TILE_LENGTH;
+		}
+
+		int m = max(tileSize.x, tileSize.y);
+		globalPosition.y -= sprite.getTexture()->getSize().y - (TILE_WIDTH + TILE_WIDTH / 2);
+
+
+		//globalPosition.y = globalPosition.y - (sprite->getTexture()->getSize().y - (m - 1) * TILE_WIDTH); //+(m % 2 == 0) ? TILE_WIDTH / 2 : 0);
+	}
+	void Render(RenderTarget* target)
+	{
+		
+		sprite.setPosition(globalPosition);
+		target->draw(sprite);
+	}
+private:
+	static int componentsCount;
+};
+
+class Amperemeter : public Component {
+public:
+	Amperemeter(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentTypePackage type, bool removable = true, std::string id = "")
+		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable, id)
+	{
+		if (name.length() == 0)
+			this->name = L"Amperomierz";
+		if (description.length() == 0)
+			this->description = L"Mierzy p³yn¹cy ³adunek";
+
+		componentType = CompoenetType::amperemeter;
+		simSymbol = "_app\\\\appamperemeter"; // TODO
+		simName = "res" + to_string(componentsCount) + this->id;
+	}
+	Amperemeter(Amperemeter* amperemeter)
+		:Component(amperemeter)
+	{
+		componentType = CompoenetType::amperemeter;
+		simSymbol = "_app\\\\appamperemeter";
+		simName = "res" + to_string(componentsCount) + this->id;
+		componentsCount++;
+	}
+	Amperemeter(const Amperemeter& amperemeter)
+		:Component(amperemeter)
+	{
+		componentType = CompoenetType::amperemeter;
+		simSymbol = "_app\\\\appamperemeter";
+		simName = "res" + to_string(componentsCount) + this->id;
+		componentsCount++;
+	}
+	virtual Amperemeter* clone() const override
+	{
+		componentsCount++;
+		return new Amperemeter(*this);
+	}
+
+	static void resetComponentCounter()
+	{
+		componentsCount = 0;
+	}
+
+	//It shouldnt be like that
+	void Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin)
+	{
+		globalPosition = ScreenPos({ boardPosition.x , boardPosition.y + 1 }, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin;// -Vector2f(spriteSize.y - TILE_WIDTH, 0.f);
 
 		if (rotation % 2 == 1)
 		{
@@ -369,7 +499,73 @@ public:
 	}
 	void Render(RenderTarget* target)
 	{
-		
+
+		sprite.setPosition(globalPosition);
+		target->draw(sprite);
+	}
+private:
+	static int componentsCount;
+};
+
+class Voltmeter : public Component{
+public:
+	Voltmeter(wstring name, wstring description, Vector2i tileSize, int padsCount, Vector2i* padsPos, const Texture& texture, ComponentTypePackage type, bool removable = true, std::string id = "")
+		:Component(name, description, tileSize, padsCount, padsPos, texture, type, removable, id)
+	{
+		if (name.length() == 0)
+			this->name = L"Amperomierz";
+		if (description.length() == 0)
+			this->description = L"Mierzy p³yn¹cy ³adunek";
+
+		componentType = CompoenetType::voltmeter;
+		simSymbol = "_app\\\\appvoltmeter"; // TODO
+		simName = "res" + to_string(componentsCount) + this->id;
+	}
+	Voltmeter(Voltmeter* voltmeter)
+		:Component(voltmeter)
+	{
+		componentType = CompoenetType::voltmeter;
+		simSymbol = "_app\\\\appvoltmeter";
+		simName = "res" + to_string(componentsCount) + this->id;
+		componentsCount++;
+	}
+	Voltmeter(const Voltmeter& voltmeter)
+		:Component(voltmeter)
+	{
+		componentType = CompoenetType::voltmeter;
+		simSymbol = "_app\\\\appvoltmeter";
+		simName = "res" + to_string(componentsCount) + this->id;
+		componentsCount++;
+	}
+	virtual Voltmeter* clone() const override
+	{
+		componentsCount++; 
+		return new Voltmeter(*this);
+	}
+
+	static void resetComponentCounter()
+	{
+		componentsCount = 0;
+	}
+
+	//It shouldnt be like that
+	void Update(RenderWindow* window, Time* elapsed, Vector2f& viewOrigin) override
+	{
+		globalPosition = ScreenPos({ boardPosition.x , boardPosition.y + 1 }, { TILE_LENGTH, TILE_WIDTH }) + viewOrigin;// -Vector2f(spriteSize.y - TILE_WIDTH, 0.f);
+
+		if (rotation % 2 == 1)
+		{
+			globalPosition.x -= getComponentLength() - IMAGE_TILE_LENGTH;
+		}
+
+		int m = max(tileSize.x, tileSize.y);
+		globalPosition.y -= sprite.getTexture()->getSize().y - (TILE_WIDTH + TILE_WIDTH / 2);
+
+		//globalPosition.y = globalPosition.y - (sprite->getTexture()->getSize().y - (m - 1) * TILE_WIDTH); //+(m % 2 == 0) ? TILE_WIDTH / 2 : 0);
+	}
+	void Render(RenderTarget* target)
+	{
+
 		sprite.setPosition(globalPosition);
 		target->draw(sprite);
 	}

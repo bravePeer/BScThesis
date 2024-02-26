@@ -37,6 +37,12 @@
     <Filter Include="Pliki źródłowe\GameStates">
       <UniqueIdentifier>{f5020f5f-e1e5-4ddf-8943-2afa4ef86c37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\User">
+      <UniqueIdentifier>{29192491-725b-48cb-b867-ae903648daaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\User">
+      <UniqueIdentifier>{898e02ca-492a-4a7f-a773-6422fe963f1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,9 +78,6 @@
     <ClCompile Include="stateStartMenu.cpp">
       <Filter>Pliki źródłowe\GameStates</Filter>
     </ClCompile>
-    <ClCompile Include="levelsToLoad.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="component.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
@@ -86,6 +89,15 @@
     </ClCompile>
     <ClCompile Include="boardSave.cpp">
       <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="SHA256.cpp">
+      <Filter>Pliki źródłowe\User</Filter>
+    </ClCompile>
+    <ClCompile Include="graphicPaths.h">
+      <Filter>Pliki nagłówkowe\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="levelsToLoad.cpp">
+      <Filter>Pliki źródłowe\Levels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,17 +155,20 @@
     <ClInclude Include="boardSave.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="databaseConnector.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="tile.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="user.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="componentDesc.h">
       <Filter>Pliki nagłówkowe\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="databaseConnector.h">
+      <Filter>Pliki nagłówkowe\User</Filter>
+    </ClInclude>
+    <ClInclude Include="user.h">
+      <Filter>Pliki nagłówkowe\User</Filter>
+    </ClInclude>
+    <ClInclude Include="SHA256.h">
+      <Filter>Pliki nagłówkowe\User</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
