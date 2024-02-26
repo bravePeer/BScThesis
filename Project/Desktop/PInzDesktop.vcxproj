@@ -140,6 +140,8 @@
     <ClCompile Include="board.cpp" />
     <ClCompile Include="boardSave.cpp" />
     <ClCompile Include="component.cpp" />
+    <ClCompile Include="graphicPaths.h" />
+    <ClCompile Include="SHA256.cpp" />
     <ClCompile Include="stateSolveLevel.cpp" />
     <ClCompile Include="appEngine.cpp" />
     <ClCompile Include="graphics.cpp" />
@@ -160,6 +162,7 @@
     <ClInclude Include="component.h" />
     <ClInclude Include="componentDesc.h" />
     <ClInclude Include="databaseConnector.h" />
+    <ClInclude Include="SHA256.h" />
     <ClInclude Include="stateSolveLevel.h" />
     <ClInclude Include="appEngine.h" />
     <ClInclude Include="graphics.h" />

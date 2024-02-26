@@ -3,7 +3,7 @@
 SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 	:State(res)
 {
-	logger = new Logger("SolveLevel");
+	logger = new applogger::Logger("SolveLevel");
 	
 	GraphicManager::GetInstance().loadTileGraphic();
 
@@ -14,6 +14,15 @@ SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 	currentLevel = level;
 	//Load components from task
 	level->load();
+
+	GraphicManager::GetInstance().loadLevelSchematic(level->getSchematicPath());
+	levelSchematic = GraphicManager::GetInstance().getLevelSchematic();
+	showLevelSchematic = false;
+
+	for (auto a = level->getComponentsDesc().begin(); a!= level->getComponentsDesc().end(); a++)
+	{
+		a->second.setSprite(GraphicManager::GetInstance().loadComponentDescription(a->second.getPath()));
+	}
 
 	components = level->getComponents();
 	componentsCount = level->getComponentsCount();
@@ -30,7 +39,7 @@ SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 	initInfoNearMouse(res);
 	addComponent = nullptr;
 
-	componentDesc = new ComponentDesc(res);
+	//componentDesc = new ComponentDesc(res);
 
 	if (loadExistingLevel)
 	{
@@ -42,8 +51,7 @@ SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 			loadExistingLevel = !loadExistingLevel;
 		}
 	}
-
-	if(!loadExistingLevel)
+	else
 	{
 		//TODO load dimensions from level
 		board = new Board(currentLevel->getBoardDimension().x, currentLevel->getBoardDimension().y, currentLevel->getBoardDimension().z);
@@ -60,7 +68,31 @@ SolveLevel::SolveLevel(Resources* res, Level* level, bool loadExistingLevel)
 	helpButton = new Button(sf::Vector2f((configValue.width - 20.f) / 3, configValue.height), sf::Vector2f(calPos(1), 0.f), res->GetFont(), L"Pomoc");
 	checkButton = new Button(sf::Vector2f((configValue.width - 20.f) / 3, configValue.height), sf::Vector2f(calPos(0), 0.f), res->GetFont(), L"SprawdŸ");
 
+	Vector2f posSchematicButton = Vector2f(res->getConfig().getSectionConfig(Config::SectionConfig::TaskSection).getPosition().x+5,
+		res->getConfig().getSectionConfig(Config::SectionConfig::TaskSection).getPosition().y + 
+		res->getConfig().getSectionConfig(Config::SectionConfig::TaskSection).getSize().y - 45);
+
+	showLevelSchematicButton = new Button(sf::Vector2f(configValue.width-10, 40), posSchematicButton, res->GetFont(), L"Zobacz schemat");
+
 	simulationCheckResponse = new TextBox({ 300.f, 50.f }, { 700.f, 0.f }, res->GetFont(), L"", sf::Color(0,0,0,0));
+
+	configValue = res->getConfig().getSectionConfig(Config::SectionConfig::ComponentSection);
+	if (currentLevel->getComponentsCount() > 5)
+	{
+		moveAddComponentsRight = new Button({ 100.f,25.f }, { configValue.getSize().x + configValue.getPosition().x - 100.f,configValue.getPosition().y + configValue.getSize().y - 35.1f }, res->GetFont(), L"\n>\n\n");
+		moveAddComponentsLeft = new Button({ 100.f,25.f }, { configValue.getPosition().x+0.f,configValue.getPosition().y + configValue.getSize().y - 35.1f }, res->GetFont(), L"\n<\n\n");
+	}
+
+	helpBox.setTexture(GraphicManager::GetInstance().loadHelp());
+	helpBox.setPosition({ 10.f,10.f });
+	showHelp = false;
+
+	Resistor::resetComponentCounter();
+	LightEmittingDiode::resetComponentCounter();
+	Capacitor::resetComponentCounter();
+	Microcontroller::resetComponentCounter();
+	Voltmeter::resetComponentCounter();
+	Amperemeter::resetComponentCounter();
 }
 
 SolveLevel::~SolveLevel()
@@ -79,7 +111,7 @@ SolveLevel::~SolveLevel()
 
 	delete currentLevel;
 
-	delete componentDesc;
+	//delete componentDesc;
 
 	delete logger;
 
@@ -90,16 +122,21 @@ void SolveLevel::Update(RenderWindow* window, Time* elapsed)
 {
 	board->Update(window, elapsed);
 	helpButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
-	/*if (helpButton->isButtonPressed())
+	if (helpButton->isButtonPressed())
 	{
-		popupBox = new PopupBox(res->GetFont(), L"awdawda");
+		showHelp = !showHelp;
 	}
-	if (popupBox)
+
+	showLevelSchematicButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
+	if (showLevelSchematicButton->isButtonPressed())
 	{
-		popupBox->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
-		if (popupBox->ShouldBeDestroyed())
-			delete popupBox;
-	}*/
+		showLevelSchematic = !showLevelSchematic;
+		if (showLevelSchematic)
+			showLevelSchematicButton->SetString(L"Ukryj schemat");
+		else
+			showLevelSchematicButton->SetString(L"Poka¿ schemat");
+	}
+
 
 	menuButton->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
 	if (menuButton->isButtonPressed())
@@ -172,6 +209,17 @@ void SolveLevel::Update(RenderWindow* window, Time* elapsed)
 	
 	if(viewOffset.x != 0.f || viewOffset.y != 0.f)
 		board->moveViewOrigin(viewOffset);
+
+	if (moveAddComponentsLeft)
+	{
+		moveAddComponentsLeft->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
+		if (moveAddComponentsLeft->isButtonPressed())
+			selectComponent->setPrevOffset();
+
+		moveAddComponentsRight->Update(sf::Vector2f(sf::Mouse::getPosition(*window)));
+		if (moveAddComponentsRight->isButtonPressed())
+			selectComponent->setNextOffset();
+	}
 }
 
 void SolveLevel::Render(RenderTarget* target)
@@ -188,14 +236,33 @@ void SolveLevel::Render(RenderTarget* target)
 	renderBoardSection(target);
 
 	selectComponent->Render(target);
+
 	renderInfoNearMouse(target);
 
 	checkButton->Render(target);
 
+	showLevelSchematicButton->Render(target);
+
+
 	if (simulationCheckResponse)
 		simulationCheckResponse->Render(target);
 
-	componentDesc->Render(target);
+	if(componentDesc != nullptr)
+		componentDesc->Render(target);
+
+	if (showLevelSchematic)
+		target->draw(levelSchematic);
+
+	if (moveAddComponentsLeft)
+	{
+		moveAddComponentsLeft->Render(target);
+		moveAddComponentsRight->Render(target);
+	}
+
+	if (showHelp)
+	{
+		target->draw(helpBox);
+	}
 }
 
 inline void SolveLevel::initTaskSection(Resources* res)
@@ -345,14 +412,16 @@ inline void SolveLevel::updateComponentSection(RenderWindow* window, Time* elaps
 		if (selectedComponentId != -1 && addComponent == nullptr)
 		{
 			logger->Info("Selected " + to_string(selectedComponentId) + "component");
-			if (dynamic_cast<Resistor*>(components[selectedComponentId]))
+			addComponent = components[selectedComponentId]->clone();
+
+			/*if (dynamic_cast<Resistor*>(components[selectedComponentId]))
 				addComponent = new Resistor(dynamic_cast<Resistor*>(components[selectedComponentId]));
 			else if (dynamic_cast<LightEmittingDiode*>(components[selectedComponentId]))
 				addComponent = new LightEmittingDiode(dynamic_cast<LightEmittingDiode*>(components[selectedComponentId]));
 			else if (dynamic_cast<Microcontroller*>(components[selectedComponentId]))
 				addComponent = new Microcontroller(dynamic_cast<Microcontroller*>(components[selectedComponentId]));
 			else
-				addComponent = new Component(components[selectedComponentId]);
+				addComponent = new Component(*components[selectedComponentId]);*/
 			selectComponent->ResetSelection();
 			updateBoardSection = &SolveLevel::updateBoardSectionPlaceComponent;
 
@@ -362,21 +431,30 @@ inline void SolveLevel::updateComponentSection(RenderWindow* window, Time* elaps
 		short hoveredComponentId = selectComponent->GetHovered();
 		if (hoveredComponentId != -1)
 		{
-			componentDesc->setComponent(components[hoveredComponentId]);
-			componentDesc->setRender(true);
+			/*componentDesc->setComponent(components[hoveredComponentId]);
+			componentDesc->setRender(true);*/
+			try
+			{
+				componentDesc = &currentLevel->getComponentsDesc()[hoveredComponentId];
+			}
+			catch (const std::exception& )
+			{
+				logger->Error("Can't show component description");
+			}
 		}
 		else
-			componentDesc->setRender(false);
+			componentDesc = nullptr;
+			//componentDesc->setRender(false);
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Key::N))
+	/*if (Keyboard::isKeyPressed(Keyboard::Key::N))
 	{
 		selectComponent->setButtonOffset(0);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::M))
 	{
 		selectComponent->setButtonOffset(1);
-	}
+	}*/
 }
 
 inline void SolveLevel::initBoardSection()
@@ -511,7 +589,7 @@ inline void SolveLevel::renderBoardSection(RenderTarget* target)
 
 inline void SolveLevel::initInfoNearMouse(Resources* res)
 {
-	mouseInfoBox = new TextBox({ 100,50 }, { 0,0 }, res->GetFont(), "Inormacje dotycz¹ce pola", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), 12);
+	mouseInfoBox = new TextBox({ 100,50 }, { 0,0 }, res->GetFont(), "Inormacje dotycz¹ce pola", Color(255, 0, 0, 0), Color(255, 0, 0, 0), Color(255, 0, 0, 0), 15);
 }
 
 inline void SolveLevel::destroyInfoNearMouse()
@@ -522,9 +600,15 @@ inline void SolveLevel::destroyInfoNearMouse()
 inline void SolveLevel::updateInfoNearMouse(RenderWindow* window, Time* elapsed)
 {
 	//if in board section
+	shouldRenderInfoNearMouse = false;
 
 	Vector2i mousePos = Mouse::getPosition(*window);
-	sf::String str = L"a";
+	if (!res->getConfig().getSectionConfig(Config::SectionConfig::BoardSection).contains(static_cast<Vector2f>(mousePos)))
+		return;
+
+	shouldRenderInfoNearMouse = true;
+	
+	sf::String str = L"";
 	try
 	{
 		Vector2i tmp = board->getHoverTilePos(mousePos);
@@ -532,11 +616,39 @@ inline void SolveLevel::updateInfoNearMouse(RenderWindow* window, Time* elapsed)
 		str += L"Pos: ";
 		str += L"x: " + to_wstring(tmp.x);
 		str += L"y: " + to_wstring(tmp.y);
-		str += L"\nIndeks: " + to_wstring(tmp.x + tmp.y * board->getBoardDimension().x);
-		str += L"\nTile:" + hoveredTile.getStateString();
+		//str += L"\nIndeks: " + to_wstring(tmp.x + tmp.y * board->getBoardDimension().x);
+		str += L"\nKafelek:" + hoveredTile.getStateString();
 		Component* component = board->getComponentOnBoard(tmp);
 		if (component != nullptr)
+		{
 			str += L"\nKomponent: " + component->getName();
+			if (simulationEngine)
+			{
+				if (component->getComponentType() == Component::CompoenetType::amperemeter)
+				{
+					try
+					{
+						str += L"\nNatê¿enie pr¹du: " + to_wstring(abs(simulationEngine->getComponentValue(component->getSimName()))) + L"A";
+					}
+					catch (const  std::string&)
+					{
+
+					}
+				}
+				else if (component->getComponentType() == Component::CompoenetType::voltmeter)
+				{
+					try
+					{
+						str += L"\nNapiêcie: " + to_wstring(abs( simulationEngine->getComponentValue(component->getSimName()) * stof(component->getSimValue().substr(0, component->getSimValue().length()-1)))) + L"V";
+					}
+					catch (const  std::string&)
+					{
+
+					}
+				}
+			}
+		}
+		
 	}
 	catch (const sf::String& e)
 	{
@@ -552,6 +664,8 @@ inline void SolveLevel::updateInfoNearMouse(RenderWindow* window, Time* elapsed)
 
 inline void SolveLevel::renderInfoNearMouse(RenderTarget* target)
 {
+	if (!shouldRenderInfoNearMouse)
+		return;
 	mouseInfoBox->Render(target);
 }
 

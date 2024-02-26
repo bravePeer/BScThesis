@@ -22,5 +22,5 @@ private:
 	BoardSave();
 	//static BoardSave* boardSave;
 	
-	Logger* logger;
+	applogger::Logger* logger;
 };

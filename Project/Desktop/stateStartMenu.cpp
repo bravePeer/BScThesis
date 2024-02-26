@@ -1,7 +1,7 @@
 #include "stateStartMenu.h"
 
 //------StartMenu---------
-StartMenu::StartMenu(Resources* res, bool logged)
+StartMenu::StartMenu(Resources* res)
 	:State(res)
 {
 
@@ -13,7 +13,7 @@ StartMenu::StartMenu(Resources* res, bool logged)
 	buttons[ButtonId::Exit] = new Button({ 200,50 }, { 200,420 }, res->GetFont(), L"Wyjœcie");
 
 	//if logged sombody
-	if (logged)
+	if (User::getInstance().isLoggedIn())
 	{
 		updateF = &StartMenu::updateLogged;
 		renderF = &StartMenu::renderLogged;
@@ -70,6 +70,13 @@ void StartMenu::updateLogged(RenderWindow* window, Time* elapsed)
 
 void StartMenu::renderLogged(RenderTarget* window)
 {
+	sf::String str = L"Witaj " + User::getInstance().getUserName() + L"!";
+	sf::Text text(str, res->getFont(), 30);
+	
+	text.setPosition({ (res->getConfig().getWindowDimension().x - (str.getSize() * text.getCharacterSize()))/2.f,10.f });
+
+	window->draw(text);
+
 	buttons[ButtonId::Start]->Render(window);
 	buttons[ButtonId::Logout]->Render(window);
 	buttons[ButtonId::Exit]->Render(window);

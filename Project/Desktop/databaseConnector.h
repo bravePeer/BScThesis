@@ -18,7 +18,7 @@ Delete container:
 Clear Tables:
 	SET FOREIGN_KEY_CHECKS = 0;
 	TRUNCATE TABLE Users;
-	TRUNCATE TABLE SAVES;
+	TRUNCATE TABLE Saves;
 	SET FOREIGN_KEY_CHECKS = 1;
 
 
@@ -56,7 +56,6 @@ public:
 
 	bool insertUser(std::string login, std::string pass)
 	{
-
 		if (login.find(' ') != std::string::npos)
 			throw std::string("Field `login` can't contain space!");
 		if (pass.find(' ') != std::string::npos)
@@ -85,9 +84,13 @@ public:
 			//TODO generate initialized file, header
 
 			mysqlx::byte data[64] = { 0 };
-			for (int i = 0; i < 64; i++)
-				data[i] = (i < 60) ? 'a': 0;
+			/*for (int i = 0; i < 64; i++)
+				data[i] = (i < 60) ? 'a': 0;*/
 			
+			for (int i = 0; i < 60; i++)
+			{
+				data[i] = login[i];
+			}
 			
 
 			mysqlx::bytes datas(data, 64);

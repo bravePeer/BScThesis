@@ -5,7 +5,7 @@
 
 BoardSave::BoardSave()
 {
-	logger = new Logger("BoardSave");
+	logger = new applogger::Logger("BoardSave");
 }
 
 BoardSave::~BoardSave()
@@ -210,20 +210,20 @@ Board* BoardSave::loadBoard(const std::string& path, Level* level)
 			{
 				if (levelComponents[i]->getId() == id)
 				{
-					Component* addComponent;
-					if (dynamic_cast<Resistor*>(levelComponents[i]))
+					Component* addComponent = levelComponents[i]->clone();
+					/*if (dynamic_cast<Resistor*>(levelComponents[i]))
 						addComponent = new Resistor(dynamic_cast<Resistor*>(levelComponents[i]));
 					else if (dynamic_cast<LightEmittingDiode*>(levelComponents[i]))
 						addComponent = new LightEmittingDiode(dynamic_cast<LightEmittingDiode*>(levelComponents[i]));
 					else
-						addComponent = new Component(levelComponents[i]);
+						addComponent = new Component(levelComponents[i]);*/
 
 					pos.x = pos.x / 16;
 					pos.y = pos.y / 16;
 					
+					addComponent->setBoardPosition(pos);
 					for (int i = 0; i < stoi(rotation.substr(1)) / 90; i++)
 						addComponent->rotate();
-					
 					board->placeComponent(addComponent, pos);
 					//place compoenent
 				}

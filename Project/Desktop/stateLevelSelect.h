@@ -31,6 +31,9 @@ private:
 	//Level** levels;
 	//int levelsCount;
 
+	void drawUserProgress(sf::RenderTarget* target);
+	void drawUserLogin(sf::RenderTarget* target);
+
 	Button* backButton;
 	//Button* resetViewButton;
 
@@ -48,11 +51,15 @@ private:
 	std::map<std::string, Button*> levelButtonsMap;
 	std::map<std::string, RectangleShape*> levelButtonsHoverFilterMap;
 
+	bool hideLoadButton;
+	bool hideStartNewButton;
+
 	enum class LevelInfoState
 	{
 		Hidden,
 		Showed,
-		Active
+		Active,
+		ActiveCantRealize
 	};
 	LevelInfoState levelInfoState;
 };
